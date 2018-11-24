@@ -25,8 +25,7 @@ def index(request):
 
                 # Get the uploaded file and rename it to make it unique and save locally
                 file = request.FILES['video'].read()
-                current_name = ''.join(random.choice('0123456789ABCDEF') for i in range(16)) + str(request.FILES['video']) 
-                current_name = current_name.replace(" ", "") #removing space in names
+                current_name = ''.join(random.choice('0123456789ABCDEF') for i in range(16)) + str(request.FILES['video'].split('.')[-1])
                 
                 path1 = os.path.join(os.path.join(settings.BASE_DIR, "static"), 'videos')
                 open(os.path.join(path1, current_name), 'wb').write(file)
