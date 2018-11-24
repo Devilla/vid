@@ -1,6 +1,6 @@
 {% extends 'core/base.html' %}
 
-{% block title %} {{ name }} {% endblock title %}
+{% block title %} {{ current.name }} {% endblock title %}
 
 {% block navigation %}
 
@@ -35,7 +35,7 @@
             time = this.currentTime;
             
             if(ad == 'false'){
-                if (parseInt(time) == 4){
+                if (parseInt(time) == 120){
                     playAd();
                 }
             }
@@ -50,7 +50,7 @@
                     ],
                 };
                 $('video').bind('timeupdate', myfunction);
-                document.getElementsByTagName("video")[0].currentTime = 4;  
+                document.getElementsByTagName("video")[0].currentTime = 121;  
                 player.play();
             }
             else {
@@ -63,7 +63,7 @@
                 player.source = {type: 'video',
                     sources: [
                         {
-                            src: 'http://gateway.ipfs.io/ipfs/QmNtWwMeT7NA51mQDLXUUkSVzyaMudxy422EDKQ4Y7DKMi',
+                            src: 'http://gateway.ipfs.io/ipfs/QmSL5V7u5awPhfTia4hhEEvQSaZci4yrrMDgMjzqy4oTGF',
                             type: 'video/mp4',
                             size: 720,
                         },

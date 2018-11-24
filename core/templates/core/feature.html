@@ -41,7 +41,7 @@
                 {{ forloop.counter0 }}
                 <div class="b-video">
                     <div class="v-img">
-                        <a href="{% url 'watch:index'  i.bestHash_Featured   i.id  %}"><img src='https://gateway.ipfs.io/ipfs/{{ i.thumbNail }}' alt="" height="100%" width="100%"></a>
+                        <a href="{% url 'watch:index'  i.bestHash_Featured   i.id  %}"><img src='https://gateway.ipfs.io/ipfs/{{ i.thumbNail }}' alt="" style="width:27.2rem; height:16rem;"></a>
                         <div class="time">{{ i.duration }}</div>
                     </div>
                     <div class="v-desc">

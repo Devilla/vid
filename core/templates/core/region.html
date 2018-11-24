@@ -49,12 +49,11 @@
             <div class="col-lg-3 col-sm-6 videoitem">
                 <div class="b-video">
                     <div class="v-img">
-                        {{ i.bestHash_Trending }}
-                        {% comment %} <a href="{% url 'watch:index'  i.bestHash_Trending   i.id  %}"><img src='https://gateway.ipfs.io/ipfs/{{ i.thumbNail }}' alt="" height="100%" width="100%"></a> {% endcomment %}
+                        <a href="{% url 'watch:index'  i.bestHash_Trending   i.id  %}"><img src='https://gateway.ipfs.io/ipfs/{{ i.thumbNail }}' alt="" style="width:27.2rem; height:16rem;"></a>
                         <div class="time">{{i.duration}}</div>
                     </div>
                     <div class="v-desc">
-                        {% comment %} <a href="{% url 'watch:index'  i.bestHash_Trending   i.id  %}">{{ i.name }}</a> {% endcomment %}
+                        <a href="{% url 'watch:index'   i.bestHash_Trending   i.id  %}">{{ i.name }}</a>
                     </div>
                     <div class="v-views">
                         {{i.views}} <span class="v-percent"><span class="fa fa-dollar"></span> 78</span><span class="glyphicon glyphicon-thumbs-up"

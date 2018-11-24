@@ -11,8 +11,6 @@ import cv2
 import ipfsapi
 import json
 
-import traceback
-
 from upload.models import Video
 
 
@@ -29,17 +27,16 @@ def index(request):
                 
                 path1 = os.path.join(os.path.join(settings.BASE_DIR, "static"), 'videos')
                 open(os.path.join(path1, current_name), 'wb').write(file)
+                
                 # Connect to the ipfs through ipfsapi and add the uploaded file to the ipfs
-                print('a print')
                 api = ipfsapi.connect('127.0.0.1', 5001)
                 fileHash = api.add_bytes(file)
                 
-                
+
                 # Define the path to save the thumbnail of the uploaded video
                 path = os.path.join(os.path.join(settings.BASE_DIR, "static"), 'images')                              
                 thumbnail_name = '%s%s' % (''.join(random.choice('0123456789ABCDEF') for i in range(16)) +'video_Pranish', 'thumb.jpg')
                 thumbnail_path = os.path.join(path, thumbnail_name)
-                print('hello')
                 
 
                 # Generate the thumnail of the video using ffmpeg tool
@@ -47,7 +44,7 @@ def index(request):
                 # ffMpegPAth = "C:\\ffmpeg\\bin"
                 # runCommand = ffMpegPAth + "\\" + runCommand
                 subprocess.check_call(runCommand.split(" ")) #we have a command line injection vulnerability here
-                
+
 
                 # Get the duration of the video file
                 durationCommand = 'ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 ' + os.path.join(path1, current_name)
@@ -58,8 +55,7 @@ def index(request):
                 floatDuration = float(duration)/60
                 decimal = floatDuration - int(floatDuration)
                 seconds = int(decimal*60)
-                   
-                        
+                
                 if int(floatDuration) > 60:
                     hours = int(floatDuration/60)
                     minutes = int(floatDuration - hours*60)
@@ -110,11 +106,10 @@ def index(request):
                 request.session['hash'] = fileHash
                 return redirect('upload:info')
 
-            except Exception as e:
+            except:
                 print('Not uploaded, server error')
-                print(str(e))
-                print(traceback.format_exc())
-
+            
+                
         return render(request, 'upload/upload.html')
 
     else:

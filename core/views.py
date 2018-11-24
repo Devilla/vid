@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from upload.models import Video
+from register.models import User
 import json
 import demjson
 
@@ -8,8 +9,8 @@ def index(request):
     
     featured = Video.objects.all().order_by('-id')[:8]
     trending = Video.objects.all().order_by('-views')[:8]
-    channels = Video.objects.all().order_by('-id')[:11]
-
+    channels = User.objects.all().order_by('-id')[:11]
+    
     bestHash_Featured = []
     bestHash_Trending = []
 
@@ -20,16 +21,21 @@ def index(request):
             if str(each_res) in each_video.video:
                 hash = demjson.decode(each_video.video)
                 each_video.bestHash_Featured = hash[str(each_res)]
-                bestHash_Featured.append(hash[str(each_res)])
                 break   
 
-    for each_video in trending:
+    for each_videot in trending:
         for each_res in resolution:
-            if str(each_res) in each_video.video:
-                hash = demjson.decode(each_video.video)
-                each_video.bestHash_Trending = hash[str(each_res)]
-                bestHash_Trending.append(hash[str(each_res)])
+            if str(each_res) in each_videot.video:
+                hasht = demjson.decode(each_videot.video)
+                each_videot.bestHash_Trending = hasht[str(each_res)]
                 break   
-
+    
+    for each_channel in channels:
+        try:
+            video = Video.objects.filter(user_id=each_channel.id).count()
+            each_channel.count = video
+        except:
+            each_channel.count = 0
+            
     return render(request, "core/home.html", {'instance': featured, 'trend': trending, 
                                                   'subscription': channels })

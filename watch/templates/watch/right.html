@@ -19,13 +19,13 @@
         <div class="h-video row">
             <div class="col-lg-6 col-sm-6">
                 <div class="v-img">
-                    <a href="{% url 'watch:index'  bestHash_Featured.0   i.id  %}"><img src='https://gateway.ipfs.io/ipfs/{{ i.thumbNail }}' alt="" height="100%" width="100%"></a>
+                    <a href="{% url 'watch:index'  i.featured   i.id  %}"><img src='https://gateway.ipfs.io/ipfs/{{ i.thumbNail }}' alt="" style="width:17rem; height:9.4rem;"></a>
                     <div class="time">{{i.duration}}</div>
                 </div>
             </div>
             <div class="col-lg-6 col-sm-6">
                 <div class="v-desc">
-                    <a href="{% url 'watch:index'  bestHash_Featured.0   i.id  %}">{{i.name}}</a>
+                    <a href="{% url 'watch:index'  i.featured   i.id  %}">{{i.name}}</a>
                 </div>
                 <div class="v-views">
                     {{i.views}}
@@ -57,13 +57,13 @@
         <div class="h-video row">
             <div class="col-lg-6 col-sm-6">
                 <div class="v-img">
-                    <a href="{% url 'watch:index'  bestHash_Recomended.0   i.id  %}"><img src='https://gateway.ipfs.io/ipfs/{{ i.thumbNail }}' alt="" height="100%" width="100%"></a>
+                    <a href="{% url 'watch:index'  i.recommend   i.id  %}"><img src='https://gateway.ipfs.io/ipfs/{{ i.thumbNail }}' alt="" height="100%" width="100%"></a>
                     <div class="time">{{i.duration}}</div>
                 </div>
             </div>
             <div class="col-lg-6 col-sm-6">
                 <div class="v-desc">
-                    <a href="{% url 'watch:index'  bestHash_Recomended.0   i.id  %}">{{i.name}}</a>
+                    <a href="{% url 'watch:index'  i.recommend   i.id  %}">{{i.name}}</a>
                 </div>
                 <div class="v-views">
                    {{i.views}}

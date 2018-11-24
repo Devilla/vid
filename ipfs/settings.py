@@ -25,7 +25,7 @@ SECRET_KEY = 'o4r4r^vsn06yop!46h_2w!kvos8uhi+=jck28iz%y#cjiql^=0'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['pranish.quantorithm.com', 'www.pranish.quantorithm.com']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition

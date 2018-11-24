@@ -1,5 +1,6 @@
 from django.shortcuts import render, HttpResponse
 from upload.models import Video
+from register.models import User
 import demjson
 
 import json
@@ -9,55 +10,55 @@ import json
 def index(request, video_hash, video_id):
     current = Video.objects.get(id=video_id)
 
-    featured = Video.objects.all().order_by('-id')[:1]
-    recommend = Video.objects.all().order_by('-views')[:1]
-
+    hash = json.loads(current.video)
     resolution = [2160, 1440, 1080, 720, 480, 360, 240  , 144]
 
-
-
-    bestHash_Featured = []
-    bestHash_Recomended = []
-
-    for each_video in featured:
-        for each_res in resolution:
-            if str(each_res) in each_video.video:
-                hash = demjson.decode(each_video.video)
-                bestHash_Featured.append(hash[str(each_res)])
-                break   
-
-    for each_video in recommend:
-        for each_res in resolution:
-            if str(each_res) in each_video.video:
-                hash = demjson.decode(each_video.video)
-                bestHash_Recomended.append(hash[str(each_res)])
-                break   
-
-
-
-    hash = json.loads(current.video)
-    
-    dump = json.dumps(hash)
-    
-    video_content = ''
-
-    for quality, this_hash in hash.items():
-        video_content = video_content + '{\n\t src: \'https://gateway.ipfs.io/ipfs/' + this_hash + '\',\n\t type: \'video/mp4\',\n\t size: ' + quality + ',\n},\n' 
-    
-    
     isVideo = False
+
     for each_res in resolution:
         if str(each_res) in current.video:
             if hash[str(each_res)] == video_hash:
                 isVideo = True
-                break 
+                break  
         
     if isVideo == True:
         views = current.views
         current.views = views+1
-        current.save() 
-        return render(request, "watch/base.html", {'video_hash': hash, 'view': current.views, 'dump': dump, 'cont': video_content,
-                'video_id': video_id, 'thumbsUp': current.thumbsUp, 'thumbsDown': current.thumbsDown, 'name': current.name,
-                'latest' : featured, 'recommended': recommend, 
-                'bestHash_Featured': bestHash_Featured,'bestHash_Recomended': bestHash_Recomended })
+        current.save()
+
+        featured = Video.objects.all().order_by('-id')[:1]
+        recommend = Video.objects.all().order_by('-views')[:1]
+
+        user = User.objects.get(id=current.user_id)
+        count = Video.objects.filter(user_id=current.user_id).count()
+
+        bestHash_Featured = []
+        bestHash_Recomended = []
+
+        for each_video in featured:
+            for each_res in resolution:
+                if str(each_res) in each_video.video:
+                    hash1 = demjson.decode(each_video.video)
+                    each_video.featured = hash1[str(each_res)]
+                    break   
+
+        for each_video in recommend:
+            for each_res in resolution:
+                if str(each_res) in each_video.video:
+                    hash1 = demjson.decode(each_video.video)
+                    each_video.recommend = hash1[str(each_res)]
+                    break   
+
+        
+        dump = json.dumps(hash)
+        
+        video_content = ''
+
+        for quality, this_hash in hash.items():
+            video_content = video_content + '{\n\t src: \'https://gateway.ipfs.io/ipfs/' + this_hash + '\',\n\t type: \'video/mp4\',\n\t size: ' + quality + ',\n},\n' 
+        
+                    
+        return render(request, "watch/base.html", {'video_hash': hash, 'cont': video_content,
+        'latest': featured, 'recommended': recommend, 'current': current,
+        'user': user, 'count': count })
     
