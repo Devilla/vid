@@ -1,0 +1,56 @@
+{% load staticfiles %}
+
+<div class="sv-video">
+<video id="player" controls data-setup='{{ video_id }}'  poster='{% static "images/single-video.png" %}' style="width:100%;height:100%;" width="100%" height="100%">
+    
+    {% for quality, hash in video_hash.items %}
+        <source src='http://gateway.ipfs.io/ipfs/{{ hash }}' type='video/mp4' size='{{ quality }}' />
+    {% endfor %}
+
+</video>
+</div>
+<div class="acide-panel acide-panel-top">
+    <a href="#"><i class="cv cvicon-cv-watch-later" data-toggle="tooltip" data-placement="top" title="Watch Later"></i></a>
+    <a href="#"><i class="cv cvicon-cv-liked" data-toggle="tooltip" data-placement="top" title="Liked"></i></a>
+    <a href="#"><i class="cv cvicon-cv-flag" data-toggle="tooltip" data-placement="top" title="Flag"></i></a>
+</div>
+<div class="author">
+    <div class="author-head">
+        <a href="#"><img src='{% static "images/channel-user.png" %}' alt="" class="sv-avatar"></a>
+        <div class="sv-name">
+            <div><a href="#">NaughtyDog</a> . 52 Videos</div>
+            <div class="c-sub hidden-xs">
+                <div class="c-f">
+                    Follow
+                </div>
+                <div class="c-s">
+                    22,548,145
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+        <a href="#" class="author-btn-add"><i class="cv cvicon-cv-plus"></i></a>
+    </div>
+    <div class="author-border"></div>
+    <div class="sv-views">
+        <div class="sv-views-count">
+            {{ view }} views
+        </div>
+        <div class="sv-views-stats">
+            <strong id="dislike_count" class="grey" style="float:right;">{{ thumbsDown }} </strong>
+            <label for="dislike" style="float:right; margin-right:0.7em;">
+                <span class="glyphicon glyphicon-thumbs-down" style="color:#fff"></span>
+            </label>
+            <strong id="like_count" class="grey" style="float:right; margin-right:2em">{{ thumbsUp }}</strong>
+            <label for="like" style="float:right;margin-right:0.7em">
+                <span class="glyphicon glyphicon-thumbs-up" onClick="thumbsDown()"></span>
+            </label>
+            <button id="like" data-videoid="{{ video_id }}" style="display:none" type="button">
+            <button id="dislike" data-videoid="{{ video_id }}" style="display:none" type="button">
+
+        </div>
+
+    </div>
+    <div class="clearfix"></div>
+
+</div>

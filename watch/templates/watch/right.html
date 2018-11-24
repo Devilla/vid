@@ -1,0 +1,79 @@
+{% load staticfiles %}
+{% load i18n %}
+
+<div class="col-lg-4 col-xs-12 col-sm-12 hidden-xs">
+
+    <!-- up next -->
+    <div class="caption">
+        <div class="left">
+            <a href="#">Up Next</a>
+        </div>
+        <div class="right">
+            <a href="#">Autoplay <i class="cv cvicon-cv-btn-off"></i></a>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="list">
+    
+        {% for i in latest %}
+        <div class="h-video row">
+            <div class="col-lg-6 col-sm-6">
+                <div class="v-img">
+                    <a href="{% url 'watch:index'  bestHash_Featured.0   i.id  %}"><img src='https://gateway.ipfs.io/ipfs/{{ i.thumbNail }}' alt="" height="100%" width="100%"></a>
+                    <div class="time">{{i.duration}}</div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-sm-6">
+                <div class="v-desc">
+                    <a href="{% url 'watch:index'  bestHash_Featured.0   i.id  %}">{{i.name}}</a>
+                </div>
+                <div class="v-views">
+                    {{i.views}}
+                </div>
+                <div class="v-percent"><span class="fa fa-dollar"></span> 55</div><span class="glyphicon glyphicon-thumbs-up"
+                    style="float:right"></span>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        {% endfor %}
+        <div class="clearfix"></div>
+
+    </div>
+    <!-- END up next -->
+
+    <!-- Recomended Videos -->
+    <div class="caption">
+        <div class="left">
+            <a href="#">Recomended Videos</a>
+        </div>
+        <div class="right">
+            <a href="#">Autoplay <i class="cv cvicon-cv-btn-off"></i></a>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="list">
+
+        {% for i in recommended %}
+        <div class="h-video row">
+            <div class="col-lg-6 col-sm-6">
+                <div class="v-img">
+                    <a href="{% url 'watch:index'  bestHash_Recomended.0   i.id  %}"><img src='https://gateway.ipfs.io/ipfs/{{ i.thumbNail }}' alt="" height="100%" width="100%"></a>
+                    <div class="time">{{i.duration}}</div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-sm-6">
+                <div class="v-desc">
+                    <a href="{% url 'watch:index'  bestHash_Recomended.0   i.id  %}">{{i.name}}</a>
+                </div>
+                <div class="v-views">
+                   {{i.views}}
+                </div>
+                <div class="v-percent"><span class="fa fa-dollar"></span> 55</div><span class="glyphicon glyphicon-thumbs-up"
+                    style="float:right"></span>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        {% endfor %}
+
+    </div>
+</div>

@@ -1,0 +1,22 @@
+{% extends 'core/base.html' %}
+
+{% block title %} Home {% endblock title %}
+
+{% block navigation %} 
+
+    {% include "core/navbar.html" %}
+    {% include "core/goto.html" %}
+
+{% endblock navigation %}
+
+
+{% block content %} 
+    <div class="col-lg-12">
+        {% include "core/subscripton.html" %}
+        {% include "core/feature.html" %}
+        {% include "core/region.html" %}
+        {% include "core/playlist.html" %}
+        {% include "core/channel.html" %}
+        {% include "core/pagination.html" %}
+    </div>
+{% endblock content %}

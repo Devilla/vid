@@ -1,0 +1,40 @@
+{% load staticfiles %}
+{% load i18n %}
+
+<div class="content-block">
+    <div class="cb-header">
+        <div class="row">
+            <div class="col-lg-10 col-sm-10 col-xs-10">
+                <ul class="list-inline">
+                    <li><a href="#">Updates from Subscriptions</a></li>
+                </ul>
+            </div>
+            <div class="col-lg-2 col-sm-2 col-xs-2">
+                <div class="btn-group pull-right bg-clean">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                        aria-expanded="false">
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a href="#"><i class="cv cvicon-cv-relevant"></i> Relevant</a></li>
+                        <li><a href="#"><i class="cv cvicon-cv-calender"></i> Recent</a></li>
+                        <li><a href="#"><i class="cv cvicon-cv-view-stats"></i> Viewed</a></li>
+                        <li><a href="#"><i class="cv cvicon-cv-star"></i> Top Rated</a></li>
+                        <li><a href="#"><i class="cv cvicon-cv-watch-later"></i> Longest</a></li>
+                    </ul>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+    <div class="cb-content avatars">
+        <div class="row">
+            {% for i in subscription %}
+            <div class="col-lg-1 col-sm-2 col-xs-3"><a href="#"><img src='{% static "images/ava2.png" %}' alt="">
+                    <div class="note">1</div>
+                </a></div>
+            {% endfor %}
+           
+        </div>
+    </div>
+</div>

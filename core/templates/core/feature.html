@@ -1,0 +1,60 @@
+{% load staticfiles %}
+{% load i18n %}
+
+<div class="content-block head-div">
+    <div class="cb-header">
+        <div class="row">
+            <div class="col-lg-10 col-sm-10 col-xs-8">
+                <ul class="list-inline">
+                    <li>
+                        <a href="#" class="color-active">
+                            <span class="visible-xs">Featured</span>
+                            <span class="hidden-xs">Featured Videos</span>
+                        </a>
+                    </li>
+                    <li><a href="#">New Videos</a></li>
+                    <li class="hidden-xs"><a href="#">Recommended For You</a></li>
+                </ul>
+            </div>
+            <div class="col-lg-2 col-sm-2 col-xs-4">
+                <div class="btn-group pull-right bg-clean">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                        aria-expanded="false">
+                        Sort by <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a href="#"><i class="cv cvicon-cv-relevant"></i> Relevant</a></li>
+                        <li><a href="#"><i class="cv cvicon-cv-calender"></i> Recent</a></li>
+                        <li><a href="#"><i class="cv cvicon-cv-view-stats"></i> Viewed</a></li>
+                        <li><a href="#"><i class="cv cvicon-cv-star"></i> Top Rated</a></li>
+                        <li><a href="#"><i class="cv cvicon-cv-watch-later"></i> Longest</a></li>
+                    </ul>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+    <div class="cb-content videolist">
+        <div class="row">
+            {% for i in instance %}
+            <div class="col-lg-3 col-sm-6 videoitem">
+                {{ forloop.counter0 }}
+                <div class="b-video">
+                    <div class="v-img">
+                        <a href="{% url 'watch:index'  i.bestHash_Featured   i.id  %}"><img src='https://gateway.ipfs.io/ipfs/{{ i.thumbNail }}' alt="" height="100%" width="100%"></a>
+                        <div class="time">{{ i.duration }}</div>
+                    </div>
+                    <div class="v-desc">
+                            <a href="{% url 'watch:index'  i.bestHash_Featured   i.id  %}">{{ i.name }}</a>
+                    </div>
+                    <div class="v-views">
+                        
+                        {{ i.views }} <span class="v-percent"><span class="fa fa-dollar"></span> 78</span><span class="glyphicon glyphicon-thumbs-up"
+                            style="float:right"></span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>

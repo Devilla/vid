@@ -1,0 +1,70 @@
+{% load staticfiles %}
+{% load i18n %}
+<div class="content-block head-div head-arrow">
+    <div class="head-arrow-icon">
+        <i class="cv cvicon-cv-next"></i>
+    </div>
+    <div class="cb-header">
+        <div class="row">
+            <div class="col-lg-10 col-sm-10 col-xs-8">
+                <ul class="list-inline">
+                    <li>
+                        <a href="#" class="color-active">
+                            <span class="hidden-xs">Trending videos</span>
+                            <span class="visible-xs">Trending videos</span>
+                        </a>
+                    </li>
+                    <li class="hidden-xs"><a href="#">Most Viewed</a></li>
+                    <li>
+                        <a href="#">
+                            <span class="hidden-xs">Featured This Week</span>
+                            <span class="visible-xs">Featured Videos</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-lg-2 col-sm-2 col-xs-4">
+                <div class="btn-group pull-right bg-clean">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                        aria-expanded="false">
+                        Sort by <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a href="#"><i class="cv cvicon-cv-relevant"></i> Relevant</a></li>
+                        <li><a href="#"><i class="cv cvicon-cv-calender"></i> Recent</a></li>
+                        <li><a href="#"><i class="cv cvicon-cv-view-stats"></i> Viewed</a></li>
+                        <li><a href="#"><i class="cv cvicon-cv-star"></i> Top Rated</a></li>
+                        <li><a href="#"><i class="cv cvicon-cv-watch-later"></i> Longest</a></li>
+                    </ul>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+    <div class="cb-content videolist">
+
+        <div class="row">
+
+            {% for i in trend %}
+            <div class="col-lg-3 col-sm-6 videoitem">
+                <div class="b-video">
+                    <div class="v-img">
+                        {{ i.bestHash_Trending }}
+                        {% comment %} <a href="{% url 'watch:index'  i.bestHash_Trending   i.id  %}"><img src='https://gateway.ipfs.io/ipfs/{{ i.thumbNail }}' alt="" height="100%" width="100%"></a> {% endcomment %}
+                        <div class="time">{{i.duration}}</div>
+                    </div>
+                    <div class="v-desc">
+                        {% comment %} <a href="{% url 'watch:index'  i.bestHash_Trending   i.id  %}">{{ i.name }}</a> {% endcomment %}
+                    </div>
+                    <div class="v-views">
+                        {{i.views}} <span class="v-percent"><span class="fa fa-dollar"></span> 78</span><span class="glyphicon glyphicon-thumbs-up"
+                            style="float:right"></span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+        </div>
+
+    </div>
+</div>

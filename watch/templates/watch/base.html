@@ -1,0 +1,78 @@
+{% extends 'core/base.html' %}
+
+{% block title %} {{ name }} {% endblock title %}
+
+{% block navigation %}
+
+    {% include "core/navbar.html" %}
+    {% include "core/goto.html" %}
+
+{% endblock navigation %}
+
+{% block content %}
+
+    <div class="col-lg-8">
+        {% include "watch/video_player.html" %}
+        {% include "watch/info.html" %}
+        {% include "watch/adsense.html" %}
+    </div>
+
+    {% include "watch/right.html" %}
+
+{% endblock content %}
+
+{% block plyrScript %} 
+
+    <script>
+        
+        const player = new Plyr('#player');
+        
+        $('video').bind('timeupdate', myfunction);
+        
+        var ad = 'false';
+
+        function myfunction(){
+            time = this.currentTime;
+            
+            if(ad == 'false'){
+                if (parseInt(time) == 4){
+                    playAd();
+                }
+            }
+        }
+   
+        player.on('ended', function(event) {
+            if (ad == 'true'){
+                ad = 'false';
+                player.source = {type: 'video',
+                    sources: [
+                        {{ cont|safe }}
+                    ],
+                };
+                $('video').bind('timeupdate', myfunction);
+                document.getElementsByTagName("video")[0].currentTime = 4;  
+                player.play();
+            }
+            else {
+                player.stop();
+            }
+        });
+        
+        function playAd(){
+                ad = 'true';
+                player.source = {type: 'video',
+                    sources: [
+                        {
+                            src: 'http://gateway.ipfs.io/ipfs/QmNtWwMeT7NA51mQDLXUUkSVzyaMudxy422EDKQ4Y7DKMi',
+                            type: 'video/mp4',
+                            size: 720,
+                        },
+                    ],
+                };
+                $('video').bind('timeupdate', myfunction);
+                player.play();
+        }
+
+    </script>   
+
+{% endblock plyrScript %}
