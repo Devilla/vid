@@ -17,7 +17,7 @@ def ipfs_check():
 
 def python_check():
     try:
-        urlopen('http://127.0.0.1:8000', timeout=1)
+        urlopen('https://pranish.quantorithm.com', timeout=1)
     except:
         subprocess.Popen(["python3","/home/warproxxx/IPFS/manage.py", "runserver"])
         
