@@ -11,6 +11,8 @@ import cv2
 import ipfsapi
 import json
 
+import traceback
+
 from upload.models import Video
 
 
@@ -111,6 +113,8 @@ def index(request):
             except Exception as e:
                 print('Not uploaded, server error')
                 print(str(e))
+                print(traceback.format_exc())
+                
         return render(request, 'upload/upload.html')
 
     else:
