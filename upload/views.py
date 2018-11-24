@@ -27,34 +27,37 @@ def index(request):
                 
                 path1 = os.path.join(os.path.join(settings.BASE_DIR, "static"), 'videos')
                 open(os.path.join(path1, current_name), 'wb').write(file)
-                
                 # Connect to the ipfs through ipfsapi and add the uploaded file to the ipfs
+                print('a print')
                 api = ipfsapi.connect('127.0.0.1', 5001)
                 fileHash = api.add_bytes(file)
                 
-
+                
                 # Define the path to save the thumbnail of the uploaded video
                 path = os.path.join(os.path.join(settings.BASE_DIR, "static"), 'images')                              
                 thumbnail_name = '%s%s' % (''.join(random.choice('0123456789ABCDEF') for i in range(16)) +'video_Pranish', 'thumb.jpg')
                 thumbnail_path = os.path.join(path, thumbnail_name)
+                print('hello')
                 
 
                 # Generate the thumnail of the video using ffmpeg tool
-                runCommand = 'ffmpeg -ss 00:0:01 -i "'+ os.path.join(path1, current_name) +'" -frames:v 1 "'+ thumbnail_path + '"'
-                ffMpegPAth = "C:\\ffmpeg\\bin"
-                runCommand = ffMpegPAth + "\\" + runCommand
-                subprocess.call(runCommand)
-
+                runCommand = 'ffmpeg -ss 00:0:01 -i '+ os.path.join(path1, current_name) +' -frames:v 1 '+ thumbnail_path
+                # ffMpegPAth = "C:\\ffmpeg\\bin"
+                # runCommand = ffMpegPAth + "\\" + runCommand
+                subprocess.check_call(runCommand.split(" "))
+                
 
                 # Get the duration of the video file
-                durationCommand = 'ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "' + os.path.join(path1, current_name) + '"'
-                durationCommand = ffMpegPAth + "\\" + durationCommand
+                durationCommand = 'ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 ' + os.path.join(path1, current_name)
+   
+                # durationCommand = ffMpegPAth + "\\" + durationCommand
                 time = ''
-                duration = subprocess.check_output(durationCommand)
+                duration = subprocess.check_output(durationCommand.split(' '))
                 floatDuration = float(duration)/60
                 decimal = floatDuration - int(floatDuration)
                 seconds = int(decimal*60)
-                
+                   
+                        
                 if int(floatDuration) > 60:
                     hours = int(floatDuration/60)
                     minutes = int(floatDuration - hours*60)
@@ -79,8 +82,8 @@ def index(request):
                 for small_res in resolution:
                     if small_res < height :
                         # Change the video to different quality
-                        res = 'ffmpeg -v -8 -i "' + os.path.join(path1, current_name) + '" -vf scale=-2:' + str(small_res) + ' -preset slow -c:v libx264 -strict experimental -c:a aac -crf 24 -maxrate 500k -bufsize 500k -r 25 -f mp4 "' + os.path.join(path1, str(small_res)+current_name)
-                        subprocess.check_call(res)
+                        res = 'ffmpeg -v -8 -i ' + os.path.join(path1, current_name) + ' -vf scale=-2:' + str(small_res) + ' -preset slow -c:v libx264 -strict experimental -c:a aac -crf 24 -maxrate 500k -bufsize 500k -r 25 -f mp4 ' + os.path.join(path1, str(small_res)+current_name)
+                        subprocess.check_call(res.split(" "))
                         newHash = api.add(os.path.join(path1, str(small_res)+current_name), trickle=True)
                         os.remove(os.path.join(path1, str(small_res)+current_name))
                         
@@ -105,10 +108,9 @@ def index(request):
                 request.session['hash'] = fileHash
                 return redirect('upload:info')
 
-            except:
+            except Exception as e:
                 print('Not uploaded, server error')
-            
-                
+                print(str(e))
         return render(request, 'upload/upload.html')
 
     else:
