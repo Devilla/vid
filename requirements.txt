@@ -5,3 +5,7 @@ gunicorn>=19.9.0
 psycopg2>=2.7.6.1
 opencv-python>=3.4.3.18
 psutil>=5.4.8
+steem>=1.0.1
+beem>=0.20.13
+secp256k1>=0.13.2
+git+https://github.com/steemit/steem-python.git
