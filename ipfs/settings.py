@@ -88,7 +88,7 @@ WSGI_APPLICATION = 'ipfs.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'ipfs_db2',
+        'NAME': 'ipfs_db3',
         'USER': 'ipfs',
         'PASSWORD': 'ipfs@pranish',
         'HOST': 'localhost',

@@ -18,3 +18,11 @@ class Video(models.Model):
     name = models.CharField(max_length=255, default='An apple a day keeps the doctor away')
     publish = models.BooleanField(default=False)
     nsfw = models.BooleanField(default=False)
+
+class SteemVideo(models.Model):
+    video = models.ForeignKey(Video, on_delete=models.CASCADE, related_name='steemVideos')
+    post = JSONField()
+
+class WhaleShareVideo(models.Model):
+    video = models.ForeignKey(Video, on_delete=models.CASCADE, related_name='whaleSharesVideo')
+    post = JSONField()

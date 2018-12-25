@@ -1,8 +1,9 @@
 from django.shortcuts import render
-from upload.models import Video
+from upload.models import Video, SteemVideo, WhaleShareVideo
 from register.models import User
 import json
 import demjson
+from blockchain_manager.manager import SteemManager, WhalesharesManger
 
 # Create your views here.
 def index(request):
@@ -17,6 +18,24 @@ def index(request):
     resolution = [2160, 1440, 1080, 720, 480, 360, 240  , 144]
 
     for each_video in featured:
+        
+        pay = 0
+        try:
+            steem = SteemVideo.objects.filter(video_id=each_video.id)
+            steem_pay = SteemManager.get_payout(steem.post)
+            pay = pay + steem_pay
+        except: 
+            print('No Steem')
+
+        try:
+            whale = WhaleShareVideo.objects.filter(video_id=each_video.id)
+            whale_pay = WhalesharesManger.get_payout(whale.post)
+            pay = pay + whale_pay
+        except: 
+            print('No Whale')
+
+        each_video.money = pay
+
         for each_res in resolution:
             if str(each_res) in each_video.video:
                 hash = demjson.decode(each_video.video)
@@ -24,6 +43,24 @@ def index(request):
                 break   
 
     for each_videot in trending:
+        
+        pay = 0
+        try:
+            steem = SteemVideo.objects.filter(video_id=each_videot.id)
+            steem_pay = SteemManager.get_payout(steem.post)
+            pay = pay + steem_pay
+        except: 
+            print('No Steem')
+
+        try:
+            whale = WhaleShareVideo.objects.filter(video_id=each_videot.id)
+            whale_pay = WhalesharesManger.get_payout(whale.post)
+            pay = pay + whale_pay
+        except: 
+            print('No Whale')
+
+        each_videot.money = pay
+
         for each_res in resolution:
             if str(each_res) in each_videot.video:
                 hasht = demjson.decode(each_videot.video)

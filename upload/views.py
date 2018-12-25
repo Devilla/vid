@@ -11,7 +11,7 @@ import cv2
 import ipfsapi
 import json
 
-from upload.models import Video
+from upload.models import Video, SteemVideo, WhaleShareVideo
 
 from blockchain_manager.manager import SteemManager, WhalesharesManger
 
@@ -157,9 +157,12 @@ def info(request):
                     try:
                         bodys = '<video id="player" style="width:100%;height:100%;"><source src=http://gateway.ipfs.io/ipfs/' + request.session.get('hash') + 'type=video/mp4 /></video>'
                         steem = SteemManager(request.user.steem)
-                        steem.post_in_steem(name, bodys, request.user.steem_name, ["test"])
+                        post = steem.post_in_steem(name, bodys, request.user.steem_name, ["test"])
+                        print(post)
+                        steem_save = SteemVideo(current.id, post)
+                        steem_save.save()
+
                     except Exception as e:
-                        print(str(e))
                         print('Errorsss')
                 else:
                     print('No Steem')
@@ -167,7 +170,11 @@ def info(request):
                 if request.user.whaleshare != 'false' and request.user.whaleshare_name != 'false':
                     try:
                         whaleshare = WhalesharesManger(request.user.whaleshare)
-                        whaleshare.post_in_whaleshares(name, name, request.user.whaleshare_name, ['ipfs', 'test'])
+                        postW = whaleshare.post_in_whaleshares(name, name, request.user.whaleshare_name, ['ipfs', 'test'])
+
+                        whale_save = WhaleShareVideo(current.id, postW)
+                        whale_save.save()
+
                     except:
                         print('Error Whale')
                 else:
