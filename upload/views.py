@@ -13,6 +13,7 @@ import json
 
 from upload.models import Video
 
+from blockchain_manager.manager import SteemManager, WhalesharesManger
 
 
 # Create your views here.
@@ -100,6 +101,7 @@ def index(request):
                     os.remove(thumbnail_path)
                     os.remove(os.path.join(path1, current_name))
                 except:
+                     
                     print('Delete Error')
 
                 request.session['video_id'] = video.id
@@ -151,6 +153,25 @@ def info(request):
                 current.save()
 
 
+                if request.user.steem != 'false' and request.user.steem_name != 'false':
+                    try:
+                        bodys = '<video id="player" style="width:100%;height:100%;"><source src=http://gateway.ipfs.io/ipfs/' + request.session.get('hash') + 'type=video/mp4 /></video>'
+                        steem = SteemManager(request.user.steem)
+                        steem.post_in_steem(name, bodys, request.user.steem_name, ["test"])
+                    except Exception as e:
+                        print(str(e))
+                        print('Errorsss')
+                else:
+                    print('No Steem')
+
+                if request.user.whaleshare != 'false' and request.user.whaleshare_name != 'false':
+                    try:
+                        whaleshare = WhalesharesManger(request.user.whaleshare)
+                        whaleshare.post_in_whaleshares(name, name, request.user.whaleshare_name, ['ipfs', 'test'])
+                    except:
+                        print('Error Whale')
+                else:
+                    print('No Whaleshare')
 
                 return redirect('watch:index', video_hash=bestHash, video_id=current.id)
 

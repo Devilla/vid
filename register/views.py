@@ -58,6 +58,12 @@ def update(request):
                 data['first_name'] = forma.cleaned_data['first_name']
                 data['last_name'] = forma.cleaned_data['last_name']
                 data['channel_name'] = forma.cleaned_data['channel_name']
+                data['smoke'] = forma.cleaned_data['smoke']
+                data['steem'] = forma.cleaned_data['steem']
+                data['whaleshare'] = forma.cleaned_data['whaleshare']
+                data['smoke_name'] = forma.cleaned_data['smoke_name']
+                data['steem_name'] = forma.cleaned_data['steem_name']
+                data['whaleshare_name'] = forma.cleaned_data['whaleshare_name']
                 data['channel_cover'] = channel_cover
                 data['profile_picture'] = profile_picture
                 data['channel_picture'] = channel_picture

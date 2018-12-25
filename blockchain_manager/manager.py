@@ -1,5 +1,5 @@
 from beem import Steem as Whaleshares
-from smoke import Steem as Smoke
+# from smoke import Steem as Smoke
 from steem import Steem as Steem
 
 from beem.account import Account
@@ -63,63 +63,63 @@ class SteemManager:
         return total_payout
 
 
-class SmokeManger:
-    def __init__(self, keys):
-        '''
-        Parameters:
-        ___________
+# class SmokeManger:
+#     def __init__(self, keys):
+#         '''
+#         Parameters:
+#         ___________
 
-        keys: (list)
-        The posting keys
-        '''
-        self.s = Steem(nodes=["https://rpc.smoke.io/"], keys=keys)
+#         keys: (list)
+#         The posting keys
+#         '''
+#         self.s = Steem(nodes=["https://rpc.smoke.io/"], keys=keys)
         
-    def post_in_smoke(self, title, body, username, tags):
-        '''
-        Posts in smoke and returns details
+#     def post_in_smoke(self, title, body, username, tags):
+#         '''
+#         Posts in smoke and returns details
         
-        Parameters:
-        ___________
-        title: (string)
-        The title of the post
+#         Parameters:
+#         ___________
+#         title: (string)
+#         The title of the post
         
-        body: (string)
-        The body of the post
+#         body: (string)
+#         The body of the post
         
-        username: (string)
-        The username of the poster
+#         username: (string)
+#         The username of the poster
         
-        tags: (list)
-        Tags of the post
+#         tags: (list)
+#         Tags of the post
 
-        Returns:
-        ________
-        post_details (json):
-        JSON details about the post that was just made
-        '''
+#         Returns:
+#         ________
+#         post_details (json):
+#         JSON details about the post that was just made
+#         '''
         
-        post_details = self.s.commit.post(title, body, username, tags=tags)
-        return post_details
+#         post_details = self.s.commit.post(title, body, username, tags=tags)
+#         return post_details
         
 
-    def get_payout(self, post_details):
-        '''
-        Parameters:
-        ___________
+#     def get_payout(self, post_details):
+#         '''
+#         Parameters:
+#         ___________
         
-        post_details (json):
-        JSON details about the post that was just made
+#         post_details (json):
+#         JSON details about the post that was just made
         
-        Returns: 
+#         Returns: 
         
-        total_payout (int):
-        Returns the total payout in int in terms of smoke
-        '''
-        permlink = post_details['operations'][0][1]['permlink']
-        author = post_details['operations'][0][1]['author']
-        payout_params = self.s.steemd.get_content(author, permlink)
-        total_payout = float(payout_params['total_payout_value'].split()[0]) + float(payout_params['total_pending_payout_value'].split()[0])
-        return total_payout
+#         total_payout (int):
+#         Returns the total payout in int in terms of smoke
+#         '''
+#         permlink = post_details['operations'][0][1]['permlink']
+#         author = post_details['operations'][0][1]['author']
+#         payout_params = self.s.steemd.get_content(author, permlink)
+#         total_payout = float(payout_params['total_payout_value'].split()[0]) + float(payout_params['total_pending_payout_value'].split()[0])
+#         return total_payout
 
 class WhalesharesManger:
     def __init__(self, keys):
