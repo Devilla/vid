@@ -43,43 +43,7 @@ class UserRegistrationForm(UserCreationForm):
         u.save()
         return True
 
-class UserRegistrationCompletionForm(forms.Form):
-
-    first_name = forms.CharField(
-        label="First name",
-        required=True,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First Name'})
-    )
-
-    last_name = forms.CharField(
-        label="Surname",
-        required=True,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last Name'})
-    )
-
-    channel_name = forms.CharField(
-        label="Channel Name",
-        required=True,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Channel Name'})
-    )
-
-    channel_cover = forms.FileField(
-        label="Channel Cover",
-        required=True,
-        widget=forms.FileInput(attrs={'id': 'c-cover', 'placeholder': 'Select the cover image for your channel'})
-    )
-
-    profile_picture = forms.FileField(
-        label="Profile Picture",
-        required=True,
-        widget=forms.FileInput(attrs={'id': 'p-picture', 'placeholder': 'Select the profile picture for your account'})
-    )
-
-    channel_picture = forms.FileField(
-        label="Channel Picture",
-        required=True,
-        widget=forms.FileInput(attrs={'id': 'c-picture', 'placeholder': 'Select the profile picture for your channel'})
-    )
+class UserBlockChainForm(forms.Form):
 
     smoke = forms.CharField(
         label="Smoke Id",
@@ -119,6 +83,75 @@ class UserRegistrationCompletionForm(forms.Form):
 
     class Meta:
         model = User
+        fields = ('smoke', 'steem', 'whaleshare', 'smoke_name', 'steem_name', 'whaleshare_name')
+
+
+    def clean_smoke(self):
+        smoke = self.cleaned_data['smoke']
+        return smoke
+    
+    def clean_steem(self):
+        steem = self.cleaned_data['steem']
+        return steem
+
+    def clean_whaleshare(self):
+        whaleshare = self.cleaned_data['whaleshare']
+        return whaleshare
+
+    def save(self, data, id):
+        u = User.objects.get(id = id)
+        u.smoke = data['smoke']
+        u.steem = data['steem']
+        u.whaleshare = data['whaleshare']
+        u.smoke_name = data['smoke_name']
+        u.steem_name = data['steem_name']
+        u.whaleshare_name = data['whaleshare_name']
+
+        u.save()
+        return True
+
+
+class UserRegistrationCompletionForm(forms.Form):
+
+    first_name = forms.CharField(
+        label="First name",
+        required=True,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First Name'})
+    )
+
+    last_name = forms.CharField(
+        label="Surname",
+        required=True,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last Name'})
+    )
+
+    channel_name = forms.CharField(
+        label="Channel Name",
+        required=True,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Channel Name'})
+    )
+
+    channel_cover = forms.FileField(
+        label="Channel Cover",
+        required=True,
+        widget=forms.FileInput(attrs={'id': 'c-cover', 'placeholder': 'Select the cover image for your channel'})
+    )
+
+    profile_picture = forms.FileField(
+        label="Profile Picture",
+        required=True,
+        widget=forms.FileInput(attrs={'id': 'p-picture', 'placeholder': 'Select the profile picture for your account'})
+    )
+
+    channel_picture = forms.FileField(
+        label="Channel Picture",
+        required=True,
+        widget=forms.FileInput(attrs={'id': 'c-picture', 'placeholder': 'Select the profile picture for your channel'})
+    )
+
+
+    class Meta:
+        model = User
         fields = ('first_name', 'last_name', 'channel_name', 'channel_cover', 'profile_picture', 'channel_picture', 'smoke', 'steem', 'whaleshare', 'smoke_name', 'steem_name', 'whaleshare_name')
 
     def clean_first(self):
@@ -132,18 +165,6 @@ class UserRegistrationCompletionForm(forms.Form):
     def clean_channel(self):
         channel_name = self.cleaned_data['channel_name']
         return channel_name
-
-    def clean_smoke(self):
-        smoke = self.cleaned_data['smoke']
-        return smoke
-    
-    def clean_steem(self):
-        steem = self.cleaned_data['steem']
-        return steem
-
-    def clean_whaleshare(self):
-        whaleshare = self.cleaned_data['whaleshare']
-        return whaleshare
 
 
     def save(self, data, id):
