@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from upload.models import Video
+from register.models import User
 import json
 import demjson
 # Create your views here.
@@ -15,5 +16,7 @@ def DetailView(request, pk):
                                 hasht = demjson.decode(each_videot.video)
                                 each_videot.bestHash_Trending = hasht[str(each_res)]
                                 break  
-        
-        return render(request, 'single_channel/detail.html', {'video': video })  
+
+        ch = User.objects.get(id=pk)
+        print(ch)
+        return render(request, 'single_channel/detail.html', {'video': video, 'channel':ch.channel_name })  

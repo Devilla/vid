@@ -3,7 +3,7 @@
 {% load staticfiles %}
 
 {% block navigation %}
-
+        {% include "core/navbar.html" %}
 
 {% endblock navigation %}
 
@@ -41,7 +41,7 @@
                 <div class="col-lg-10 col-lg-offset-2 col-xs-12">
                         <div class="c-details">
                                 <div class="c-name">
-                                        {{ request.user.channel_name }}
+                                        {{ channel }}
                                         <div class="c-checkbox">
                                                 <img src="images/verified-profile-icon.png" alt="">
                                         </div>
@@ -100,4 +100,4 @@
                 
 {% endblock content %}
 
-{% block title %} {{ request.user.channel_name }} {% endblock title %}
+{% block title %} {{ channel }} {% endblock title %}
