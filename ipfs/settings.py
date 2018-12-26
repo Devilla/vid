@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'logout',
     'like_dislike',
     'advertisement',
+    'single_channel',
 ]
 
 MIDDLEWARE = [

@@ -72,7 +72,8 @@ def index(request):
             video = Video.objects.filter(user_id=each_channel.id).count()
             each_channel.count = video
         except:
-            each_channel.count = 0
+            channels.remove(each_channel)
+            # each_channel.count = 0
             
     return render(request, "core/home.html", {'instance': featured, 'trend': trending, 
                                                   'subscription': channels })

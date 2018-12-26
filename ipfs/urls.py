@@ -29,4 +29,5 @@ urlpatterns = [
     path('activity/', include('like_dislike.urls')),
     path('adadmin/', include('advertisement.urls')),
     path('channel/', include('channel.urls')),
+    path('single_channel/', include('single_channel.urls')),
 ]

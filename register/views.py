@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, HttpResponse
-from register.forms import UserRegistrationForm, UserRegistrationCompletionForm, UserBlockChainForm
+from register.forms import UserRegistrationForm, UserRegistrationCompletionForm, SmokeBlockChainForm, SteemBlockChainForm, WhaleBlockChainForm
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic import TemplateView
 from register.models import User
@@ -30,22 +30,72 @@ def index(request):
         form = UserRegistrationForm()
         return render(request, "register/signup.html", {'form': form})
 
-def blockchain(request):
+def steem_blockchain(request):
     
     if request.user.is_authenticated == True:
         current = User.objects.get(id=request.user.id)
 
-        if request.method = 'POST':
-            formb = UserBlockChainForm(request.POST)
+        if request.method == 'POST':
+            formb = SteemBlockChainForm(request.POST)
+
+            if formb.is_valid():
+                data = {}
+                data['steem'] = formb.cleaned_data['steem']
+                data['steem_name'] = formb.cleaned_data['steem_name']
+
+                if formb.save(data, current.id):
+                    return redirect('register:smoke_blockchain')
+                else:
+                    print('Database error')    
+            else:
+                print('The submitted form is not valid')
+
+        formBl = SteemBlockChainForm()          
+        return render(request, "register/steem_blockchain.html", {'form':formBl})
+            
+    else:
+        form = UserRegistrationForm()
+        return render(request, "register/signup.html", {'form': form})
+
+def smoke_blockchain(request):
+    
+    if request.user.is_authenticated == True:
+        current = User.objects.get(id=request.user.id)
+
+        if request.method == 'POST':
+            formb = SmokeBlockChainForm(request.POST)
 
             if formb.is_valid():
                 data = {}
                 data['smoke'] = formb.cleaned_data['smoke']
-                data['steem'] = formb.cleaned_data['steem']
-                data['whaleshare'] = formb.cleaned_data['whaleshare']
                 data['smoke_name'] = formb.cleaned_data['smoke_name']
-                data['steem_name'] = formb.cleaned_data['steem_name']
-                data['whaleshare_name'] = formb.cleaned_data['whaleshare_name']
+
+                if formb.save(data, current.id):
+                    return redirect('register:whale_blockchain')
+                else:
+                    print('Database error')    
+            else:
+                print('The submitted form is not valid')
+
+        formBl = SmokeBlockChainForm()          
+        return render(request, "register/smoke_blockchain.html", {'form':formBl})
+            
+    else:
+        form = UserRegistrationForm()
+        return render(request, "register/signup.html", {'form': form})
+
+def whale_blockchain(request):
+    
+    if request.user.is_authenticated == True:
+        current = User.objects.get(id=request.user.id)
+
+        if request.method == 'POST':
+            formb = WhaleBlockChainForm(request.POST)
+
+            if formb.is_valid():
+                data = {}
+                data['whale'] = formb.cleaned_data['whale']
+                data['whale_name'] = formb.cleaned_data['whale_name']
 
                 if formb.save(data, current.id):
                     return redirect('/')
@@ -54,8 +104,8 @@ def blockchain(request):
             else:
                 print('The submitted form is not valid')
 
-        formBl = UserBlockChainForm()            
-        return render(request, "register/signup_process.html", {'form':formBl})
+        formBl = WhaleBlockChainForm()          
+        return render(request, "register/whale_blockchain.html", {'form':formBl})
             
     else:
         form = UserRegistrationForm()
@@ -84,7 +134,7 @@ def update(request):
                 data['channel_picture'] = channel_picture
 
                 if forma.save(data, current.id):
-                    return redirect('register:blockchain')
+                    return redirect('register:steem_blockchain')
 
                 else:
                     print('Database error') 

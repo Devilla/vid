@@ -30,12 +30,14 @@
     <div class="cb-content avatars">
         <div class="row">
             {% for i in subscription %}
-                <div class="col-lg-1 col-sm-2 col-xs-3">
-                    <a href="#">
-                        <img src='https://gateway.ipfs.io/ipfs/{{ i.channel_picture }}' style="height:7rem; width:7rem" alt="{{ i.channel_name }}" title="hover Hello">
-                        <div class="note">{{ i.count }}</div>
-                    </a>
-                </div>
+                {% if i.count != 0%}
+                    <div class="col-lg-1 col-sm-2 col-xs-3">
+                        <a href="#">
+                            <img src='https://gateway.ipfs.io/ipfs/{{ i.channel_picture }}' style="height:7rem; width:7rem" alt="{{ i.channel_name }}" title="hover Hello">
+                            <div class="note">{{ i.count }}</div>
+                        </a>
+                    </div>
+                {% endif %}
             {% endfor %}
            
         </div>
