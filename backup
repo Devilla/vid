@@ -1,0 +1,117 @@
+from beem import Steem
+from beem.comment import Comment
+
+def get_likes(post_url):
+    '''
+    Parameters:
+    ___________
+    post_url (string):
+    The post permalink and username
+    '''
+    pass
+
+def get_payout(post_url):
+    pass
+
+class BlockchainManager:
+    '''
+    For functions that require authentication. For posting, liking/disliking and subscribing/unsubscribing.
+    '''
+
+    def __init__(self, api_keys):
+        '''
+        Parameters:
+        ___________
+
+        api_keys: (dictionary)
+        STEEM, SMOKE and WHALE keys. Can be left empty if it dosen't exist
+        '''
+
+        node = {}
+        node['STEEM'] = ["https://api.steemit.com", "https://rpc.buildteam.io"]
+        node['SMOKE'] = ["https://rpc.smoke.io/"]
+        node['WHALE'] = ["https://rpc.whaleshares.io", "ws://188.166.99.136:8090", "ws://rpc.kennybll.com:8090"]
+
+        self.daemon = {}
+
+        for key in api_keys:
+            if key == "SMOKE":
+                self.daemon[key] = Steem(node=node[key], keys=api_keys[key], custom_chains={"SMOKE": {
+                                    "chain_id": "1ce08345e61cd3bf91673a47fc507e7ed01550dab841fd9cdb0ab66ef576aaf0",
+                                    "min_version": "0.0.0",
+                                    "prefix": "SMK",
+                                    "chain_assets": [
+                                        {"asset": "STEEM", "symbol": "SMOKE", "precision": 3, "id": 1},
+                                        {"asset": "VESTS", "symbol": "VESTS", "precision": 6, "id": 2}
+                                    ]
+                                }})
+            else:
+                self.daemon[key] = Steem(node=node[key], keys=api_keys[key])
+               
+
+        
+    def post(self, title, body, usernames, tags):
+        '''
+        Posts in the given blockchain and returns the url for each in dictionary
+
+        Parameters:
+        ___________
+        title: (string)
+        The title of the post
+
+        body: (string)
+        The body of the post
+
+        usernames: (dictionary)
+        The username of the poster for the given blockchain
+
+        tags: (list)
+        Tags of the post
+        Returns:
+        ________
+        post_urls (dic):
+        Dictionary containing list of tag, author and permlink
+        '''
+        post_urls = {}
+
+
+        for key in self.daemon:
+
+            if key == "WHALE":
+                benificiary = "fiasteemproject"
+            else:
+                benificiary = "fiasteem"
+
+                if key == "STEEM":
+                    res = self.daemon[key].post(title=title, body=body, author=usernames[key], tags=tags, beneficiaries=[{'account': benificiary, 'weight': 2500}])
+                    print(res)
+
+
+
+        #         else:
+        #             res = s.post(title=title, body=body, author=usernames[key], tags=tags, json_metadata={
+        #                         'extensions': [[0, {
+        #                             'beneficiaries': [
+        #                                 {'account': benificiary, 'weight': 2500},
+        #                             ]}]]}
+        #                         )
+        #             print("reached others")
+        #             print(res)
+
+        #         permlink = res['operations'][0][1]['permlink']
+        #         author = res['operations'][0][1]['author']
+        #         tag = res['operations'][0][1]['parent_permlink']
+        #     except Exception as e:
+        #         tag = str(e)
+        #         author = str(e)
+        #         permlink = str(e)
+
+        #     post_urls[key] = [tag, author, permlink]
+
+        # return post_urls
+
+    # def upvote():
+    #   pass
+
+    # def subscribe():
+    #   pass
