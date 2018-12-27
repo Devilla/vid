@@ -43,24 +43,12 @@ class UserRegistrationForm(UserCreationForm):
         u.save()
         return True
 
-class UserBlockChainForm(forms.Form):
+class SmokeBlockChainForm(forms.Form):
 
     smoke = forms.CharField(
         label="Smoke Id",
         required=False,
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Smoke Id'})
-    )
-    
-    steem = forms.CharField(
-        label="Steem Id",
-        required=False,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Steem Id'})
-    )
-    
-    whaleshare = forms.CharField(
-        label="Whaleshare Id",
-        required=False,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Whaleshare Id'})
     )
     
     smoke_name = forms.CharField(
@@ -69,12 +57,31 @@ class UserBlockChainForm(forms.Form):
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Smoke Name'})
     )
 
-    steem_name = forms.CharField(
-        label="Steem Name", 
-        required=False,                  
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Steem Name'})
-    )
+    class Meta:
+        model = User
+        fields = ('smoke', 'smoke_name')
 
+
+    def clean_smoke(self):
+        smoke = self.cleaned_data['smoke']
+        return smoke
+    
+    def save(self, data, id):
+        u = User.objects.get(id = id)
+        u.smoke = data['smoke']
+        u.smoke_name = data['smoke_name']
+    
+        u.save()
+        return True
+
+class WhaleBlockChainForm(forms.Form):
+
+    whaleshare = forms.CharField(
+        label="Whaleshare Id",
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Whaleshare Id'})
+    )
+    
     whaleshare_name = forms.CharField(
         label="Whaleshare name",
         required=False,
@@ -83,16 +90,8 @@ class UserBlockChainForm(forms.Form):
 
     class Meta:
         model = User
-        fields = ('smoke', 'steem', 'whaleshare', 'smoke_name', 'steem_name', 'whaleshare_name')
+        fields = ('whaleshare', 'whaleshare_name')
 
-
-    def clean_smoke(self):
-        smoke = self.cleaned_data['smoke']
-        return smoke
-    
-    def clean_steem(self):
-        steem = self.cleaned_data['steem']
-        return steem
 
     def clean_whaleshare(self):
         whaleshare = self.cleaned_data['whaleshare']
@@ -100,12 +99,40 @@ class UserBlockChainForm(forms.Form):
 
     def save(self, data, id):
         u = User.objects.get(id = id)
-        u.smoke = data['smoke']
-        u.steem = data['steem']
         u.whaleshare = data['whaleshare']
-        u.smoke_name = data['smoke_name']
-        u.steem_name = data['steem_name']
         u.whaleshare_name = data['whaleshare_name']
+
+        u.save()
+        return True
+
+
+class SteemBlockChainForm(forms.Form):
+
+    steem = forms.CharField(
+        label="Steem Id",
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Steem Id'})
+    )
+    
+    steem_name = forms.CharField(
+        label="Steem Name", 
+        required=False,                  
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Steem Name'})
+    )
+
+    class Meta:
+        model = User
+        fields = ('steem', 'steem_name')
+
+
+    def clean_steem(self):
+        steem = self.cleaned_data['steem']
+        return steem
+
+    def save(self, data, id):
+        u = User.objects.get(id = id)
+        u.steem = data['steem']
+        u.steem_name = data['steem_name']
 
         u.save()
         return True
@@ -176,12 +203,6 @@ class UserRegistrationCompletionForm(forms.Form):
         u.channel_cover = data['channel_cover']
         u.profile_picture = data['profile_picture']
         u.channel_picture = data['channel_picture']
-        u.smoke = data['smoke']
-        u.steem = data['steem']
-        u.whaleshare = data['whaleshare']
-        u.smoke_name = data['smoke_name']
-        u.steem_name = data['steem_name']
-        u.whaleshare_name = data['whaleshare_name']
-
+    
         u.save()
         return True

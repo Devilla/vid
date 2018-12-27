@@ -1,0 +1,103 @@
+{% extends 'single_channel/base.html' %}
+
+{% load staticfiles %}
+
+{% block navigation %}
+        {% include "core/navbar.html" %}
+
+{% endblock navigation %}
+
+{% block extra %}
+
+<!-- channel -->
+<div class="container-fluid">
+        <div class="row">
+                <div class="img">
+                        <div class="img-image">
+                                <img src='https://gateway.ipfs.io/ipfs/{{ request.user.channel_cover }}' alt="" class="c-banner" style="height:40vh; size:cover">                        </div>
+                        <div class="c-avatar">
+                                <img src='https://gateway.ipfs.io/ipfs/{{ request.user.channel_picture }}' alt="">
+                        </div>
+                        <a href="#" class="add"><i class="cv cvicon-cv-plus"></i></a>
+                        <div class="c-social hidden-xs">
+                                Social
+                                <a href="#" class="fb"><i class="fa fa-facebook"></i></a>
+                                <a href="#" class="tw"><i class="fa fa-twitter"></i></a>
+                                <a href="#" class="gp"><i class="fa fa-google-plus"></i></a>
+                        </div>
+                </div>
+        </div>
+</div>
+<!-- ///channel -->
+
+{% endblock extra %}
+
+{% block content %}
+
+<div class="col-lg-12">
+
+<div class="channel-details">
+        <div class="row">
+                <div class="col-lg-10 col-lg-offset-2 col-xs-12">
+                        <div class="c-details">
+                                <div class="c-name">
+                                        {{ channel }}
+                                        <div class="c-checkbox">
+                                                <img src="images/verified-profile-icon.png" alt="">
+                                        </div>
+                                </div>
+                                
+                                <div class="c-sub pull-right hidden-xs">
+                                        <div class="c-sub-wrap">
+                                                <div class="c-f">
+                                                        Follow
+                                                </div>
+                                                <div class="c-s">
+                                                        1
+                                                </div>
+                                                <div class="clearfix"></div>
+                                        </div>
+                                </div>
+                                <div class="clearfix"></div>
+                        </div>
+                </div>
+        </div>
+</div>
+<!-- Featured Videos -->
+<div class="content-block">
+        <div class="cb-header">
+        
+        </div>
+        <div class="cb-content videolist">
+                <div class="row">
+                        {% for i in video %}
+                                <div class=" col-lg-3 col-sm-6 videoitem">
+                                        <div class="b-video">
+                                                <div class="v-img">
+                                                        <a href="{% url 'watch:index'  i.bestHash_Trending   i.id  %}">
+                                                                <img src='https://gateway.ipfs.io/ipfs/{{ i.thumbNail }}' alt="">
+                                                        </a>
+                                                        <div class="time">{{ i.duration }}</div>
+                                                </div>
+                                                <div class="v-desc">
+                                                        <a href="{% url 'watch:index'  i.bestHash_Trending   i.id  %}">
+                                                                {{ i.name }}
+                                                        </a>
+                                                </div>
+                                                <div class="v-views">
+                                                        {{ i.views }} <span class="v-percent"><span class="fa fa-dollar"></span> 78</span><span class="glyphicon glyphicon-thumbs-up" style="float:right"></span>
+                                                </div>
+                                        </div>
+                                </div>
+                        {% endfor %}
+                </div>
+        </div>
+</div>
+<!-- /Featured Videos -->
+
+
+</div>
+                
+{% endblock content %}
+
+{% block title %} {{ channel }} {% endblock title %}
