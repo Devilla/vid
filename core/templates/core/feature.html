@@ -49,8 +49,19 @@
                     </div>
                     <div class="v-views">
                         
-                        {{ i.views }} <span class="v-percent"><span class="fa fa-dollar"></span> {{ i.money }} </span><span class="glyphicon glyphicon-thumbs-up"
-                            style="float:right"></span>
+                        <div  style="float:left">{{ i.views }} <span class="v-percent"></span><span class="fa fa-dollar"></span> {{ i.money }} </span></div>
+                        <div  style="float:right">
+                            <form action="video/addlike/" method="post" enctype='multipart/form-data'>{% csrf_token %}
+                            {{ likeform.likevideoID}}
+                            <button style="margin:0; padding  :0 !important; color:white; background:transparent; border:none;" type="submit"><b>
+        
+                                <i class="fas fa-thumbs-up"></i></b>
+                            </button>
+                            <form>&nbsp;
+                            <button style="margin:0; padding  :0 !important; color:white; background:transparent; border:none;" type="submit"><b><i class="fas fa-thumbs-down"></i></b>
+                            </button>
+                        </div>
+                        <script>document.getElementById("id_likevideoID").value = "{{i.id}}";</script>
                     </div>
                 </div>
             </div>

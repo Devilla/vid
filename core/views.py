@@ -1,6 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect 
 from upload.models import Video, SteemVideo, WhaleShareVideo
 from register.models import User
+from django.http import JsonResponse
+from django.http import HttpResponse
+from .forms import videoLikeForm, videoDisLikeForm
 import json
 import demjson
 # from blockchain_manager.manager import SteemManager, WhalesharesManger
@@ -74,6 +77,23 @@ def index(request):
         except:
             channels.remove(each_channel)
             # each_channel.count = 0
-            
+    
+    likeform = videoLikeForm()
+    dislikeform = videoDisLikeForm()
     return render(request, "core/home.html", {'instance': featured, 'trend': trending, 
-                                                  'subscription': channels })
+                                                  'subscription': channels, 'likeform':likeform, 'dislikeform':dislikeform})
+
+def videoLike(request):
+    if request.method == "POST":
+        if request.user.is_authenticated == True:
+            form = videoLikeForm(request.POST)
+            if form.is_valid():
+                videoid = form.cleaned_data.get("likevideoID")
+            user_id = request.user.id
+            print ("user id")
+            print(user_id)
+            print("video id")
+            print(videoid)
+
+
+            return redirect('/')
