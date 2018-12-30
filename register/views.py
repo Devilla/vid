@@ -94,8 +94,8 @@ def whale_blockchain(request):
 
             if formb.is_valid():
                 data = {}
-                data['whale'] = formb.cleaned_data['whale']
-                data['whale_name'] = formb.cleaned_data['whale_name']
+                data['whaleshare'] = formb.cleaned_data['whaleshare']
+                data['whaleshare_name'] = formb.cleaned_data['whaleshare_name']
 
                 if formb.save(data, current.id):
                     return redirect('/')

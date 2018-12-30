@@ -1,4 +1,3 @@
-
 import os.path
 import subprocess
 
@@ -11,9 +10,9 @@ import cv2
 import ipfsapi
 import json
 
-from upload.models import Video, SteemVideo, WhaleShareVideo
-
-# from blockchain_manager.manager import SteemManager, WhalesharesManger
+from upload.models import Video, SteemVideo, WhaleShareVideo, SmokeVideo
+from beem import Steem
+from beem.comment import Comment
 
 
 # Create your views here.
@@ -151,16 +150,15 @@ def info(request):
                         current.nsfw = False
                 current.publish = True
                 current.save()
-
+                
+                arb_url = 'https://vidsocial.org/watch/'+ bestHash + '/'+ str(current.id) + '/'
+                body = get_body(name, current.thumbNail, arb_url)
+                tags = ['vidsocial']
 
                 if request.user.steem != 'false' and request.user.steem_name != 'false':
                     try:
-                        bodys = '<video id="player" style="width:100%;height:100%;"><source src=http://gateway.ipfs.io/ipfs/' + request.session.get('hash') + 'type=video/mp4 /></video>'
-                        # steem = SteemManager(request.user.steem)
-                        # post = steem.post_in_steem(name, bodys, request.user.steem_name, ["test"])
-                        # print(post)
-                        # steem_save = SteemVideo(current.id, post)
-                        # steem_save.save()
+                        s_res = post_steem(request.user.steem, request.user.steem_name, tags, name, body)
+                        save_data(s_res, 'steem')
 
                     except Exception as e:
                         print('Errorsss')
@@ -169,17 +167,21 @@ def info(request):
 
                 if request.user.whaleshare != 'false' and request.user.whaleshare_name != 'false':
                     try:
-                        bodys = '<video id="player" style="width:100%;height:100%;"><source src=http://gateway.ipfs.io/ipfs/' + request.session.get('hash') + 'type=video/mp4 /></video>'
-                        # whaleshare = WhalesharesManger(request.user.whaleshare)
-                        # postW = whaleshare.post_in_whaleshares(name, name, request.user.whaleshare_name, ['ipfs', 'test'])
-
-                        # whale_save = WhaleShareVideo(current.id, postW)
-                        # whale_save.save()
-
+                        wls_res = post_whaleshare(request.user.whaleshare, request.user.whaleshare_name, tags, name, body)
+                        save_data(wls_res, 'whale')
                     except:
                         print('Error Whale')
                 else:
                     print('No Whaleshare')
+
+                if request.user.smoke != 'false' and request.user.smoke_name != 'false':
+                    try:
+                        smk_res = post_smoke(request.user.smoke, request.user.smoke_name, tags, name, body)
+                        save_data(smk_res, 'smoke')
+                    except:
+                        print('Error smoke')
+                else:
+                    print('No smoke')
 
                 return redirect('watch:index', video_hash=bestHash, video_id=current.id)
 
@@ -189,3 +191,62 @@ def info(request):
 
     else:
         return redirect('/login')
+
+
+def get_body(title, thumbnail, url):
+    body = '<html><p><img src=\"'+ thumbnail + '\" width=\"480\" height=\"360\"/></p> <p><a href=\"'+ url+'\">'+ title+'</a></p></html>'
+    return body
+
+
+def post_steem(steem_key, steem_username, tags, title, body):
+    s = Steem(keys=[steem_key], nodes=["https://api.steemit.com", "https://rpc.buildteam.io"])
+    s_res = s.post(title=title, body=body, author=steem_username, tags=tags, beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
+    return s_res
+
+
+def post_smoke(smoke_key, smoke_username, tags, title, body):
+    smk = Steem(node=['https://rpc.smoke.io/'], keys=[smoke_key], custom_chains={"SMOKE": {
+        "chain_id": "1ce08345e61cd3bf91673a47fc507e7ed01550dab841fd9cdb0ab66ef576aaf0",
+        "min_version": "0.0.0",
+        "prefix": "SMK",
+        "chain_assets": [
+            {"asset": "STEEM", "symbol": "SMOKE", "precision": 3, "id": 1},
+            {"asset": "VESTS", "symbol": "VESTS", "precision": 6, "id": 2}
+        ]
+    }})
+
+    smk_res = smk.post(title=title, body=body, author=smoke_username, tags=tags)
+    return smk_res
+
+
+def post_whaleshare(whalshares_key, whaleshares_username, tags, title, body):
+    wls = Steem(node=["https://rpc.whaleshares.io", "ws://188.166.99.136:8090", "ws://rpc.kennybll.com:8090"], keys=[whaleshares_key])
+
+    wls_res = wls.post(title=title, body=body, author=whaleshares_username, tags=tags, json_metadata={
+        'extensions': [[0, {
+            'beneficiaries': [
+                {'account': 'fiasteemproject', 'weight': 2500},
+            ]}
+        ]]
+    })
+    return wls_res
+
+def save_data(data, platform):
+    permlink = data['operations'][0][1]['permlink']
+    author = data['operations'][0][1]['author']
+    tag = data['operations'][0][1]['parent_permlink']
+    
+    if platform == 'smoke':
+        post_url = "https://smoke.io/{}/@{}/{}".format(tag, author, permlink)
+        smoke = SmokeVideo(current.id, permlink, author, tag, post_url)
+        smoke.save()
+
+    if platform == 'whale':
+        post_url = "https://whaleshares.io/{}/@{}/{}".format(tag, author, permlink)
+        whale = WhaleShareVideo(current.id, permlink, author, tag, post_url)
+        whale.save()
+
+    if platform == 'steem':
+        post_url = "https://steemit.com/{}/@{}/{}".format(tag, author, permlink)
+        steem = SteemVideo(current.id, permlink, author, tag, post_url)
+        steem.save()
