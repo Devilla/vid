@@ -152,33 +152,37 @@ def info(request):
                 current.save()
                 
                 arb_url = 'https://vidsocial.org/watch/'+ bestHash + '/'+ str(current.id) + '/'
-                body = get_body(name, current.thumbNail, arb_url)
+                thumbnail_url = 'https://gateway.ipfs.io/ipfs/' + current.thumbNail
+                body = get_body(name, thumbnail_url, arb_url)
                 tags = ['vidsocial']
-
+                name = current.name
+                print(name)
                 if request.user.steem != 'false' and request.user.steem_name != 'false':
                     try:
-                        s_res = post_steem(request.user.steem, request.user.steem_name, tags, name, body)
-                        save_data(s_res, 'steem')
-
+                        s_res = post_steem(request.user.steem_name, request.user.steem, tags, name, body)
+                        save_data(s_res, 'steem', current.id, tags)
                     except Exception as e:
+                        print(str(e))
                         print('Errorsss')
                 else:
                     print('No Steem')
 
                 if request.user.whaleshare != 'false' and request.user.whaleshare_name != 'false':
                     try:
-                        wls_res = post_whaleshare(request.user.whaleshare, request.user.whaleshare_name, tags, name, body)
-                        save_data(wls_res, 'whale')
-                    except:
+                        wls_res = post_whaleshare(request.user.whaleshare_name, request.user.whaleshare, tags, name, body)
+                        save_data(wls_res, 'whale', current.id, tags)
+                    except Exception as e:
+                        print(str(e))
                         print('Error Whale')
                 else:
                     print('No Whaleshare')
 
                 if request.user.smoke != 'false' and request.user.smoke_name != 'false':
                     try:
-                        smk_res = post_smoke(request.user.smoke, request.user.smoke_name, tags, name, body)
-                        save_data(smk_res, 'smoke')
-                    except:
+                        smk_res = post_smoke(request.user.smoke_name, request.user.smoke, tags, name, body)
+                        save_data(smk_res, 'smoke', current.id, tags)
+                    except Exception as e:
+                        print(str(e))
                         print('Error smoke')
                 else:
                     print('No smoke')
@@ -192,14 +196,14 @@ def info(request):
     else:
         return redirect('/login')
 
-
 def get_body(title, thumbnail, url):
     body = '<html><p><img src=\"'+ thumbnail + '\" width=\"480\" height=\"360\"/></p> <p><a href=\"'+ url+'\">'+ title+'</a></p></html>'
+    print(body)
     return body
-
 
 def post_steem(steem_key, steem_username, tags, title, body):
     s = Steem(keys=[steem_key], nodes=["https://api.steemit.com", "https://rpc.buildteam.io"])
+    print(body)
     s_res = s.post(title=title, body=body, author=steem_username, tags=tags, beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
     return s_res
 
@@ -218,8 +222,7 @@ def post_smoke(smoke_key, smoke_username, tags, title, body):
     smk_res = smk.post(title=title, body=body, author=smoke_username, tags=tags)
     return smk_res
 
-
-def post_whaleshare(whalshares_key, whaleshares_username, tags, title, body):
+def post_whaleshare(whaleshares_key, whaleshares_username, tags, title, body):
     wls = Steem(node=["https://rpc.whaleshares.io", "ws://188.166.99.136:8090", "ws://rpc.kennybll.com:8090"], keys=[whaleshares_key])
 
     wls_res = wls.post(title=title, body=body, author=whaleshares_username, tags=tags, json_metadata={
@@ -231,22 +234,27 @@ def post_whaleshare(whalshares_key, whaleshares_username, tags, title, body):
     })
     return wls_res
 
-def save_data(data, platform):
+def save_data(data, platform, id, tags):
     permlink = data['operations'][0][1]['permlink']
     author = data['operations'][0][1]['author']
     tag = data['operations'][0][1]['parent_permlink']
+    print(tag)
     
     if platform == 'smoke':
         post_url = "https://smoke.io/{}/@{}/{}".format(tag, author, permlink)
-        smoke = SmokeVideo(current.id, permlink, author, tag, post_url)
+        print(id)
         smoke.save()
+        smoke = SmokeVideo(video_id=int(id), permlink=permlink, author=author, tags=tags, post_url=post_url)
+        
 
     if platform == 'whale':
         post_url = "https://whaleshares.io/{}/@{}/{}".format(tag, author, permlink)
-        whale = WhaleShareVideo(current.id, permlink, author, tag, post_url)
+        whale = WhaleShareVideo(video_id=int(id), permlink=permlink, author=author, tags=tags, post_url=post_url)
         whale.save()
+        
 
     if platform == 'steem':
         post_url = "https://steemit.com/{}/@{}/{}".format(tag, author, permlink)
-        steem = SteemVideo(current.id, permlink, author, tag, post_url)
+        steem = SteemVideo(video_id=int(id), permlink=permlink, author=author, tags=tags, post_url=post_url)
         steem.save()
+        
