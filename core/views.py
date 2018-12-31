@@ -213,11 +213,10 @@ def index(request):
 def videoLike(request):
     if request.method == "POST":
         if request.user.is_authenticated == True:
-            videoid = request.POST.get("dislikevideoID")
+            videoid = request.POST.get("likevideoID")
             user_id = request.user.id
             
             user_details = User.objects.get(id=user_id)
-
             try:
                 steem_details = SteemVideo.objects.get(video_id=videoid)
                 s = Steem(keys=[user_details.steem], nodes=["https://api.steemit.com", "https://rpc.buildteam.io"])
@@ -249,8 +248,18 @@ def videoLike(request):
             except:
                 pass
             
-            data = {'videoID': videoid, 'userID':user_id, 'type':'Liked'}
+            totalLike = 0
+            try:
+                videoDetails = Video.objects.get(id=videoid)
+                totalLike = videoDetails.thumbsUp + 1
+                videoDetails.thumbsUp = totalLike
+                videoDetails.save()
+            except:
+                pass
+            data = {'totalLike': totalLike}
             return JsonResponse(data)
+
+            
         
 
 def videoDisLike(request):
@@ -260,7 +269,7 @@ def videoDisLike(request):
             user_id = request.user.id
             
             user_details = User.objects.get(id=user_id)
-
+            
             try:
                 steem_details = SteemVideo.objects.get(video_id=videoid)
                 s = Steem(keys=[user_details.steem], nodes=["https://api.steemit.com", "https://rpc.buildteam.io"])
@@ -292,6 +301,15 @@ def videoDisLike(request):
             except:
                 pass
             
-            data = {'videoID': videoid, 'userID':user_id, 'type':'Disliked'}
+            totalDisLike = 0
+            try:
+                videoDetails = Video.objects.get(id=videoid)
+                totalDisLike = videoDetails.thumbsDown + 1
+                videoDetails.thumbsDown = totalDisLike
+                videoDetails.save()
+            except:
+                pass
+            
+            data = {'totalDisLike': totalDisLike}
             return JsonResponse(data)
         
