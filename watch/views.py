@@ -59,7 +59,7 @@ def index(request, video_hash, video_id):
                 # print(whale_url)
                 # whale_pay = WhalesharesManger.get_payout(whale.post)
                 # pay = pay + whale_pay
-            except: 
+            except Exception as e: 
                 print('Got Error: {}'.format(str(e)))
 
             try:
@@ -69,7 +69,7 @@ def index(request, video_hash, video_id):
                 # print(whale_url)
                 # whale_pay = WhalesharesManger.get_payout(whale.post)
                 # pay = pay + whale_pay
-            except: 
+            except Exception as e: 
                 print('Got Error: {}'.format(str(e)))
 
             print("{} {} {}".format(steem_url, smoke_url, whale_url))
