@@ -40,11 +40,11 @@
             {{ current.views }} views
         </div>
         <div class="sv-views-stats">
-            <strong id="dislike_count" class="grey" style="float:right;">{{ current.thumbsDown }} </strong>
+            <strong id="dislike_count" class="grey" style="float:right;">{{ total_dislikes }} </strong>
             <label for="dislike" style="float:right; margin-right:0.7em;">
                 <span class="glyphicon glyphicon-thumbs-down" style="color:#fff"></span>
             </label>
-            <strong id="like_count" class="grey" style="float:right; margin-right:2em">{{ current.thumbsUp }}</strong>
+            <strong id="like_count" class="grey" style="float:right; margin-right:2em">{{ total_likes }}</strong>
             <label for="like" style="float:right;margin-right:0.7em">
                 <span class="glyphicon glyphicon-thumbs-up" onClick="thumbsDown()"></span>
             </label>
