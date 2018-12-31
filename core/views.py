@@ -12,18 +12,29 @@ from datetime import datetime
 import pytz
 import requests
 import json
+
 from beem import Steem
+from beem.comment import Comment
+
 import schedule
 import time
 
-def get_payout(s, author, permline):
+def get_payout(s, author, permlink):
     try:
         acc = Comment("@{}/{}".format(author, permlink), steem_instance=s)
         payout = float(str(acc.reward).split()[0])
-    except:
+    except Exception as e:
         payout = 0.00
     
     return payout
+
+def upvote(s, author, permlink):
+    acc = Comment("@{}/{}".format(author, permlink), steem_instance=s)
+    votes = acc.upvote(voter=author)
+
+def downvote(s, author, permlink):
+    acc = Comment("@{}/{}".format(author, permlink), steem_instance=s)
+    votes = acc.downvote(voter=author)
 
 s_no_auth = Steem(nodes=["https://api.steemit.com", "https://rpc.buildteam.io"])
 w_no_auth = Steem(node=["https://rpc.whaleshares.io", "ws://188.166.99.136:8090", "ws://rpc.kennybll.com:8090"])
@@ -202,13 +213,43 @@ def index(request):
 def videoLike(request):
     if request.method == "POST":
         if request.user.is_authenticated == True:
-            videoid = request.POST.get("likevideoID")
-            print("video id")
-            print(videoid)
+            videoid = request.POST.get("dislikevideoID")
             user_id = request.user.id
-            print ("user id")
-            print(user_id)
-            data = {'videoID': videoid, 'userID':user_id, 'type':'like'}
+            
+            user_details = User.objects.get(id=user_id)
+
+            try:
+                steem_details = SteemVideo.objects.get(video_id=videoid)
+                s = Steem(keys=[user_details.steem], nodes=["https://api.steemit.com", "https://rpc.buildteam.io"])
+                upvote(s, steem_details.author, steem_details.permlink)
+            except:
+                pass
+
+            try:
+                whale_details = WhaleShareVideo.objects.get(video_id=videoid)
+                wls = Steem(node=["https://rpc.whaleshares.io", "ws://188.166.99.136:8090", "ws://rpc.kennybll.com:8090"], keys=[user_details.whaleshare])
+                upvote(wls, whale_details.author, whale_details.permlink)
+            except:
+                pass
+
+            try:
+                smoke_details = SmokeVideo.objects.get(video_id=videoid)
+
+                smk = Steem(node=['https://rpc.smoke.io/'], keys=[user_details.smoke], custom_chains={"SMOKE": {
+                        "chain_id": "1ce08345e61cd3bf91673a47fc507e7ed01550dab841fd9cdb0ab66ef576aaf0",
+                        "min_version": "0.0.0",
+                        "prefix": "SMK",
+                        "chain_assets": [
+                            {"asset": "STEEM", "symbol": "SMOKE", "precision": 3, "id": 1},
+                            {"asset": "VESTS", "symbol": "VESTS", "precision": 6, "id": 2}
+                        ]
+                    }})
+
+                upvote(wls, smoke_details.author, smoke_details.permlink)
+            except:
+                pass
+            
+            data = {'videoID': videoid, 'userID':user_id, 'type':'Disliked'}
             return JsonResponse(data)
         
 
@@ -216,11 +257,41 @@ def videoDisLike(request):
     if request.method == "POST":
         if request.user.is_authenticated == True:
             videoid = request.POST.get("dislikevideoID")
-            print("video id")
-            print(videoid)
             user_id = request.user.id
-            print ("user id")
-            print(user_id)
-            data = {'videoID': videoid, 'userID':user_id, 'type':'dislike'}
+            
+            user_details = User.objects.get(id=user_id)
+
+            try:
+                steem_details = SteemVideo.objects.get(video_id=videoid)
+                s = Steem(keys=[user_details.steem], nodes=["https://api.steemit.com", "https://rpc.buildteam.io"])
+                downvote(s, steem_details.author, steem_details.permlink)
+            except:
+                pass
+
+            try:
+                whale_details = WhaleShareVideo.objects.get(video_id=videoid)
+                wls = Steem(node=["https://rpc.whaleshares.io", "ws://188.166.99.136:8090", "ws://rpc.kennybll.com:8090"], keys=[user_details.whaleshare])
+                downvote(wls, whale_details.author, whale_details.permlink)
+            except:
+                pass
+
+            try:
+                smoke_details = SmokeVideo.objects.get(video_id=videoid)
+
+                smk = Steem(node=['https://rpc.smoke.io/'], keys=[user_details.smoke], custom_chains={"SMOKE": {
+                        "chain_id": "1ce08345e61cd3bf91673a47fc507e7ed01550dab841fd9cdb0ab66ef576aaf0",
+                        "min_version": "0.0.0",
+                        "prefix": "SMK",
+                        "chain_assets": [
+                            {"asset": "STEEM", "symbol": "SMOKE", "precision": 3, "id": 1},
+                            {"asset": "VESTS", "symbol": "VESTS", "precision": 6, "id": 2}
+                        ]
+                    }})
+
+                downvote(wls, smoke_details.author, smoke_details.permlink)
+            except:
+                pass
+            
+            data = {'videoID': videoid, 'userID':user_id, 'type':'Disliked'}
             return JsonResponse(data)
         
