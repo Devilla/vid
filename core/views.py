@@ -249,7 +249,7 @@ def videoLike(request):
             except:
                 pass
             
-            data = {'videoID': videoid, 'userID':user_id, 'type':'Disliked'}
+            data = {'videoID': videoid, 'userID':user_id, 'type':'Liked'}
             return JsonResponse(data)
         
 
