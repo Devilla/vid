@@ -51,17 +51,23 @@
                         
                         <div  style="float:left">{{ i.views }} <span class="v-percent"></span><span class="fa fa-dollar"></span> {{ i.money }} </span></div>
                         <div  style="float:right">
-                            <form action="video/addlike/" method="post" enctype='multipart/form-data'>{% csrf_token %}
-                            {{ likeform.likevideoID}}
-                            <button style="margin:0; padding  :0 !important; color:white; background:transparent; border:none;" type="submit"><b>
-        
-                                <i class="fas fa-thumbs-up"></i></b>
-                            </button>
-                            <form>&nbsp;
-                            <button style="margin:0; padding  :0 !important; color:white; background:transparent; border:none;" type="submit"><b><i class="fas fa-thumbs-down"></i></b>
-                            </button>
+                            <form id="videolikeform" method="POST">{% csrf_token %}
+                                <input type="hidden" value="{{ i.id }}" id="vidID">
+                                <button style="margin:0; padding  :0 !important; color:white; background:transparent; border:none;" type="submit"><b>
+            
+                                    <i class="fas fa-thumbs-up"></i></b>
+                                </button>
+                            </form>&nbsp;
+                            <form id="videodislikeform" method="POST">{% csrf_token %}
+                                <input type="hidden" value="{{ i.id }}" id="vidID">
+                                <button style="margin:0; padding  :0 !important; color:white; background:transparent; border:none;" type="submit"><b>
+            
+                                    <i class="fas fa-thumbs-down"></i></b>
+                                </button>
+                            </form>
+                           
                         </div>
-                        <script>document.getElementById("id_likevideoID").value = "{{i.id}}";</script>
+                       
                     </div>
                 </div>
             </div>
@@ -69,3 +75,45 @@
         </div>
     </div>
 </div>
+
+<script>    
+
+
+$(document).ready(function() {
+       $("#videolikeform").submit(function(event){
+            event.preventDefault();
+            $.ajax({
+                 method:"POST",
+                 url:"/like/",
+                 data: {
+                        'likevideoID': $('#vidID').val(),
+                        'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+                        },
+                 success: function(data){
+                     alert(data.type);
+                 }
+            });
+            return false; //<---- move it here
+       });
+
+});
+
+$(document).ready(function() {
+       $("#videodislikeform").submit(function(event){
+            event.preventDefault();
+            $.ajax({
+                 method:"POST",
+                 url:"/dislike/",
+                 data: {
+                        'dislikevideoID': $('#vidID').val(),
+                        'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+                        },
+                 success: function(data){
+                     alert(data.type);
+                 }
+            });
+            return false; //<---- move it here
+       });
+
+});
+</script>

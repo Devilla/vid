@@ -3,7 +3,7 @@ from upload.models import Video, SteemVideo, WhaleShareVideo, SmokeVideo
 from register.models import User
 from django.http import JsonResponse
 from django.http import HttpResponse
-from .forms import videoLikeForm, videoDisLikeForm
+
 import json
 import demjson
 from core.models import AssetPrice
@@ -137,25 +137,32 @@ def index(request):
             channels.remove(each_channel)
             # each_channel.count = 0
     
-    likeform = videoLikeForm()
-    dislikeform = videoDisLikeForm()
+
     return render(request, "core/home.html", {'instance': featured, 'trend': trending, 
-                                                  'subscription': channels, 'likeform':likeform, 'dislikeform':dislikeform})
+                                                  'subscription': channels})
 
 def videoLike(request):
     if request.method == "POST":
         if request.user.is_authenticated == True:
-            form = videoLikeForm(request.POST)
-            if form.is_valid():
-                videoid = form.cleaned_data.get("likevideoID")
-                print("video id")
-                print(videoid)
-
-                
+            videoid = request.POST.get("likevideoID")
+            print("video id")
+            print(videoid)
             user_id = request.user.id
             print ("user id")
             print(user_id)
-            
+            data = {'videoID': videoid, 'userID':user_id, 'type':'like'}
+            return JsonResponse(data)
+        
 
-
-            return redirect('/')
+def videoDisLike(request):
+    if request.method == "POST":
+        if request.user.is_authenticated == True:
+            videoid = request.POST.get("dislikevideoID")
+            print("video id")
+            print(videoid)
+            user_id = request.user.id
+            print ("user id")
+            print(user_id)
+            data = {'videoID': videoid, 'userID':user_id, 'type':'dislike'}
+            return JsonResponse(data)
+        
