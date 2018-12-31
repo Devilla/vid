@@ -9,11 +9,11 @@ from django.shortcuts import render, redirect
 import cv2
 import ipfsapi
 import json
-
+from .forms import postOptionsForm
 from upload.models import Video, SteemVideo, WhaleShareVideo, SmokeVideo
 from beem import Steem
 from beem.comment import Comment
-
+from register.models import User
 
 # Create your views here.
 def index(request):
@@ -133,9 +133,15 @@ def info(request):
 
         
         if current.user_id == request.user.id:
-            
+            optform = postOptionsForm()
             if request.method == 'POST':
-                name = request.POST.get("name")
+                form = postOptionsForm(request.POST)
+                if form.is_valid():
+                    name = form.cleaned_data['name']
+                    steemPost = form.cleaned_data['steem']
+                    smokePost = form.cleaned_data['smoke']
+                    whalePost = form.cleaned_data['whale']
+
                 if name != '':
                     if request.POST.getlist("#"):
                         current.name = name
@@ -157,7 +163,7 @@ def info(request):
                 tags = ['vidsocial']
                 name = current.name
                 print(name)
-                if request.user.steem != 'false' and request.user.steem_name != 'false':
+                if steemPost == True and request.user.steem != 'false' and request.user.steem_name != 'false':
                     try:
                         print("Steem: {} Steem Name: {}".format(request.user.steem, request.user.steem_name))
                         s_res = post_steem(request.user.steem, request.user.steem_name, tags, name, body)
@@ -168,7 +174,7 @@ def info(request):
                 else:
                     print('No Steem')
 
-                if request.user.whaleshare != 'false' and request.user.whaleshare_name != 'false':
+                if whalePost == True and request.user.whaleshare != 'false' and request.user.whaleshare_name != 'false':
                     try:
                         print("Whale: {} Whale Name: {}".format(request.user.whaleshare, request.user.whaleshare_name))
                         wls_res = post_whaleshare(request.user.whaleshare, request.user.whaleshare_name, tags, name, body)
@@ -179,7 +185,7 @@ def info(request):
                 else:
                     print('No Whaleshare')
 
-                if request.user.smoke != 'false' and request.user.smoke_name != 'false':
+                if smokePost == True and request.user.smoke != 'false' and request.user.smoke_name != 'false':
                     try:
                         print("Smoke: {} Smoke Name: {}".format(request.user.smoke, request.user.smoke_name))
                         smk_res = post_smoke(request.user.smoke, request.user.smoke_name, tags, name, body)
@@ -191,8 +197,24 @@ def info(request):
                     print('No smoke')
 
                 return redirect('watch:index', video_hash=bestHash, video_id=current.id)
+            user = User.objects.get(id=current.user_id)
+            key ={}
+            if user.steem == 'false':
+                key['steemchk'] = False
+            else:
+                key['steemchk'] = True
 
-            return render(request, 'upload/upload_process.html', {'filehash':request.session.get('hash')})  
+            if user.smoke == 'false':
+                key['smokechk'] = False
+            else:
+                key['smokechk'] = True
+
+            if user.whaleshare == 'false':
+                key['whalechk'] = False
+            else:
+                key['whalechk'] = True
+                
+            return render(request, 'upload/upload_process.html', {'filehash':request.session.get('hash'), 'postOptionsForm':optform, 'keychk':key})  
         else:
             print('Not sufficient privilege')
 

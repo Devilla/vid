@@ -12,7 +12,7 @@
 
 {% block content %}
 
-<div class="col-lg-12 upload-page" style="padding-top:5rem; padding-bottom:5rem">
+<div class="col-lg-12 upload-page" style="margin-bottom:50px;">
     <div class="container-fluid col-md-12" style="height:55vh">
         <div class="col-md-4" style="height:55vh">
             <video poster='{% static "images/single-video.png" %}' style="width:100%;height:40%;" controls="controls"
@@ -20,33 +20,45 @@
                 <source src='http://gateway.ipfs.io/ipfs/{{ filehash }}' type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>
             </video>
         </div>  
-        <div class="col-md-8 row" style="height:55vh">
+        <div class="col-md-8 row" style="height:55vh; border: 1px rgb(219, 219, 219);">
             <div class="l-form">
                 <form class="form-horizontal" method="POST">
                 {% csrf_token %} 
                     <div class="form-group">
-                        <label for="videoName" class="col-sm-2 control-label">Name :</label>
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control" name="name" placeholder="An apple a day keeps a doctor away" required>
+                        <div class="col-sm-8">
+                            <label for="id_name" class="control-label pull-left"> Title: </label>
+                            {{ postOptionsForm.name}}
                         </div>
-                    </div>
-                    <br>
-                    <div class="form-group">
-                        <label for="nsfw" class="col-sm-4 control-label" style="margin-left:1.8em">Not Safe For Work (NSFw) ? :</label>
                         <div class="col-sm-5">
-                            <label class="checkbox" style="min-height:0px">
-                                <input type="checkbox" name="#" id="nsfw">
-                                <span class="arrow"></span>
-                            </label> 
+                            <h4 class='pull-left'> Choose where to post:</h4> <br>
+                            <div class="col-sm-5">
+                                <table class='pull-left'>
+                                   
+                                    {% if keychk.steemchk is True %}
+                                    <tr> 
+                                            <td> Steem</td>
+                                            <td> {{ postOptionsForm.steem}}</td>
+                                        </tr>
+                                    {% endif %}
+                                    {% if keychk.smokechk is True %}
+                                    <tr> 
+                                            <td> Smoke</td>
+                                            <td> {{ postOptionsForm.smoke}}</td>
+                                    </tr>
+                                    {% endif %}
+                                    {% if keychk.whalechk is True %}
+                                        <tr> 
+                                            <td> Whale</td>
+                                            <td> {{ postOptionsForm.whale}}</td>
+                                        </tr>
+                                    {% endif %}
+                                </table>
+                             </div>
+
                         </div>
+
                     </div>
-                    <br>
-                    <br>
-                    <br>
-                    <br>
-                    <br>
-                    <br>
-                    <br>
+
                     <div class="col-sm-4" style="margin-left:1.8em">
                         <button type="submit" class="btn btn-cv1">Publish</button>
                     </div>
