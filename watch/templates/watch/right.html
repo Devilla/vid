@@ -30,8 +30,7 @@
                 <div class="v-views">
                     {{i.views}}
                 </div>
-                <div class="v-percent"><span class="fa fa-dollar"></span> {{ i.money }}</div><span class="glyphicon glyphicon-thumbs-up"
-                    style="float:right"></span>
+                <div class="v-percent"><span class="fa fa-dollar"></span> {{ i.money }}</div>
             </div>
             <div class="clearfix"></div>
         </div>
@@ -68,8 +67,8 @@
                 <div class="v-views">
                    {{i.views}}
                 </div>
-                <div class="v-percent"><span class="fa fa-dollar"></span> {{ i.money }}</div><span class="glyphicon glyphicon-thumbs-up"
-                    style="float:right"></span>
+                <div class="v-percent"><span class="fa fa-dollar"></span> {{ i.money }}</div>
+                
             </div>
             <div class="clearfix"></div>
         </div>
@@ -77,3 +76,46 @@
 
     </div>
 </div>
+
+
+<script>    
+
+
+    $(document).ready(function() {
+           $("#videolikeform").submit(function(event){
+                event.preventDefault();
+                $.ajax({
+                     method:"POST",
+                     url:"/like/",
+                     data: {
+                            'likevideoID': $('#vidID').val(),
+                            'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+                            },
+                     success: function(data){
+                         alert(data.type);
+                     }
+                });
+                return false; //<---- move it here
+           });
+    
+    });
+    
+    $(document).ready(function() {
+           $("#videodislikeform").submit(function(event){
+                event.preventDefault();
+                $.ajax({
+                     method:"POST",
+                     url:"/dislike/",
+                     data: {
+                            'dislikevideoID': $('#vidID').val(),
+                            'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+                            },
+                     success: function(data){
+                         alert(data.type);
+                     }
+                });
+                return false; //<---- move it here
+           });
+    
+    });
+    </script>

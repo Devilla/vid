@@ -40,17 +40,24 @@
             {{ current.views }} views
         </div>
         <div class="sv-views-stats">
-            <strong id="dislike_count" class="grey" style="float:right;">{{ total_dislikes }} </strong>
-            <label for="dislike" style="float:right; margin-right:0.7em;">
-                <span class="glyphicon glyphicon-thumbs-down" style="color:#fff"></span>
-            </label>
-            <strong id="like_count" class="grey" style="float:right; margin-right:2em">{{ total_likes }}</strong>
-            <label for="like" style="float:right;margin-right:0.7em">
-                <span class="glyphicon glyphicon-thumbs-up" onClick="thumbsDown()"></span>
-            </label>
-            <button id="like" data-videoid="{{ video_id }}" style="display:none" type="button">
-            <button id="dislike" data-videoid="{{ video_id }}" style="display:none" type="button">
+            <div  class="col-md-3">
+                <form id="videolikeform" method="POST">{% csrf_token %}
+                    <input type="hidden" value="{{ i.id }}" id="vidID">
+                    <button style="margin:0; padding  :0 !important; color:white; background:transparent; border:none;" type="submit"><b>
 
+                        <i class="fas fa-thumbs-up"></i></b>
+                    </button>
+                </form>
+            </div>
+            <div  class="col-md-3">
+                <form id="videodislikeform" method="POST">{% csrf_token %}
+                    <input type="hidden" value="{{ i.id }}" id="vidID">
+                    <button style="margin:0; padding  :0 !important; color:white; background:transparent; border:none;" type="submit"><b>
+                        <i class="fas fa-thumbs-down"></i></b>
+                    </button>
+                </form>
+               
+            </div>
         </div>
 
     </div>
@@ -68,3 +75,4 @@
     <div class="clearfix"></div>
 
 </div>
+
