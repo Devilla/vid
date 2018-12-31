@@ -84,6 +84,7 @@ def index(request, video_hash, video_id):
     current = Video.objects.get(id=video_id)
     total_likes, total_dislikes = get_likes_dislikes(current.id)
 
+    current = Video.objects.get(id=video_id)
     hash = json.loads(current.video)
     resolution = [2160, 1440, 1080, 720, 480, 360, 240  , 144]
 
@@ -164,5 +165,4 @@ def index(request, video_hash, video_id):
         return render(request, "watch/base.html", {'video_hash': hash, 'cont': video_content,
         'latest': featured, 'recommended': recommend, 'current': current,
         'user': user, 'count': count, 'steem_url': steem_url, 'smoke_url': smoke_url, 'whale_url': whale_url, 
-        'total_likes': total_likes, 'total_dislikes': total_dislikes})
-    
+        'total_likes': total_likes, 'total_dislikes': total_dislikes})    

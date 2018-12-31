@@ -62,8 +62,7 @@
                             <form id="videodislikeform" method="POST">{% csrf_token %}
                                 <input type="hidden" value="{{ i.id }}" id="vidID">
                                 <button style="margin:0; padding  :0 !important; color:white; background:transparent; border:none;" type="submit"><b>
-            
-                                    <i class="fas fa-thumbs-down"></i></b>
+                        <i class="fas fa-thumbs-down"></i></b>
                                 </button>
                             </form>
                             <span> 759</span>
@@ -78,44 +77,3 @@
     </div>
 </div>
 
-<script>    
-
-
-$(document).ready(function() {
-       $("#videolikeform").submit(function(event){
-            event.preventDefault();
-            $.ajax({
-                 method:"POST",
-                 url:"/like/",
-                 data: {
-                        'likevideoID': $('#vidID').val(),
-                        'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
-                        },
-                 success: function(data){
-                     alert(data.type);
-                 }
-            });
-            return false; //<---- move it here
-       });
-
-});
-
-$(document).ready(function() {
-       $("#videodislikeform").submit(function(event){
-            event.preventDefault();
-            $.ajax({
-                 method:"POST",
-                 url:"/dislike/",
-                 data: {
-                        'dislikevideoID': $('#vidID').val(),
-                        'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
-                        },
-                 success: function(data){
-                     alert(data.type);
-                 }
-            });
-            return false; //<---- move it here
-       });
-
-});
-</script>
