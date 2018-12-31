@@ -6,3 +6,5 @@ psycopg2>=2.7.6.1
 opencv-python>=3.4.3.18
 psutil>=5.4.8
 beem>=0.20.13
+secp256k1==0.13.2
+pytz==2018.7
