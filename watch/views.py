@@ -3,6 +3,7 @@ from upload.models import Video, SteemVideo, WhaleShareVideo, SmokeVideo
 from register.models import User
 import demjson
 from beem.comment import Comment
+from beem import Steem
 
 import json
 # Create your views here.
@@ -12,7 +13,7 @@ def get_votes(s, author, permlink):
 
     upvotes = 0
     downvotes = 0
-
+    
     for vote in acc.get_votes():
         if vote.rshares > 0:
             upvotes = upvotes + 1
@@ -21,7 +22,7 @@ def get_votes(s, author, permlink):
 
     return upvotes, downvotes
 
-def get_likes_dislikes(vid_id,user_details):
+def get_likes_dislikes(vid_id):
     total_likes = 0
     total_dislikes = 0
 
@@ -31,13 +32,12 @@ def get_likes_dislikes(vid_id,user_details):
         permalink = steem.permlink
         author = steem.author
 
-        s = Steem(keys=[user_details.steem], nodes=["https://api.steemit.com", "https://rpc.buildteam.io"])
+        s = Steem(nodes=["https://api.steemit.com", "https://rpc.buildteam.io"])
         s_upvote, s_downvote = get_votes(s, author, permalink)
         total_likes = total_likes + s_upvote
         total_dislikes = total_dislikes + s_downvote
     except Exception as e:
         print('Got Error: {}'.format(str(e)))
-
 
     try:
         whale = WhaleShareVideo.objects.get(video_id=vid_id)
@@ -45,7 +45,7 @@ def get_likes_dislikes(vid_id,user_details):
         permalink = whale.permlink
         author = whale.author
 
-        wls = Steem(node=["https://rpc.whaleshares.io", "ws://188.166.99.136:8090", "ws://rpc.kennybll.com:8090"], keys=[user_details.whaleshare])
+        wls = Steem(node=["https://rpc.whaleshares.io", "ws://188.166.99.136:8090", "ws://rpc.kennybll.com:8090"])
         w_upvote, w_downvote = get_votes(wls, author, permalink)
 
         total_likes = total_likes + w_upvote
@@ -53,14 +53,13 @@ def get_likes_dislikes(vid_id,user_details):
     except Exception as e: 
         print('Got Error: {}'.format(str(e)))
 
-
     try:
         smoke = SmokeVideo.objects.get(video_id=vid_id)
         smoke_url = smoke.post_url
         permalink = smoke.permlink
         author = smoke.author
 
-        smk = Steem(node=['https://rpc.smoke.io/'], keys=[user_details.smoke], custom_chains={"SMOKE": {
+        smk = Steem(node=['https://rpc.smoke.io/'], custom_chains={"SMOKE": {
             "chain_id": "1ce08345e61cd3bf91673a47fc507e7ed01550dab841fd9cdb0ab66ef576aaf0",
             "min_version": "0.0.0",
             "prefix": "SMK",
@@ -77,10 +76,13 @@ def get_likes_dislikes(vid_id,user_details):
     except Exception as e: 
         print('Got Error: {}'.format(str(e)))
 
+    print("Likes: {} Dislikes: {}".format(total_likes, total_dislikes))
+
     return total_likes, total_dislikes
 
 def index(request, video_hash, video_id):
     current = Video.objects.get(id=video_id)
+    total_likes, total_dislikes = get_likes_dislikes(current.id)
 
     hash = json.loads(current.video)
     resolution = [2160, 1440, 1080, 720, 480, 360, 240  , 144]
@@ -107,8 +109,6 @@ def index(request, video_hash, video_id):
         bestHash_Featured = []
         bestHash_Recomended = []
 
-        user_details = User.objects.get(id=current.user_id)
-
         for each_video in featured:
 
             pay = 0
@@ -118,7 +118,7 @@ def index(request, video_hash, video_id):
             whale_url = ""
             smoke_url = ""
 
-            total_likes, total_dislikes = get_likes_dislikes(each_video.vid_id, user_details)
+            
 
             for each_res in resolution:
                 if str(each_res) in each_video.video:
