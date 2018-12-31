@@ -107,8 +107,8 @@ def index(request):
                 request.session['hash'] = fileHash
                 return redirect('upload:info')
 
-            except:
-                print('Not uploaded, server error')
+            except Exception as e:
+                print('Not uploaded, server error: {}'.format(str(e)))
             
                 
         return render(request, 'upload/upload.html')

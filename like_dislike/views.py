@@ -4,6 +4,9 @@ from like_dislike.models import Activity
 from register.models import User
 
 # Create your views here.
+
+
+                
 def like(request):
     
     if request.method == 'GET':
