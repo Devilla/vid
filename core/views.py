@@ -3,6 +3,7 @@ from upload.models import Video, SteemVideo, WhaleShareVideo, SmokeVideo
 from register.models import User
 from django.http import JsonResponse
 from django.http import HttpResponse
+from threading import Thread
 
 import json
 import demjson
@@ -11,6 +12,9 @@ from datetime import datetime
 import pytz
 import requests
 import json
+from beem import Steem
+import schedule
+import time
 
 def get_payout(s, author, permline):
     try:
@@ -21,8 +25,136 @@ def get_payout(s, author, permline):
     
     return payout
 
-# Create your views here.
+s_no_auth = Steem(nodes=["https://api.steemit.com", "https://rpc.buildteam.io"])
+w_no_auth = Steem(node=["https://rpc.whaleshares.io", "ws://188.166.99.136:8090", "ws://rpc.kennybll.com:8090"])
+sm_no_auth = Steem(node=['https://rpc.smoke.io/'], custom_chains={"SMOKE": {
+                    "chain_id": "1ce08345e61cd3bf91673a47fc507e7ed01550dab841fd9cdb0ab66ef576aaf0",
+                    "min_version": "0.0.0",
+                    "prefix": "SMK",
+                    "chain_assets": [
+                        {"asset": "STEEM", "symbol": "SMOKE", "precision": 3, "id": 1},
+                        {"asset": "VESTS", "symbol": "VESTS", "precision": 6, "id": 2}
+                    ]
+                }})
+
+def update_prices():
+    '''
+    Gets the price for steem, smoke and whaleshares
+    '''
+
+    print("Updating price")
+    steem_price = 0
+    smoke_price = 0
+    whaleshare_price = 0
+
+    latest_price = AssetPrice.objects.all().order_by('-curr_time')[:1][0]
+    steem_price = latest_price.steem_price
+    smoke_price = latest_price.smoke_price
+    whaleshare_price = latest_price.whaleshare_price
+
+    try:
+        r=requests.get("https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=STEEM,USD", headers={"X-CMC_PRO_API_KEY":"030f8706-dc8a-442b-82bb-8824eecf4e6e"}, timeout=1)
+        res = json.loads(r.text)
+        p = float(res['data']['STEEM']['quote']['USD']['price'])
+
+        if p > 0:
+            steem_price = p
+    except:
+        pass
+
+    try:
+        r=requests.get("https://cryptofresh.com/api/asset/markets?asset=SMOKE", timeout=0.1)
+        res = json.loads(r.text)
+        p = float(res['USD']['price'])
+
+        if p > 0:
+            smoke_price = p
+    except:
+        pass
+
+    try:
+        r=requests.get("https://cryptofresh.com/api/asset/markets?asset=WHALESHARE")
+        res = json.loads(r.text)
+        p = float(res['USD']['price'])
+
+        if p > 0:
+            whaleshare_price = p
+    except:
+        pass
+
+    a = AssetPrice(steem_price=steem_price, smoke_price=smoke_price, whaleshare_price=whaleshare_price)
+    a.save()
+
+
+def update_payout(steem_price, smoke_price, whaleshare_price):
+    '''
+    Updates all payouts
+    '''
+    get_videos = Video.objects.all()
+    total_earning = 0.0
+
+    for all_videos in get_videos:
+            try:
+                single_val = SteemVideo.objects.get(video_id=all_videos.id)
+
+                permlink = single_val.permlink
+                author = single_val.author
+    
+                steem_payout = get_payout(s_no_auth, author, permlink) * steem_price
+                total_earning = total_earning + steem_payout
+
+                all_videos.steem = steem_payout
+
+                print("Updated")
+            except Exception as e: 
+                print('No Steem. Error is {}'.format(str(e)))
+
+            try:
+                single_val = SmokeVideo.objects.get(video_id=all_videos.id)
+
+                permlink = single_val.permlink
+                author = single_val.author
+    
+                smoke_payout = get_payout(sm_no_auth, author, permlink) * smoke_price
+                total_earning = total_earning + smoke_payout
+                
+                all_videos.smoke = smoke_payout
+
+                print("Updated")
+            except Exception as e: 
+                print('No Smoke. Error is {}'.format(str(e)))
+
+            try:
+                single_val = SmokeVideo.objects.get(video_id=all_videos.id)
+
+                permlink = single_val.permlink
+                author = single_val.author
+    
+                whale_payout = get_payout(w_no_auth, author, permlink) * whaleshare_price
+                total_earning = total_earning + whale_payout
+                
+                all_videos.whaleshares = whale_payout
+
+                print("Updated")
+            except Exception as e: 
+                print('No Whaleshares. Error is {}'.format(str(e)))
+
+            all_videos.total_earning = total_earning
+            all_videos.save()
+
+def keep_updating():
+    schedule.every(10).minutes.do(update_prices)
+
+    while True:
+        time.sleep(1)
+        schedule.run_pending()
+
+# Create your views here
 def index(request):
+
+    thread = Thread(target = keep_updating)
+    thread.start()
+
     if (len(AssetPrice.objects.all())) == 0:
         AssetPrice().save()
 
@@ -30,42 +162,8 @@ def index(request):
     steem_price = latest_price.steem_price
     smoke_price = latest_price.smoke_price
     whaleshare_price = latest_price.whaleshare_price
-    latest_date = latest_price.curr_time
-    substract = datetime.utcnow().replace(tzinfo=pytz.UTC) - latest_date
 
-    if int(substract.seconds/60) >= 180:
-        try:
-            r=requests.get("https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=STEEM,USD", headers={"X-CMC_PRO_API_KEY":"030f8706-dc8a-442b-82bb-8824eecf4e6e"}, timeout=1)
-            res = json.loads(r.text)
-            p = float(res['data']['STEEM']['quote']['USD']['price'])
-
-            if p > 0:
-                steem_price = p
-        except:
-            pass
-
-        try:
-            r=requests.get("https://cryptofresh.com/api/asset/markets?asset=SMOKE", timeout=0.1)
-            res = json.loads(r.text)
-            p = float(res['USD']['price'])
-
-            if p > 0:
-                smoke_price = p
-        except:
-            pass
-
-        try:
-            r=requests.get("https://cryptofresh.com/api/asset/markets?asset=WHALESHARE")
-            res = json.loads(r.text)
-            p = float(res['USD']['price'])
-
-            if p > 0:
-                whaleshare_price = p
-        except:
-            pass
-
-        a = AssetPrice(steem_price=steem_price, smoke_price=smoke_price, whaleshare_price=whaleshare_price)
-        a.save()
+    update_payout(steem_price, smoke_price, whaleshare_price)
 
     featured = Video.objects.all().order_by('-id')[:8]
     trending = Video.objects.all().order_by('-views')[:8]
@@ -77,27 +175,6 @@ def index(request):
     resolution = [2160, 1440, 1080, 720, 480, 360, 240  , 144]
 
     for each_video in featured:
-
-        pay = 0
-
-        try:
-            steem = SteemVideo.objects.filter(video_id=each_video.id)
-            permlink = steem[0].permlink
-            author = steem[0].author
-            #update the earning every hour too
-        except: 
-            print('No Steem')
-
-        try:
-            smoke = SmokeVideo.objects.filter(video_id=each_video.id)
-        except: 
-            print('No Smoke')
-
-        try:
-            whale = WhaleShareVideo.objects.filter(video_id=each_video.id)
-        except: 
-            print('No Whaleshare')
-
         for each_res in resolution:
             if str(each_res) in each_video.video:
                 hash = demjson.decode(each_video.video)
@@ -105,24 +182,6 @@ def index(request):
                 break   
 
     for each_videot in trending:
-        
-        pay = 0
-        # try:
-        #     steem = SteemVideo.objects.filter(video_id=each_videot.id)
-        #     steem_pay = SteemManager.get_payout(steem.post)
-        #     pay = pay + steem_pay
-        # except: 
-        #     print('No Steem')
-
-        # try:
-        #     whale = WhaleShareVideo.objects.filter(video_id=each_videot.id)
-        #     whale_pay = WhalesharesManger.get_payout(whale.post)
-        #     pay = pay + whale_pay
-        # except: 
-        #     print('No Whale')
-
-        each_videot.money = pay
-
         for each_res in resolution:
             if str(each_res) in each_videot.video:
                 hasht = demjson.decode(each_videot.video)
@@ -135,7 +194,6 @@ def index(request):
             each_channel.count = video
         except:
             channels.remove(each_channel)
-            # each_channel.count = 0
     
 
     return render(request, "core/home.html", {'instance': featured, 'trend': trending, 
