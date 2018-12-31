@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponse
-from upload.models import Video
+from upload.models import Video, SteemVideo, WhaleShareVideo, SmokeVideo
 from register.models import User
 import demjson
 
@@ -38,19 +38,41 @@ def index(request, video_hash, video_id):
         for each_video in featured:
 
             pay = 0
+
+
+            steem_url = ""
+            whale_url = ""
+            smoke_url = ""
+
             try:
                 steem = SteemVideo.objects.filter(video_id=each_video.id)
-                steem_pay = SteemManager.get_payout(steem.post)
-                pay = pay + steem_pay
-            except: 
-                print('No Steem')
+                steem_url = steem.values('post_url')[0]['post_url']
+                # steem_pay = SteemManager.get_payout(steem.post)
+                # pay = pay + steem_pay
+            except Exception as e: 
+                print('Got Error: {}'.format(str(e)))
 
             try:
                 whale = WhaleShareVideo.objects.filter(video_id=each_video.id)
-                whale_pay = WhalesharesManger.get_payout(whale.post)
-                pay = pay + whale_pay
+                whale_url = whale.values('post_url')[0]['post_url']
+                # whale_url = whale.post_url
+                # print(whale_url)
+                # whale_pay = WhalesharesManger.get_payout(whale.post)
+                # pay = pay + whale_pay
             except: 
-                print('No Whale')
+                print('Got Error: {}'.format(str(e)))
+
+            try:
+                smoke = SmokeVideo.objects.filter(video_id=each_video.id)
+                smoke_url = smoke.values('post_url')[0]['post_url']
+                # whale_url = whale.post_url
+                # print(whale_url)
+                # whale_pay = WhalesharesManger.get_payout(whale.post)
+                # pay = pay + whale_pay
+            except: 
+                print('Got Error: {}'.format(str(e)))
+
+            print("{} {} {}".format(steem_url, smoke_url, whale_url))
 
             each_video.money = pay
 
@@ -64,19 +86,19 @@ def index(request, video_hash, video_id):
             
             pay = 0
             
-            try:
-                steem = SteemVideo.objects.filter(video_id=each_video.id)
-                steem_pay = SteemManager.get_payout(steem.post)
-                pay = pay + steem_pay
-            except: 
-                print('No Steem')
+            # try:
+            #     steem = SteemVideo.objects.filter(video_id=each_video.id)
+            #     steem_pay = SteemManager.get_payout(steem.post)
+            #     pay = pay + steem_pay
+            # except: 
+            #     print('No Steem')
 
-            try:
-                whale = WhaleShareVideo.objects.filter(video_id=each_video.id)
-                whale_pay = WhalesharesManger.get_payout(whale.post)
-                pay = pay + whale_pay
-            except: 
-                print('No Whale')
+            # try:
+            #     whale = WhaleShareVideo.objects.filter(video_id=each_video.id)
+            #     whale_pay = WhalesharesManger.get_payout(whale.post)
+            #     pay = pay + whale_pay
+            # except: 
+            #     print('No Whale')
 
             each_video.money = pay
             
@@ -97,5 +119,5 @@ def index(request, video_hash, video_id):
                     
         return render(request, "watch/base.html", {'video_hash': hash, 'cont': video_content,
         'latest': featured, 'recommended': recommend, 'current': current,
-        'user': user, 'count': count })
+        'user': user, 'count': count, 'steem_url': steem_url, 'smoke_url': smoke_url, 'whale_url': whale_url })
     

@@ -89,11 +89,14 @@ def videoLike(request):
             form = videoLikeForm(request.POST)
             if form.is_valid():
                 videoid = form.cleaned_data.get("likevideoID")
+                print("video id")
+                print(videoid)
+
+                
             user_id = request.user.id
             print ("user id")
             print(user_id)
-            print("video id")
-            print(videoid)
+            
 
 
             return redirect('/')

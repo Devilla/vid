@@ -159,7 +159,8 @@ def info(request):
                 print(name)
                 if request.user.steem != 'false' and request.user.steem_name != 'false':
                     try:
-                        s_res = post_steem(request.user.steem_name, request.user.steem, tags, name, body)
+                        print("Steem: {} Steem Name: {}".format(request.user.steem, request.user.steem_name))
+                        s_res = post_steem(request.user.steem, request.user.steem_name, tags, name, body)
                         save_data(s_res, 'steem', current.id, tags)
                     except Exception as e:
                         print(str(e))
@@ -169,7 +170,8 @@ def info(request):
 
                 if request.user.whaleshare != 'false' and request.user.whaleshare_name != 'false':
                     try:
-                        wls_res = post_whaleshare(request.user.whaleshare_name, request.user.whaleshare, tags, name, body)
+                        print("Whale: {} Whale Name: {}".format(request.user.whaleshare, request.user.whaleshare_name))
+                        wls_res = post_whaleshare(request.user.whaleshare, request.user.whaleshare_name, tags, name, body)
                         save_data(wls_res, 'whale', current.id, tags)
                     except Exception as e:
                         print(str(e))
@@ -179,7 +181,8 @@ def info(request):
 
                 if request.user.smoke != 'false' and request.user.smoke_name != 'false':
                     try:
-                        smk_res = post_smoke(request.user.smoke_name, request.user.smoke, tags, name, body)
+                        print("Smoke: {} Smoke Name: {}".format(request.user.smoke, request.user.smoke_name))
+                        smk_res = post_smoke(request.user.smoke, request.user.smoke_name, tags, name, body)
                         save_data(smk_res, 'smoke', current.id, tags)
                     except Exception as e:
                         print(str(e))
@@ -197,7 +200,7 @@ def info(request):
         return redirect('/login')
 
 def get_body(title, thumbnail, url):
-    body = '<html><p><img src=\"'+ thumbnail + '\" width=\"480\" height=\"360\"/></p> <p><a href=\"'+ url+'\">'+ title+'</a></p></html>'
+    body = '<html><p><img src="{}" width="480" height="360"/></p> <p><a href="{}">{}</a></p></html>'.format(thumbnail, url, title)
     print(body)
     return body
 
@@ -243,9 +246,8 @@ def save_data(data, platform, id, tags):
     if platform == 'smoke':
         post_url = "https://smoke.io/{}/@{}/{}".format(tag, author, permlink)
         print(id)
-        smoke.save()
         smoke = SmokeVideo(video_id=int(id), permlink=permlink, author=author, tags=tags, post_url=post_url)
-        
+        smoke.save()
 
     if platform == 'whale':
         post_url = "https://whaleshares.io/{}/@{}/{}".format(tag, author, permlink)
