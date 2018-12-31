@@ -1,7 +1,7 @@
 {% load staticfiles %}
 
 <div class="sv-video">
-    <video id="player" controls data-setup='{{ current.id }}'  poster='{% static "images/single-video.png" %}' style="width:100%;height:100%;">
+    <video id="player" controls data-setup='{{ current.id }}'  poster='{% static "images/single-video.png" %}' style="width:100%;height:60%;">
         
         {% for quality, hash in video_hash.items %}
             <source src='http://gateway.ipfs.io/ipfs/{{ hash }}' type='video/mp4' size='{{ quality }}' />
@@ -40,21 +40,22 @@
             {{ current.views }} views
         </div>
         <div class="sv-views-stats">
-            <div  class="col-md-3">
+            <div  class="col-md-5">
                 <form id="videolikeform" method="POST">{% csrf_token %}
-                    <input type="hidden" value="{{ i.id }}" id="vidID">
+                    <input type="hidden" value="{{ current.id }}" id="vidID">
                     <button style="margin:0; padding  :0 !important; color:white; background:transparent; border:none;" type="submit"><b>
-
-                        <i class="fas fa-thumbs-up"></i></b>
+                        <i class="fas fa-thumbs-up"></i></b> <span class="" id="totalLikes">{{ current.thumbsUp }}</span>
                     </button>
+                    
                 </form>
             </div>
-            <div  class="col-md-3">
+            <div  class="col-md-5">
                 <form id="videodislikeform" method="POST">{% csrf_token %}
-                    <input type="hidden" value="{{ i.id }}" id="vidID">
+                    <input type="hidden" value="{{ current.id }}" id="vidID">
                     <button style="margin:0; padding  :0 !important; color:white; background:transparent; border:none;" type="submit"><b>
-                        <i class="fas fa-thumbs-down"></i></b>
+                        <i class="fas fa-thumbs-down"></i></b> <span class="" id="totalDisLikes">{{ current.thumbsDown }}</span>
                     </button>
+                    
                 </form>
                
             </div>
