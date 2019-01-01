@@ -2,6 +2,7 @@ from django.shortcuts import render, HttpResponse
 from upload.models import Video, SteemVideo, WhaleShareVideo, SmokeVideo
 from register.models import User
 import demjson
+from like_dislike.models import Activity
 
 import json
 # Create your views here.
@@ -116,8 +117,20 @@ def index(request, video_hash, video_id):
         for quality, this_hash in hash.items():
             video_content = video_content + '{\n\t src: \'https://gateway.ipfs.io/ipfs/' + this_hash + '\',\n\t type: \'video/mp4\',\n\t size: ' + quality + ',\n},\n' 
         
-                    
+        chkLike, chkDislike = likedordisliked (request, request.user.id, video_id)
+
         return render(request, "watch/base.html", {'video_hash': hash, 'cont': video_content,
         'latest': featured, 'recommended': recommend, 'current': current,
-        'user': user, 'count': count, 'steem_url': steem_url, 'smoke_url': smoke_url, 'whale_url': whale_url})
+        'user': user, 'count': count, 'steem_url': steem_url, 'smoke_url': smoke_url, 'whale_url': whale_url, 'chkLike': chkLike, 'chkDislike':chkDislike})
     
+
+def likedordisliked (request, user_id, video_id):
+    if request.user.is_authenticated:
+            likeDislike = Activity.objects.filter(user_id=user_id, video_id = video_id).exists()
+            if likeDislike == True:
+                checkLikeDislike = Activity.objects.get(user_id=user_id, video_id = video_id)
+                chkLike = checkLikeDislike.thumbsUp
+                chkDislike = checkLikeDislike.thumbsDown
+                return chkLike, chkDislike
+            else:
+                return False ,False
