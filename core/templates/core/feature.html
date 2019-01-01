@@ -50,24 +50,7 @@
                     <div class="v-views">
                         
                         <div  style="float:left">{{ i.views }} <span class="v-percent"></span><span class="fa fa-dollar"></span> {{ i.total_earning }} </span></div>
-                        <div  style="float:right">
-                            <form id="videolikeform" method="POST">{% csrf_token %}
-                                <input type="hidden" value="{{ i.id }}" id="vidID">
-                                <button style="margin:0; padding  :0 !important; color:white; background:transparent; border:none;" type="submit"><b>
-            
-                                    <i class="fas fa-thumbs-up"></i></b>
-                                </button>
-                            </form>&nbsp;
-                            
-                            <form id="videodislikeform" method="POST">{% csrf_token %}
-                                <input type="hidden" value="{{ i.id }}" id="vidID">
-                                <button style="margin:0; padding  :0 !important; color:white; background:transparent; border:none;" type="submit"><b>
-                        <i class="fas fa-thumbs-down"></i></b>
-                                </button>
-                            </form>
-                            <span> 759</span>
-                           
-                        </div>
+
                        
                     </div>
                 </div>
