@@ -98,8 +98,12 @@
                             'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
                             },
                      success: function(data){
-                         alert('liked');
-                         document.getElementById('totalLikes').innerHTML = data.totalLike;
+                        if (data.alreadyLiked == false){
+                            $("#totalLikes").text(data.totalLike);
+                            $("#totalDisLikes").text(data.totalDislike);
+                            $('#tu').css('color','#ea2c5a');
+                            $('#td').css('color','#ffffff');
+                        }
                      }
                 });
                 return false; //<---- move it here
@@ -118,7 +122,12 @@
                             'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
                             },
                      success: function(data){
-                        $("#totalDisLikes").text(data.totalDisLike);
+                        if (data.alreadyDisliked == false){
+                            $("#totalDisLikes").text(data.totalDisLike);
+                            $("#totalLikes").text(data.totalLike);
+                            $('#td').css('color','#ea2c5a');
+                            $('#tu').css('color','#ffffff');
+                        }
                      }
                 });
                 return false; //<---- move it here

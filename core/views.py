@@ -1,5 +1,6 @@
 from django.shortcuts import render,redirect 
 from upload.models import Video, SteemVideo, WhaleShareVideo, SmokeVideo
+from like_dislike.models import Activity
 from register.models import User
 from django.http import JsonResponse
 from django.http import HttpResponse
@@ -215,48 +216,76 @@ def videoLike(request):
         if request.user.is_authenticated == True:
             videoid = request.POST.get("likevideoID")
             user_id = request.user.id
-            
             user_details = User.objects.get(id=user_id)
+
+            alreadyLiked = False
             try:
-                steem_details = SteemVideo.objects.get(video_id=videoid)
-                s = Steem(keys=[user_details.steem], nodes=["https://api.steemit.com", "https://rpc.buildteam.io"])
-                upvote(s, steem_details.author, steem_details.permlink)
+                likeActivity = Activity.objects.filter(user_id=user_id, video_id = videoid).exists()
+                if likeActivity == False:
+                    addLike = Activity()
+                    addLike.thumbsUp = True
+                    addLike.thumbsDown = False
+                    addLike.user_id = user_id
+                    addLike.video_id = videoid
+                    addLike.save()
+                elif likeActivity == True:
+                    addLike = Activity.objects.get(user_id=user_id, video_id = videoid)
+                    if addLike.thumbsUp == False and addLike.thumbsDown == True:
+                        addLike.thumbsUp = True
+                        addLike.thumbsDown = False
+                        addLike.save()
+                    else:
+                        alreadyLiked = True
             except:
                 pass
 
-            try:
-                whale_details = WhaleShareVideo.objects.get(video_id=videoid)
-                wls = Steem(node=["https://rpc.whaleshares.io", "ws://188.166.99.136:8090", "ws://rpc.kennybll.com:8090"], keys=[user_details.whaleshare])
-                upvote(wls, whale_details.author, whale_details.permlink)
-            except:
-                pass
+            videoDetails = Video.objects.get(id=videoid)
+            totalLike = videoDetails.thumbsUp
+            totalDislike = videoDetails.thumbsDown
+            if alreadyLiked == False:
+                
+                try:
+                    steem_details = SteemVideo.objects.get(video_id=videoid)
+                    s = Steem(keys=[user_details.steem], nodes=["https://api.steemit.com", "https://rpc.buildteam.io"])
+                    upvote(s, steem_details.author, steem_details.permlink)
+                except:
+                    pass
 
-            try:
-                smoke_details = SmokeVideo.objects.get(video_id=videoid)
+                try:
+                    whale_details = WhaleShareVideo.objects.get(video_id=videoid)
+                    wls = Steem(node=["https://rpc.whaleshares.io", "ws://188.166.99.136:8090", "ws://rpc.kennybll.com:8090"], keys=[user_details.whaleshare])
+                    upvote(wls, whale_details.author, whale_details.permlink)
+                except:
+                    pass
 
-                smk = Steem(node=['https://rpc.smoke.io/'], keys=[user_details.smoke], custom_chains={"SMOKE": {
-                        "chain_id": "1ce08345e61cd3bf91673a47fc507e7ed01550dab841fd9cdb0ab66ef576aaf0",
-                        "min_version": "0.0.0",
-                        "prefix": "SMK",
-                        "chain_assets": [
-                            {"asset": "STEEM", "symbol": "SMOKE", "precision": 3, "id": 1},
-                            {"asset": "VESTS", "symbol": "VESTS", "precision": 6, "id": 2}
-                        ]
-                    }})
+                try:
+                    smoke_details = SmokeVideo.objects.get(video_id=videoid)
 
-                upvote(wls, smoke_details.author, smoke_details.permlink)
-            except:
-                pass
-            
-            totalLike = 0
-            try:
-                videoDetails = Video.objects.get(id=videoid)
-                totalLike = videoDetails.thumbsUp + 1
-                videoDetails.thumbsUp = totalLike
-                videoDetails.save()
-            except:
-                pass
-            data = {'totalLike': totalLike}
+                    smk = Steem(node=['https://rpc.smoke.io/'], keys=[user_details.smoke], custom_chains={"SMOKE": {
+                            "chain_id": "1ce08345e61cd3bf91673a47fc507e7ed01550dab841fd9cdb0ab66ef576aaf0",
+                            "min_version": "0.0.0",
+                            "prefix": "SMK",
+                            "chain_assets": [
+                                {"asset": "STEEM", "symbol": "SMOKE", "precision": 3, "id": 1},
+                                {"asset": "VESTS", "symbol": "VESTS", "precision": 6, "id": 2}
+                            ]
+                        }})
+
+                    upvote(wls, smoke_details.author, smoke_details.permlink)
+                except:
+                    pass
+                
+                try:
+                    totalLike = videoDetails.thumbsUp + 1
+                    videoDetails.thumbsUp = totalLike
+                    if totalDislike != 0:
+                        totalDislike = totalDislike-1
+                        videoDetails.thumbsDown =  totalDislike
+                    videoDetails.save()
+                except:
+                    pass
+
+            data = {'totalLike': totalLike,'totalDislike':totalDislike, 'alreadyLiked':alreadyLiked}
             return JsonResponse(data)
 
             
@@ -267,49 +296,75 @@ def videoDisLike(request):
         if request.user.is_authenticated == True:
             videoid = request.POST.get("dislikevideoID")
             user_id = request.user.id
-            
-            user_details = User.objects.get(id=user_id)
-            
+
+            alreadyDisliked = False
             try:
-                steem_details = SteemVideo.objects.get(video_id=videoid)
-                s = Steem(keys=[user_details.steem], nodes=["https://api.steemit.com", "https://rpc.buildteam.io"])
-                downvote(s, steem_details.author, steem_details.permlink)
-            except:
-                pass
-
-            try:
-                whale_details = WhaleShareVideo.objects.get(video_id=videoid)
-                wls = Steem(node=["https://rpc.whaleshares.io", "ws://188.166.99.136:8090", "ws://rpc.kennybll.com:8090"], keys=[user_details.whaleshare])
-                downvote(wls, whale_details.author, whale_details.permlink)
-            except:
-                pass
-
-            try:
-                smoke_details = SmokeVideo.objects.get(video_id=videoid)
-
-                smk = Steem(node=['https://rpc.smoke.io/'], keys=[user_details.smoke], custom_chains={"SMOKE": {
-                        "chain_id": "1ce08345e61cd3bf91673a47fc507e7ed01550dab841fd9cdb0ab66ef576aaf0",
-                        "min_version": "0.0.0",
-                        "prefix": "SMK",
-                        "chain_assets": [
-                            {"asset": "STEEM", "symbol": "SMOKE", "precision": 3, "id": 1},
-                            {"asset": "VESTS", "symbol": "VESTS", "precision": 6, "id": 2}
-                        ]
-                    }})
-
-                downvote(wls, smoke_details.author, smoke_details.permlink)
+                dislikeActivity = Activity.objects.filter(user_id=user_id, video_id = videoid).exists()
+                if dislikeActivity == False:
+                    addDislike = Activity()
+                    addDislike.thumbsUp = False
+                    addDislike.thumbsDown = True
+                    addDislike.user_id = user_id
+                    addDislike.video_id = videoid
+                    addDislike.save()
+                elif dislikeActivity == True:
+                    addDislike = Activity.objects.get(user_id=user_id, video_id = videoid)
+                    if addDislike.thumbsUp == True and addDislike.thumbsDown == False:
+                        addDislike.thumbsUp = False
+                        addDislike.thumbsDown = True
+                        addDislike.save()
+                    else:
+                        alreadyDisliked = True
             except:
                 pass
             
-            totalDisLike = 0
-            try:
-                videoDetails = Video.objects.get(id=videoid)
-                totalDisLike = videoDetails.thumbsDown + 1
-                videoDetails.thumbsDown = totalDisLike
-                videoDetails.save()
-            except:
-                pass
+            videoDetails = Video.objects.get(id=videoid)
+            totalDisLike = videoDetails.thumbsDown
+            totalLike = videoDetails.thumbsUp
+            if alreadyDisliked == False:
+                user_details = User.objects.get(id=user_id)
+                
+                try:
+                    steem_details = SteemVideo.objects.get(video_id=videoid)
+                    s = Steem(keys=[user_details.steem], nodes=["https://api.steemit.com", "https://rpc.buildteam.io"])
+                    downvote(s, steem_details.author, steem_details.permlink)
+                except:
+                    pass
+
+                try:
+                    whale_details = WhaleShareVideo.objects.get(video_id=videoid)
+                    wls = Steem(node=["https://rpc.whaleshares.io", "ws://188.166.99.136:8090", "ws://rpc.kennybll.com:8090"], keys=[user_details.whaleshare])
+                    downvote(wls, whale_details.author, whale_details.permlink)
+                except:
+                    pass
+
+                try:
+                    smoke_details = SmokeVideo.objects.get(video_id=videoid)
+
+                    smk = Steem(node=['https://rpc.smoke.io/'], keys=[user_details.smoke], custom_chains={"SMOKE": {
+                            "chain_id": "1ce08345e61cd3bf91673a47fc507e7ed01550dab841fd9cdb0ab66ef576aaf0",
+                            "min_version": "0.0.0",
+                            "prefix": "SMK",
+                            "chain_assets": [
+                                {"asset": "STEEM", "symbol": "SMOKE", "precision": 3, "id": 1},
+                                {"asset": "VESTS", "symbol": "VESTS", "precision": 6, "id": 2}
+                            ]
+                        }})
+
+                    downvote(wls, smoke_details.author, smoke_details.permlink)
+                except:
+                    pass
+                
+                try:
+                    totalDisLike = videoDetails.thumbsDown + 1
+                    videoDetails.thumbsDown = totalDisLike
+                    if totalLike != 0:
+                        totalLike = totalLike-1
+                        videoDetails.thumbsUp =  totalLike
+                    videoDetails.save()
+                except:
+                    pass
             
-            data = {'totalDisLike': totalDisLike}
+            data = {'totalDisLike': totalDisLike,'totalLike':totalLike,  'alreadyDisliked':alreadyDisliked}
             return JsonResponse(data)
         
