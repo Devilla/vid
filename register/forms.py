@@ -1,6 +1,7 @@
 from django import forms
 from register.models import User
 from django.contrib.auth.forms import UserCreationForm
+from beem import Steem
 
 class UserRegistrationForm(UserCreationForm):
 
@@ -127,7 +128,17 @@ class SteemBlockChainForm(forms.Form):
 
     def clean_steem(self):
         steem = self.cleaned_data['steem']
-        return steem
+        
+        try:
+            s = Steem(keys=[steem], nodes=["https://api.steemit.com", "https://rpc.buildteam.io"])
+            if s.is_connected():
+                return steem
+            else:
+                raise forms.ValidationError('This is an invalid key')
+        except:
+             raise forms.ValidationError('This is an invalid key')
+
+        
 
     def save(self, data, id):
         u = User.objects.get(id = id)

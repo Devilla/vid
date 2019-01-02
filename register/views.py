@@ -23,6 +23,8 @@ def index(request):
                     login(request, user)
 
                     return redirect('register:update')
+        
+            return render(request, "register/signup.html", {'form': form})
 
     if request.user.is_authenticated:
         return redirect('/')
@@ -34,7 +36,8 @@ def steem_blockchain(request):
     
     if request.user.is_authenticated == True:
         current = User.objects.get(id=request.user.id)
-
+        formBl = SteemBlockChainForm() 
+          
         if request.method == 'POST':
             formb = SteemBlockChainForm(request.POST)
 
@@ -49,16 +52,18 @@ def steem_blockchain(request):
                     print('Database error')    
             else:
                 print('The submitted form is not valid')
-
-        formBl = SteemBlockChainForm()          
-        return render(request, "register/steem_blockchain.html", {'form':formBl})
             
+        
+            return render(request, "register/steem_blockchain.html", {'form':formb})
+        else:
+            formBl = SteemBlockChainForm()          
+            return render(request, "register/steem_blockchain.html", {'form':formBl})
+
     else:
         form = UserRegistrationForm()
         return render(request, "register/signup.html", {'form': form})
 
 def smoke_blockchain(request):
-    
     if request.user.is_authenticated == True:
         current = User.objects.get(id=request.user.id)
 
@@ -73,19 +78,19 @@ def smoke_blockchain(request):
                 if formb.save(data, current.id):
                     return redirect('register:whale_blockchain')
                 else:
-                    print('Database error')    
+                    print('Database error') 
             else:
                 print('The submitted form is not valid')
-
-        formBl = SmokeBlockChainForm()          
-        return render(request, "register/smoke_blockchain.html", {'form':formBl})
             
+            return render(request, "register/smoke_blockchain.html", {'form':formb})
+        else:
+            formBl = SmokeBlockChainForm()          
+            return render(request, "register/smoke_blockchain.html", {'form':formBl})
     else:
         form = UserRegistrationForm()
         return render(request, "register/signup.html", {'form': form})
 
-def whale_blockchain(request):
-    
+def whale_blockchain(request):    
     if request.user.is_authenticated == True:
         current = User.objects.get(id=request.user.id)
 
@@ -100,13 +105,14 @@ def whale_blockchain(request):
                 if formb.save(data, current.id):
                     return redirect('/')
                 else:
-                    print('Database error')    
+                    print('Database error') 
             else:
                 print('The submitted form is not valid')
-
-        formBl = WhaleBlockChainForm()          
-        return render(request, "register/whale_blockchain.html", {'form':formBl})
-            
+        
+            return render(request, "register/whale_blockchain.html", {'form':formb})
+        else:
+            formBl = WhaleBlockChainForm()          
+            return render(request, "register/whale_blockchain.html", {'form':formBl})
     else:
         form = UserRegistrationForm()
         return render(request, "register/signup.html", {'form': form})
