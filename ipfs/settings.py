@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'like_dislike',
     'advertisement',
     'single_channel',
+    'channel',
 ]
 
 MIDDLEWARE = [

@@ -1,0 +1,255 @@
+{% extends 'core/base.html' %}
+{% load staticfiles %}
+
+{% block title %} Upload {% endblock title %}
+
+{% block navigation %}
+
+{% include "core/navbar.html" %}
+{% include "core/goto.html" %}
+
+{% endblock navigation %}
+
+{% block content %}
+<div class="content-wrapper">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+
+                <div class="channel-details">
+                    <div class="row">
+                        <div class="col-lg-10 col-lg-offset-2 col-xs-12">
+                            <div class="c-details">
+                                <div class="c-name">
+                                    NaughtyDog
+                                    <div class="c-checkbox">
+                                        <img src="src='https://gateway.ipfs.io/ipfs/{{ request.user.profile_picture }}'" alt="">
+                                    </div>
+                                </div>
+                                <div class="c-nav">
+                                    <ul class="list-inline">
+                                        <li><a href="#">Videos</a></li>
+                                        <li><a href="#">Playlist</a></li>
+                                        <li class="hidden-xs"><a href="#">Channels</a></li>
+                                        <li class="hidden-xs"><a href="#">Discussion</a></li>
+                                        <li class="hidden-xs"><a href="#">About</a></li>
+                                        <li class="hidden-xs"><a href="#">Donate</a></li>
+                                    </ul>
+                                    <div class="btn-group dropup pull-right">
+                                        <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Discussion <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="#"><i class="cv cvicon-cv-relevant"></i> Relevant</a></li>
+                                            <li><a href="#"><i class="cv cvicon-cv-calender"></i> Recent</a></li>
+                                            <li><a href="#"><i class="cv cvicon-cv-view-stats"></i> Viewed</a></li>
+                                            <li><a href="#"><i class="cv cvicon-cv-star"></i> Top Rated</a></li>
+                                            <li><a href="#"><i class="cv cvicon-cv-watch-later"></i> Longest</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="c-sub pull-right hidden-xs">
+                                    <div class="c-sub-wrap">
+                                        <div class="c-f">
+                                            Follow
+                                        </div>
+                                        <div class="c-s">
+                                            22,548,145
+                                        </div>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+<!-- Featured Posts -->
+        
+                <div class="content-block">
+                    <div class="cb-header">
+                        <div class="row">
+                            <div class="col-lg-8 col-xs-6">
+                                <div class="btn-group bg-clean">
+                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Uploads <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="#"><i class="cv cvicon-cv-relevant"></i> Relevant</a></li>
+                                        <li><a href="#"><i class="cv cvicon-cv-calender"></i> Recent</a></li>
+                                        <li><a href="#"><i class="cv cvicon-cv-view-stats"></i> Viewed</a></li>
+                                        <li><a href="#"><i class="cv cvicon-cv-star"></i> Top Rated</a></li>
+                                        <li><a href="#"><i class="cv cvicon-cv-watch-later"></i> Longest</a></li>
+                                    </ul>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="col-lg-4 col-xs-6">
+                                <div class="h-grid pull-right hidden-xs">
+                                    <a href="#"><i class="cv cvicon-cv-grid-view"></i></a>
+                                    <a href="#"><i class="cv cvicon-cv-list-view"></i></a>
+                                </div>
+                                <div class="btn-group pull-right bg-clean">
+                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Date Added ( Newest ) <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="#"><i class="cv cvicon-cv-relevant"></i> Relevant</a></li>
+                                        <li><a href="#"><i class="cv cvicon-cv-calender"></i> Recent</a></li>
+                                        <li><a href="#"><i class="cv cvicon-cv-view-stats"></i> Viewed</a></li>
+                                        <li><a href="#"><i class="cv cvicon-cv-star"></i> Top Rated</a></li>
+                                        <li><a href="#"><i class="cv cvicon-cv-watch-later"></i> Longest</a></li>
+                                    </ul>
+                                </div>
+
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+                </div>
+                    <div class="cb-content videolist">
+                        <div class="row">
+                            
+                            <div class=" col-lg-3 col-sm-12 videoitem" style="padding-top:40px;">
+                                <!--TOpic of the post-->
+                                <div class="col-lg-3 col-sm-12">
+                                <!-- So this is the shitty guy who post it here-->
+
+                                <div class="avatar pull-left" style="padding:0 0 12px 0; display:inline-block">
+                                <img src="images/ava5.png" alt="avatar">
+                                <span class="status"></span>
+                                </div>
+                                <div class=left-top-pad>
+                                <strong ><a href="#" style="color:#9f9f9f">John Doe</a></strong><br>
+                                <span style="color:#9f9f9f">12 minutes ago</span>
+                                </div>
+
+
+                                </div>
+                                <div class="col-lg-3 col-sm-12">
+                                <div class="b-video last-row">
+                                <div class="v-img">
+                                <a href="single-video-tabs.html"><img src="images/post-full.png" alt=""></a>
+                                <div class="time">9:47</div>
+                                </div>
+
+                                <!--Post Name: Something Cool and Interesting-->
+                                <!--Additional Information about the post-->
+                                <div class="v-views"> <span class="glyphicon glyphicon-thumbs-up"></span><strong style="padding-left: 10px;">2,729,347 Likes .</strong>
+                                <i class="material-icons" style="float:right">&#xe0c9;</i>
+
+                                </div>
+                                </div>
+                                </div>
+                                <p style="padding:12px 12px 12px 12px;color:white">Comments</p>
+                                <form class="col-lg-3 col-sm-8">
+                                    <input class="comment-input" type="text" name="comment" placeholder="Write a comment.." >
+
+                                </form>
+                            </div>
+                            <div class=" col-lg-3 col-sm-12 videoitem" style="padding-top:40px;">
+                                <!--TOpic of the post-->
+                                <div class="col-lg-3 col-sm-12">
+                                <!-- So this is the shitty guy who post it here-->
+
+                                <div class="avatar pull-left" style="padding:0 0 12px 0; display:inline-block">
+                                <img src="images/ava5.png" alt="avatar">
+                                <span class="status"></span>
+                                </div>
+                                <div class=left-top-pad>
+                                <strong ><a href="#" style="color:#9f9f9f">John Doe</a></strong><br>
+                                <span style="color:#9f9f9f">12 minutes ago</span>
+                                </div>
+
+
+                                </div>
+                                <div class="col-lg-3 col-sm-12">
+                                <div class="b-video last-row">
+                                <div class="v-img">
+                                <a href="single-video-tabs.html"><img src="images/post-full.png" alt=""></a>
+                                <div class="time">9:47</div>
+                                </div>
+
+                                <!--Post Name: Something Cool and Interesting-->
+                                <!--Additional Information about the post-->
+                                <div class="v-views"> <span class="glyphicon glyphicon-thumbs-up"></span><strong style="padding-left: 10px;">2,729,347 Likes .</strong>
+                                <i class="material-icons" style="float:right">&#xe0c9;</i>
+
+                                </div>
+                                </div>
+                                </div>
+                                <p style="padding:12px 12px 12px 12px;color:white">Comments</p>
+                                <form class="col-lg-3 col-sm-8">
+                                    <input class="comment-input" type="text" name="comment" placeholder="Write a comment.." >
+
+                                </form>
+                            </div>
+                            <div class=" col-lg-3 col-sm-12 videoitem" style="padding-top:40px;">
+                                <!--TOpic of the post-->
+                                <div class="col-lg-3 col-sm-12">
+                                <!-- So this is the shitty guy who post it here-->
+
+                                <div class="avatar pull-left" style="padding:0 0 12px 0; display:inline-block">
+                                <img src="images/ava5.png" alt="avatar">
+                                <span class="status"></span>
+                                </div>
+                                <div class=left-top-pad>
+                                <strong ><a href="#" style="color:#9f9f9f">John Doe</a></strong><br>
+                                <span style="color:#9f9f9f">12 minutes ago</span>
+                                </div>
+
+
+                                </div>
+                                <div class="col-lg-3 col-sm-12">
+                                <div class="b-video last-row">
+                                <div class="v-img">
+                                <a href="single-video-tabs.html"><img src="images/post-full.png" alt=""></a>
+                                <div class="time">9:47</div>
+                                </div>
+
+                                <!--Post Name: Something Cool and Interesting-->
+                                <!--Additional Information about the post-->
+                                <div class="v-views"> <span class="glyphicon glyphicon-thumbs-up"></span><strong style="padding-left: 10px;">2,729,347 Likes .</strong>
+                                <i class="material-icons" style="float:right">&#xe0c9;</i>
+
+                                </div>
+                                </div>
+                                </div>
+                                <p style="padding:12px 12px 12px 12px;color:white">Comments</p>
+                                <form class="col-lg-3 col-sm-8">
+                                    <input class="comment-input" type="text" name="comment" placeholder="Write a comment.." >
+
+                                </form>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- /Featured Posts -->
+
+                <!-- pagination -->
+                <div class="v-pagination">
+                    <ul class="list-inline">
+                        <li class="v-pagination-prev"><a href="#"><i class="cv cvicon-cv-previous"></i></a></li>
+                        <li class="v-pagination-first"><a href="#">1</a></li>
+                        <li><a href="#">2</a></li>
+                        <li><a href="#">3</a></li>
+                        <li><a href="#">4</a></li>
+                        <li><a href="#">5</a></li>
+                        <li><a href="#">...</a></li>
+                        <li><a href="#">10</a></li>
+                        <li class="v-pagination-skin visible-xs"><a href="#">Skip 5 Pages</a></li>
+                        <li class="v-pagination-next"><a href="#"><i class="cv cvicon-cv-next"></i></a></li>
+                    </ul>
+                </div>
+                <!-- /pagination -->
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% include "core/footer.html" %}

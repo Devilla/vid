@@ -59,7 +59,9 @@
                                     <span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu">
+                                    <li><a href="channel/mychannel/">My Profile</a></li>
                                     <li><a href="{% url 'logout:logout' %}">Logout</a></li>
+                                    
                                     <li>{{ request.user.email }}</li>
                                 </ul>
                             </div>
@@ -92,8 +94,6 @@
                 event.preventDefault();
                 $('#tu').css('color','#ea2c5a');
                 $('#td').css('color','#ffffff');
-                $('#totalLikes').html(parseInt($('.totalLikes').html(), 10)+1)
-                $('#totalDisLikes').html(parseInt($('.totalDisLikes').html(), 10)-1)
                 $.ajax({
                      method:"POST",
                      url:"/like/",
@@ -119,8 +119,6 @@
                 event.preventDefault();
                 $('#td').css('color','#ea2c5a');
                 $('#tu').css('color','#ffffff');
-                $('#totalLikes').html(parseInt($('.totalLikes').html(), 10)-1)
-                $('#totalDisLikes').html(parseInt($('.totalDisLikes').html(), 10)+1)
                 $.ajax({
                      method:"POST",
                      url:"/dislike/",
