@@ -98,7 +98,11 @@ def index(request, video_hash, video_id):
         for quality, this_hash in hash.items():
             video_content = video_content + '{\n\t src: \'https://gateway.ipfs.io/ipfs/' + this_hash + '\',\n\t type: \'video/mp4\',\n\t size: ' + quality + ',\n},\n' 
         
-        chkLike, chkDislike = likedordisliked (request, request.user.id, video_id)
+        try:
+            chkLike, chkDislike = likedordisliked (request, request.user.id, video_id)
+        except:
+            chkLike = False
+            chkDislike = False
 
         return render(request, "watch/base.html", {'video_hash': hash, 'cont': video_content,
         'latest': featured, 'recommended': recommend, 'current': current,
