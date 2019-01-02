@@ -28,7 +28,6 @@ urlpatterns = [
     path('logout/', include('logout.urls')),
     path('activity/', include('like_dislike.urls')),
     path('adadmin/', include('advertisement.urls')),
-    path('channel/', include('channel.urls')),
-    path('single_channel/', include('single_channel.urls')),
+    path('channel/', include('single_channel.urls')),
     path('like_dislike/', include('like_dislike.urls')),
 ]

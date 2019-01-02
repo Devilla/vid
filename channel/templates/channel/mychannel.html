@@ -11,6 +11,27 @@
 {% endblock navigation %}
 
 {% block content %}
+<!-- channel -->
+<div class="container-fluid">
+    <div class="row">
+        <div class="img">
+            <div class="img-image">
+                <img  src='https://gateway.ipfs.io/ipfs/{{ request.user.channel_picture }}' alt="" class="c-banner">
+            </div>
+            <div class="c-avatar">
+                <a href="#"><img  src='https://gateway.ipfs.io/ipfs/{{ request.user.profile_picture }}' alt=""></a>
+            </div>
+            <a href="#" class="add"><i class="cv cvicon-cv-plus"></i></a>
+            <div class="c-social hidden-xs">
+                Social
+                <a href="#" class="fb"><i class="fab fa-facebook-square"></i></a>
+                <a href="#" class="tw"><i class="fa fa-twitter"></i></a>
+                <a href="#" class="gp"><i class="fa fa-google-plus"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ///channel -->
 <div class="content-wrapper">
     <div class="container">
         <div class="row">
@@ -23,7 +44,7 @@
                                 <div class="c-name">
                                     NaughtyDog
                                     <div class="c-checkbox">
-                                        <img src="src='https://gateway.ipfs.io/ipfs/{{ request.user.profile_picture }}'" alt="">
+                                        <img src='https://gateway.ipfs.io/ipfs/{{ request.user.profile_picture }}' alt="">
                                     </div>
                                 </div>
                                 <div class="c-nav">
