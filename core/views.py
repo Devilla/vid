@@ -116,87 +116,84 @@ def update_likes_payout(steem_price, smoke_price, whaleshare_price):
     '''
     Updates all payouts and likes
     '''
-
-    total_likes = 0
-    total_dislikes = 0
-
-    print(Video)
     get_videos = Video.objects.all()
-    total_earning = 0.0
-
-    # global Video, SteemVideo, SmokeVideo, WhaleShareVideo
-
+    
     for all_videos in get_videos:
-            try:
-                single_val = SteemVideo.objects.get(video_id=all_videos.id)
+        total_likes = 0
+        total_dislikes = 0
 
-                permlink = single_val.permlink
-                author = single_val.author
+        total_earning = 0.0
 
-                try:
-                    s_upvote, s_downvote = get_votes(s_no_auth, author, permlink)
-                    total_likes = total_likes + s_upvote
-                    total_dislikes = total_dislikes + s_downvote
-                except Exception as e:
-                    print("Steem upvote error: {}".format(str(e)))
-    
-                steem_payout = get_payout(s_no_auth, author, permlink) * steem_price
-                total_earning = total_earning + steem_payout
+        try:
+            single_val = SteemVideo.objects.get(video_id=all_videos.id)
 
-                all_videos.steem = steem_payout
-
-                print("Updated")
-            except Exception as e: 
-                print('No Steem. Error is {}'.format(str(e)))
+            permlink = single_val.permlink
+            author = single_val.author
 
             try:
-                single_val = SmokeVideo.objects.get(video_id=all_videos.id)
+                s_upvote, s_downvote = get_votes(s_no_auth, author, permlink)
+                total_likes = total_likes + s_upvote
+                total_dislikes = total_dislikes + s_downvote
+            except Exception as e:
+                print("Steem upvote error: {}".format(str(e)))
 
-                permlink = single_val.permlink
-                author = single_val.author
+            steem_payout = get_payout(s_no_auth, author, permlink) * steem_price
+            total_earning = total_earning + steem_payout
 
-                try:
-                    sm_upvote, sm_downvote = get_votes(sm_no_auth, author, permlink)
-                    total_likes = total_likes + sm_upvote
-                    total_dislikes = total_dislikes + sm_downvote
-                except Exception as e:
-                    print("Smoke upvote error: {}".format(str(e)))
-    
-                smoke_payout = get_payout(sm_no_auth, author, permlink) * smoke_price
-                total_earning = total_earning + smoke_payout
-                
-                all_videos.smoke = smoke_payout
+            all_videos.steem = steem_payout
 
-                print("Updated")
-            except Exception as e: 
-                print('No Smoke. Error is {}'.format(str(e)))
+            print("Updated")
+        except Exception as e: 
+            print('No Steem. Error is {}'.format(str(e)))
+
+        try:
+            single_val = SmokeVideo.objects.get(video_id=all_videos.id)
+
+            permlink = single_val.permlink
+            author = single_val.author
 
             try:
-                single_val = WhaleShareVideo.objects.get(video_id=all_videos.id)
+                sm_upvote, sm_downvote = get_votes(sm_no_auth, author, permlink)
+                total_likes = total_likes + sm_upvote
+                total_dislikes = total_dislikes + sm_downvote
+            except Exception as e:
+                print("Smoke upvote error: {}".format(str(e)))
 
-                permlink = single_val.permlink
-                author = single_val.author
+            smoke_payout = get_payout(sm_no_auth, author, permlink) * smoke_price
+            total_earning = total_earning + smoke_payout
+            
+            all_videos.smoke = smoke_payout
 
-                try:
-                    w_upvote, w_downvote = get_votes(w_no_auth, author, permlink)
-                    total_likes = total_likes + w_upvote
-                    total_dislikes = total_dislikes + w_downvote
-                except Exception as e:
-                    print("Whaleshare upvote error: {}".format(str(e)))
-    
-                whale_payout = get_payout(w_no_auth, author, permlink) * whaleshare_price
-                total_earning = total_earning + whale_payout
-                
-                all_videos.whaleshares = whale_payout
+            print("Updated")
+        except Exception as e: 
+            print('No Smoke. Error is {}'.format(str(e)))
 
-                print("Updated")
-            except Exception as e: 
-                print('No Whaleshares. Error is {}'.format(str(e)))
+        try:
+            single_val = WhaleShareVideo.objects.get(video_id=all_videos.id)
 
-            all_videos.total_earning = total_earning
-            all_videos.thumbsUp =  total_likes
-            all_videos.thumbsDown = total_dislikes
-            all_videos.save()
+            permlink = single_val.permlink
+            author = single_val.author
+
+            try:
+                w_upvote, w_downvote = get_votes(w_no_auth, author, permlink)
+                total_likes = total_likes + w_upvote
+                total_dislikes = total_dislikes + w_downvote
+            except Exception as e:
+                print("Whaleshare upvote error: {}".format(str(e)))
+
+            whale_payout = get_payout(w_no_auth, author, permlink) * whaleshare_price
+            total_earning = total_earning + whale_payout
+            
+            all_videos.whaleshares = whale_payout
+
+            print("Updated")
+        except Exception as e: 
+            print('No Whaleshares. Error is {}'.format(str(e)))
+
+        all_videos.total_earning = total_earning
+        all_videos.thumbsUp =  total_likes
+        all_videos.thumbsDown = total_dislikes
+        all_videos.save()
 
 
 
