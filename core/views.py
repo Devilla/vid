@@ -210,6 +210,40 @@ def index(request):
 
     return render(request, "core/home.html", {'instance': featured, 'trend': trending, 'subscription': channels})
 
+def perform_likes_dislike(account_details, type=1):
+    '''
+    type(int):
+    1 to like, other for dislike
+    '''
+    while True:
+        for key in account_details:
+
+            try:
+                if key == 'steem':
+                    s = Steem(keys=[account_details[key]], nodes=["https://api.steemit.com", "https://rpc.buildteam.io"])
+                elif key == 'smoke':
+                    s = Steem(keys=[account_details[key]], node=['https://rpc.smoke.io/'], custom_chains={"SMOKE": {
+                        "chain_id": "1ce08345e61cd3bf91673a47fc507e7ed01550dab841fd9cdb0ab66ef576aaf0",
+                        "min_version": "0.0.0",
+                        "prefix": "SMK",
+                        "chain_assets": [
+                            {"asset": "STEEM", "symbol": "SMOKE", "precision": 3, "id": 1},
+                            {"asset": "VESTS", "symbol": "VESTS", "precision": 6, "id": 2}
+                        ]
+                    }})
+                else:
+                    s = Steem(keys=[account_details[key]], node=["ws://188.166.99.136:8090", "ws://rpc.kennybll.com:8090","https://rpc.whaleshares.io"])
+
+                if type==1:
+                    upvote(s, account_details[key]['author'], account_details[key]['permlink'])
+                else:
+                    downvote(s, account_details[key]['author'], account_details[key]['permlink'])
+            except Exception as e:
+                print("Error while like/dislike: {}".format(str(e)))
+                time.sleep(1)
+            
+            break
+
 def videoLike(request):
     if request.method == "POST":
         if request.user.is_authenticated == True:
@@ -241,45 +275,42 @@ def videoLike(request):
             videoDetails = Video.objects.get(id=videoid)
             totalLike = videoDetails.thumbsUp
             totalDislike = videoDetails.thumbsDown
-            if alreadyLiked == False:
-                
-                try:
+
+            account_details = {}
+
+            if ('steem' in user_details):
+                if len(user_details.steem) >=2:
+                    account_details['steem'] = {}
                     steem_details = SteemVideo.objects.get(video_id=videoid)
-                    s = Steem(keys=[user_details.steem], nodes=["https://api.steemit.com", "https://rpc.buildteam.io"])
-                    upvote(s, steem_details.author, steem_details.permlink)
-                except:
-                    pass
+                    account_details['steem']['key'] = user_details.steem
+                    account_details['steem']['author'] = steem_details.author
+                    account_details['steem']['permlink'] = steem_details.permlink
 
-                try:
-                    whale_details = WhaleShareVideo.objects.get(video_id=videoid)
-                    wls = Steem(node=["https://rpc.whaleshares.io", "ws://188.166.99.136:8090", "ws://rpc.kennybll.com:8090"], keys=[user_details.whaleshare])
-                    upvote(wls, whale_details.author, whale_details.permlink)
-                except:
-                    pass
-
-                try:
+            if ('smoke' in user_details):
+                if len(user_details.smoke) >=2:
+                    account_details['smoke'] = {}
                     smoke_details = SmokeVideo.objects.get(video_id=videoid)
+                    account_details['smoke']['key'] = user_details.smoke
+                    account_details['smoke']['author'] = smoke_details.author
+                    account_details['smoke']['permlink'] = smoke_details.permlink
 
-                    smk = Steem(node=['https://rpc.smoke.io/'], keys=[user_details.smoke], custom_chains={"SMOKE": {
-                            "chain_id": "1ce08345e61cd3bf91673a47fc507e7ed01550dab841fd9cdb0ab66ef576aaf0",
-                            "min_version": "0.0.0",
-                            "prefix": "SMK",
-                            "chain_assets": [
-                                {"asset": "STEEM", "symbol": "SMOKE", "precision": 3, "id": 1},
-                                {"asset": "VESTS", "symbol": "VESTS", "precision": 6, "id": 2}
-                            ]
-                        }})
+            if ('whaleshare' in user_details):
+                if len(user_details.whaleshare) >=2:
+                    account_details['whaleshare'] = {}
+                    whaleshare_details = WhaleShareVideo.objects.get(video_id=videoid)
+                    account_details['whaleshare']['key'] = whaleshare_details.smoke
+                    account_details['whaleshare']['author'] = whaleshare_details.author
+                    account_details['whaleshare']['permlink'] = whaleshare_details.permlink
 
-                    upvote(wls, smoke_details.author, smoke_details.permlink)
-                except:
-                    pass
-                
+            print(account_details)
+
+            if alreadyLiked == False:  
+                like_thread = Thread(target=perform_likes_dislike, args=(account_details, 1,))    
+                like_thread.start()
+
                 try:
-                    totalLike = videoDetails.thumbsUp + 1
+                    totalLike = videoDetails.thumbsUp + len(account_details)
                     videoDetails.thumbsUp = totalLike
-                    if totalDislike != 0:
-                        totalDislike = totalDislike-1
-                        videoDetails.thumbsDown =  totalDislike
                     videoDetails.save()
                 except:
                     pass
@@ -320,46 +351,44 @@ def videoDisLike(request):
             videoDetails = Video.objects.get(id=videoid)
             totalDisLike = videoDetails.thumbsDown
             totalLike = videoDetails.thumbsUp
-            if alreadyDisliked == False:
-                user_details = User.objects.get(id=user_id)
+
+            user_details = User.objects.get(id=user_id)
                 
-                try:
+            account_details = {}
+
+            if ('steem' in user_details):
+                if len(user_details.steem) >=2:
+                    account_details['steem'] = {}
                     steem_details = SteemVideo.objects.get(video_id=videoid)
-                    s = Steem(keys=[user_details.steem], nodes=["https://api.steemit.com", "https://rpc.buildteam.io"])
-                    downvote(s, steem_details.author, steem_details.permlink)
-                except:
-                    pass
+                    account_details['steem']['key'] = user_details.steem
+                    account_details['steem']['author'] = steem_details.author
+                    account_details['steem']['permlink'] = steem_details.permlink
 
-                try:
-                    whale_details = WhaleShareVideo.objects.get(video_id=videoid)
-                    wls = Steem(node=["https://rpc.whaleshares.io", "ws://188.166.99.136:8090", "ws://rpc.kennybll.com:8090"], keys=[user_details.whaleshare])
-                    downvote(wls, whale_details.author, whale_details.permlink)
-                except:
-                    pass
-
-                try:
+            if ('smoke' in user_details):
+                if len(user_details.smoke) >=2:
+                    account_details['smoke'] = {}
                     smoke_details = SmokeVideo.objects.get(video_id=videoid)
+                    account_details['smoke']['key'] = user_details.smoke
+                    account_details['smoke']['author'] = smoke_details.author
+                    account_details['smoke']['permlink'] = smoke_details.permlink
 
-                    smk = Steem(node=['https://rpc.smoke.io/'], keys=[user_details.smoke], custom_chains={"SMOKE": {
-                            "chain_id": "1ce08345e61cd3bf91673a47fc507e7ed01550dab841fd9cdb0ab66ef576aaf0",
-                            "min_version": "0.0.0",
-                            "prefix": "SMK",
-                            "chain_assets": [
-                                {"asset": "STEEM", "symbol": "SMOKE", "precision": 3, "id": 1},
-                                {"asset": "VESTS", "symbol": "VESTS", "precision": 6, "id": 2}
-                            ]
-                        }})
+            if ('whaleshare' in user_details):
+                if len(user_details.whaleshare) >=2:
+                    account_details['whaleshare'] = {}
+                    whaleshare_details = WhaleShareVideo.objects.get(video_id=videoid)
+                    account_details['whaleshare']['key'] = whaleshare_details.smoke
+                    account_details['whaleshare']['author'] = whaleshare_details.author
+                    account_details['whaleshare']['permlink'] = whaleshare_details.permlink
 
-                    downvote(wls, smoke_details.author, smoke_details.permlink)
-                except:
-                    pass
+            print(account_details)
+
+            if alreadyDisliked == False:
+                dislike_thread = Thread(target=perform_likes_dislike, args=(account_details, -1,))    
+                dislike_thread.start()
                 
                 try:
-                    totalDisLike = videoDetails.thumbsDown + 1
+                    totalDisLike = videoDetails.thumbsDown + len(account_details)
                     videoDetails.thumbsDown = totalDisLike
-                    if totalLike != 0:
-                        totalLike = totalLike-1
-                        videoDetails.thumbsUp =  totalLike
                     videoDetails.save()
                 except:
                     pass
