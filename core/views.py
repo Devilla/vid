@@ -261,28 +261,28 @@ def perform_likes_dislike(account_details, type=1):
     for key in account_details:
         
         try:
-            if key == 'steem':
-                s = Steem(keys=[account_details[key]['key']], nodes=["https://api.steemit.com", "https://rpc.buildteam.io"])
-            elif key == 'smoke':
-                s = Steem(keys=[account_details[key]['key']], node=['https://rpc.smoke.io/'], custom_chains={"SMOKE": {
-                    "chain_id": "1ce08345e61cd3bf91673a47fc507e7ed01550dab841fd9cdb0ab66ef576aaf0",
-                    "min_version": "0.0.0",
-                    "prefix": "SMK",
-                    "chain_assets": [
-                        {"asset": "STEEM", "symbol": "SMOKE", "precision": 3, "id": 1},
-                        {"asset": "VESTS", "symbol": "VESTS", "precision": 6, "id": 2}
-                    ]
-                }})
-            else:
-                s = Steem(keys=[account_details[key]['key']], node=["ws://188.166.99.136:8090", "ws://rpc.kennybll.com:8090","https://rpc.whaleshares.io"])
+            if 'key' in account_details[key]:
+                if key == 'steem':
+                    s = Steem(keys=[account_details[key]['key']], nodes=["https://api.steemit.com", "https://rpc.buildteam.io"])
+                elif key == 'smoke':
+                    s = Steem(keys=[account_details[key]['key']], node=['https://rpc.smoke.io/'], custom_chains={"SMOKE": {
+                        "chain_id": "1ce08345e61cd3bf91673a47fc507e7ed01550dab841fd9cdb0ab66ef576aaf0",
+                        "min_version": "0.0.0",
+                        "prefix": "SMK",
+                        "chain_assets": [
+                            {"asset": "STEEM", "symbol": "SMOKE", "precision": 3, "id": 1},
+                            {"asset": "VESTS", "symbol": "VESTS", "precision": 6, "id": 2}
+                        ]
+                    }})
+                else:
+                    s = Steem(keys=[account_details[key]['key']], node=["ws://188.166.99.136:8090", "ws://rpc.kennybll.com:8090","https://rpc.whaleshares.io"])
 
-            if type==1:
-                upvote(s, account_details[key]['author'], account_details[key]['permlink'])
-            else:
-                downvote(s, account_details[key]['author'], account_details[key]['permlink'])
-        except Exception as e:
-            print("Error while like/dislike: {}".format())
-            time.sleep(1)
+                if type==1:
+                    upvote(s, account_details[key]['author'], account_details[key]['permlink'])
+                else:
+                    downvote(s, account_details[key]['author'], account_details[key]['permlink'])
+            except Exception as e:
+                print("Error while like/dislike: {}".format(str(e)))
 
 def videoLike(request):
     if request.method == "POST":
