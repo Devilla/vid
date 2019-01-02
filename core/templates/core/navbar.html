@@ -1,5 +1,10 @@
 {% load staticfiles %}
-
+<style>
+.thumbnailImage{
+    height:200px !important;
+    width:500px !important;
+}
+</style>
 <div class="container-fluid">
     <div class="row">
         <div class="btn-color-toggle">
@@ -60,7 +65,7 @@
                                     <span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu">
-                                    <li><a href="channel/mychannel/">My Profile</a></li>
+                                    <li><a href="{% url 'single_channel:mychannel' request.user.id  %}">My Profile</a></li>
                                     <li><a href="{% url 'logout:logout' %}">Logout</a></li>
                                     
                                     <li>{{ request.user.email }}</li>

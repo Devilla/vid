@@ -5,9 +5,8 @@ import json
 import demjson
 # Create your views here.
 
-def mychannel(request):
-        u_id = request.user.id
-        video = Video.objects.filter(user_id=u_id)
+def mychannel(request, pk):
+        video = Video.objects.filter(user_id=pk)
 
         resolution = [2160, 1440, 1080, 720, 480, 360, 240  , 144]
 
@@ -18,6 +17,6 @@ def mychannel(request):
                                 each_videot.bestHash_Trending = hasht[str(each_res)]
                                 break  
 
-        ch = User.objects.get(id=u_id)
-
+        ch = User.objects.get(id=pk)
+        print(ch)
         return render(request, 'single_channel/detail.html', {'video': video, 'channel':ch.channel_name })  
