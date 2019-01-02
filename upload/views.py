@@ -24,9 +24,13 @@ def index(request):
                 # Get the uploaded file and rename it to make it unique and save locally
                 file = request.FILES['video'].read()
                 current_name = ''.join(random.choice('0123456789ABCDEF') for i in range(16)) + "." + str(request.FILES['video']).split('.')[-1]
-                
-                path1 = os.path.join(os.path.join(settings.BASE_DIR, "static"), 'videos')
-                open(os.path.join(path1, current_name), 'wb').write(file)
+                videos_directory = os.path.join(os.path.join(settings.BASE_DIR, "static"), 'videos')
+
+
+                if not(os.path.isdir(videos_directory)):
+                    os.makedirs(videos_directory)
+
+                open(os.path.join(videos_directory, current_name), 'wb').write(file)
                 
                 # Connect to the ipfs through ipfsapi and add the uploaded file to the ipfs
                 api = ipfsapi.connect('127.0.0.1', 5001)
@@ -34,20 +38,21 @@ def index(request):
                 
 
                 # Define the path to save the thumbnail of the uploaded video
-                path = os.path.join(os.path.join(settings.BASE_DIR, "static"), 'images')                              
+                path = os.path.join(os.path.join(settings.BASE_DIR, "static"), 'images') 
+
                 thumbnail_name = '%s%s' % (''.join(random.choice('0123456789ABCDEF') for i in range(16)) +'video_Pranish', 'thumb.jpg')
                 thumbnail_path = os.path.join(path, thumbnail_name)
                 
 
                 # Generate the thumnail of the video using ffmpeg tool
-                runCommand = 'ffmpeg -ss 00:0:01 -i '+ os.path.join(path1, current_name) +' -frames:v 1 '+ thumbnail_path
+                runCommand = 'ffmpeg -ss 00:0:01 -i '+ os.path.join(videos_directory, current_name) +' -frames:v 1 '+ thumbnail_path
                 # ffMpegPAth = "C:\\ffmpeg\\bin"
                 # runCommand = ffMpegPAth + "\\" + runCommand
                 subprocess.check_call(runCommand.split(" ")) #we have a command line injection vulnerability here
 
 
                 # Get the duration of the video file
-                durationCommand = 'ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 ' + os.path.join(path1, current_name)
+                durationCommand = 'ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 ' + os.path.join(videos_directory, current_name)
    
                 # durationCommand = ffMpegPAth + "\\" + durationCommand
                 time = ''
@@ -65,7 +70,7 @@ def index(request):
 
 
                 # Find the resolution of the uploaded video
-                vid = cv2.VideoCapture(os.path.join(path1, current_name))
+                vid = cv2.VideoCapture(os.path.join(videos_directory, current_name))
                 height = int(vid.get(cv2.CAP_PROP_FRAME_HEIGHT))
                 width = vid.get(cv2.CAP_PROP_FRAME_WIDTH)
                 vid.release()
@@ -80,10 +85,10 @@ def index(request):
                 for small_res in resolution:
                     if small_res < height :
                         # Change the video to different quality
-                        res = 'ffmpeg -v -8 -i ' + os.path.join(path1, current_name) + ' -vf scale=-2:' + str(small_res) + ' -preset slow -c:v libx264 -strict experimental -c:a aac -crf 24 -maxrate 500k -bufsize 500k -r 25 -f mp4 ' + os.path.join(path1, str(small_res)+current_name)
+                        res = 'ffmpeg -v -8 -i ' + os.path.join(videos_directory, current_name) + ' -vf scale=-2:' + str(small_res) + ' -preset slow -c:v libx264 -strict experimental -c:a aac -crf 24 -maxrate 500k -bufsize 500k -r 25 -f mp4 ' + os.path.join(videos_directory, str(small_res)+current_name)
                         subprocess.check_call(res.split(" "))
-                        newHash = api.add(os.path.join(path1, str(small_res)+current_name), trickle=True)
-                        os.remove(os.path.join(path1, str(small_res)+current_name))
+                        newHash = api.add(os.path.join(videos_directory, str(small_res)+current_name), trickle=True)
+                        os.remove(os.path.join(videos_directory, str(small_res)+current_name))
                         
                         if small_res == 144:
                             hash = hash + "\"" + str(small_res) + "\": \"" + newHash['Hash'] + "\"}"
@@ -98,7 +103,7 @@ def index(request):
                 
                 try:
                     os.remove(thumbnail_path)
-                    os.remove(os.path.join(path1, current_name))
+                    os.remove(os.path.join(videos_directory, current_name))
                 except:
                      
                     print('Delete Error')

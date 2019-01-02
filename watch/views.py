@@ -27,6 +27,10 @@ def get_likes_dislikes(vid_id):
     total_likes = 0
     total_dislikes = 0
 
+    steem_url = ""
+    whale_url = ""
+    smoke_url = ""
+
     try:
         steem = SteemVideo.objects.get(video_id=vid_id)
         steem_url = steem.post_url
@@ -79,11 +83,11 @@ def get_likes_dislikes(vid_id):
 
     print("Likes: {} Dislikes: {}".format(total_likes, total_dislikes))
 
-    return total_likes, total_dislikes
+    return steem_url, smoke_url, whale_url, total_likes, total_dislikes
 
 def index(request, video_hash, video_id):
     current = Video.objects.get(id=video_id)
-    total_likes, total_dislikes = get_likes_dislikes(current.id)
+    steem_url, smoke_url, whale_url, total_likes, total_dislikes = get_likes_dislikes(current.id)
 
     current = Video.objects.get(id=video_id)
     hash = json.loads(current.video)
@@ -112,16 +116,6 @@ def index(request, video_hash, video_id):
         bestHash_Recomended = []
 
         for each_video in featured:
-
-            pay = 0
-
-
-            steem_url = ""
-            whale_url = ""
-            smoke_url = ""
-
-            
-
             for each_res in resolution:
                 if str(each_res) in each_video.video:
                     hash1 = demjson.decode(each_video.video)
@@ -129,25 +123,6 @@ def index(request, video_hash, video_id):
                     break   
 
         for each_video in recommend:
-            
-            pay = 0
-            
-            # try:
-            #     steem = SteemVideo.objects.filter(video_id=each_video.id)
-            #     steem_pay = SteemManager.get_payout(steem.post)
-            #     pay = pay + steem_pay
-            # except: 
-            #     print('No Steem')
-
-            # try:
-            #     whale = WhaleShareVideo.objects.filter(video_id=each_video.id)
-            #     whale_pay = WhalesharesManger.get_payout(whale.post)
-            #     pay = pay + whale_pay
-            # except: 
-            #     print('No Whale')
-
-            each_video.money = pay
-            
             for each_res in resolution:
                 if str(each_res) in each_video.video:
                     hash1 = demjson.decode(each_video.video)
