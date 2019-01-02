@@ -343,26 +343,35 @@ def videoLike(request):
 
             account_details = {}
 
-            if len(user_details.steem) >=6:
-                account_details['steem'] = {}
-                steem_details = SteemVideo.objects.get(video_id=videoid)
-                account_details['steem']['key'] = user_details.steem
-                account_details['steem']['author'] = steem_details.author
-                account_details['steem']['permlink'] = steem_details.permlink
+            try:
+                if len(user_details.steem) >=6:
+                    account_details['steem'] = {}
+                    steem_details = SteemVideo.objects.get(video_id=videoid)
+                    account_details['steem']['key'] = user_details.steem
+                    account_details['steem']['author'] = steem_details.author
+                    account_details['steem']['permlink'] = steem_details.permlink
+            except:
+                pass
 
-            if len(user_details.smoke) >=6:
-                account_details['smoke'] = {}
-                smoke_details = SmokeVideo.objects.get(video_id=videoid)
-                account_details['smoke']['key'] = user_details.smoke
-                account_details['smoke']['author'] = smoke_details.author
-                account_details['smoke']['permlink'] = smoke_details.permlink
+            try:
+                if len(user_details.smoke) >=6:
+                    account_details['smoke'] = {}
+                    smoke_details = SmokeVideo.objects.get(video_id=videoid)
+                    account_details['smoke']['key'] = user_details.smoke
+                    account_details['smoke']['author'] = smoke_details.author
+                    account_details['smoke']['permlink'] = smoke_details.permlink
+            except:
+                pass
 
-            if len(user_details.whaleshare) >=6:
-                account_details['whaleshare'] = {}
-                whaleshare_details = WhaleShareVideo.objects.get(video_id=videoid)
-                account_details['whaleshare']['key'] = user_details.whaleshare
-                account_details['whaleshare']['author'] = whaleshare_details.author
-                account_details['whaleshare']['permlink'] = whaleshare_details.permlink
+            try:
+                if len(user_details.whaleshare) >=6:
+                    account_details['whaleshare'] = {}
+                    whaleshare_details = WhaleShareVideo.objects.get(video_id=videoid)
+                    account_details['whaleshare']['key'] = user_details.whaleshare
+                    account_details['whaleshare']['author'] = whaleshare_details.author
+                    account_details['whaleshare']['permlink'] = whaleshare_details.permlink
+            except:
+                pass
 
             print(account_details)
 
@@ -449,26 +458,36 @@ def videoDisLike(request):
                 
             account_details = {}
 
-            if len(user_details.steem) >= 6:
-                account_details['steem'] = {}
-                steem_details = SteemVideo.objects.get(video_id=videoid)
-                account_details['steem']['key'] = user_details.steem
-                account_details['steem']['author'] = steem_details.author
-                account_details['steem']['permlink'] = steem_details.permlink
+            try:
+                if len(user_details.steem) >= 6:
+                    account_details['steem'] = {}
+                    steem_details = SteemVideo.objects.get(video_id=videoid)
+                    account_details['steem']['key'] = user_details.steem
+                    account_details['steem']['author'] = steem_details.author
+                    account_details['steem']['permlink'] = steem_details.permlink
+            except:
+                pass
 
-            if len(user_details.smoke) >= 6:
-                account_details['smoke'] = {}
-                smoke_details = SmokeVideo.objects.get(video_id=videoid)
-                account_details['smoke']['key'] = user_details.smoke
-                account_details['smoke']['author'] = smoke_details.author
-                account_details['smoke']['permlink'] = smoke_details.permlink
+            try:
+                if len(user_details.smoke) >= 6:
+                    account_details['smoke'] = {}
+                    smoke_details = SmokeVideo.objects.get(video_id=videoid)
+                    account_details['smoke']['key'] = user_details.smoke
+                    account_details['smoke']['author'] = smoke_details.author
+                    account_details['smoke']['permlink'] = smoke_details.permlink
+            except:
+                pass
 
-            if len(user_details.whaleshare) >= 6:
-                account_details['whaleshare'] = {}
-                whaleshare_details = WhaleShareVideo.objects.get(video_id=videoid)
-                account_details['whaleshare']['key'] = user_details.whaleshare
-                account_details['whaleshare']['author'] = whaleshare_details.author
-                account_details['whaleshare']['permlink'] = whaleshare_details.permlink
+            
+            try:
+                if len(user_details.whaleshare) >= 6:
+                    account_details['whaleshare'] = {}
+                    whaleshare_details = WhaleShareVideo.objects.get(video_id=videoid)
+                    account_details['whaleshare']['key'] = user_details.whaleshare
+                    account_details['whaleshare']['author'] = whaleshare_details.author
+                    account_details['whaleshare']['permlink'] = whaleshare_details.permlink
+            except:
+                pass
 
             print(account_details)
 
