@@ -37,6 +37,7 @@ def downvote(s, author, permlink):
     acc = Comment("@{}/{}".format(author, permlink), steem_instance=s)
     votes = acc.downvote(voter=author)
 
+
 s_no_auth = Steem(nodes=["https://api.steemit.com", "https://rpc.buildteam.io"])
 w_no_auth = Steem(node=["https://rpc.whaleshares.io", "ws://188.166.99.136:8090", "ws://rpc.kennybll.com:8090"])
 sm_no_auth = Steem(node=['https://rpc.smoke.io/'], custom_chains={"SMOKE": {
@@ -97,13 +98,33 @@ def update_prices():
     a = AssetPrice(steem_price=steem_price, smoke_price=smoke_price, whaleshare_price=whaleshare_price)
     a.save()
 
+def get_votes(s, author, permlink):
+    acc = Comment("@{}/{}".format(author, permlink), steem_instance=s)
 
-def update_payout(steem_price, smoke_price, whaleshare_price):
+    upvotes = 0
+    downvotes = 0
+    
+    for vote in acc.get_votes():
+        if vote.rshares > 0:
+            upvotes = upvotes + 1
+        else:
+            downvotes = downvotes + 1
+
+    return upvotes, downvotes
+
+def update_likes_payout(steem_price, smoke_price, whaleshare_price):
     '''
-    Updates all payouts
+    Updates all payouts and likes
     '''
+
+    total_likes = 0
+    total_dislikes = 0
+
+    print(Video)
     get_videos = Video.objects.all()
     total_earning = 0.0
+
+    # global Video, SteemVideo, SmokeVideo, WhaleShareVideo
 
     for all_videos in get_videos:
             try:
@@ -111,6 +132,13 @@ def update_payout(steem_price, smoke_price, whaleshare_price):
 
                 permlink = single_val.permlink
                 author = single_val.author
+
+                try:
+                    s_upvote, s_downvote = get_votes(s_no_auth, author, permlink)
+                    total_likes = total_likes + s_upvote
+                    total_dislikes = total_dislikes + s_downvote
+                except Exception as e:
+                    print("Steem upvote error: {}".format(str(e)))
     
                 steem_payout = get_payout(s_no_auth, author, permlink) * steem_price
                 total_earning = total_earning + steem_payout
@@ -126,6 +154,13 @@ def update_payout(steem_price, smoke_price, whaleshare_price):
 
                 permlink = single_val.permlink
                 author = single_val.author
+
+                try:
+                    sm_upvote, sm_downvote = get_votes(sm_no_auth, author, permlink)
+                    total_likes = total_likes + sm_upvote
+                    total_dislikes = total_dislikes + sm_downvote
+                except Exception as e:
+                    print("Smoke upvote error: {}".format(str(e)))
     
                 smoke_payout = get_payout(sm_no_auth, author, permlink) * smoke_price
                 total_earning = total_earning + smoke_payout
@@ -137,10 +172,17 @@ def update_payout(steem_price, smoke_price, whaleshare_price):
                 print('No Smoke. Error is {}'.format(str(e)))
 
             try:
-                single_val = SmokeVideo.objects.get(video_id=all_videos.id)
+                single_val = WhaleShareVideo.objects.get(video_id=all_videos.id)
 
                 permlink = single_val.permlink
                 author = single_val.author
+
+                try:
+                    w_upvote, w_downvote = get_votes(w_no_auth, author, permlink)
+                    total_likes = total_likes + w_upvote
+                    total_dislikes = total_dislikes + w_downvote
+                except Exception as e:
+                    print("Whaleshare upvote error: {}".format(str(e)))
     
                 whale_payout = get_payout(w_no_auth, author, permlink) * whaleshare_price
                 total_earning = total_earning + whale_payout
@@ -152,7 +194,11 @@ def update_payout(steem_price, smoke_price, whaleshare_price):
                 print('No Whaleshares. Error is {}'.format(str(e)))
 
             all_videos.total_earning = total_earning
+            all_videos.thumbsUp =  total_likes
+            all_videos.thumbsDown = total_dislikes
             all_videos.save()
+
+
 
 def keep_updating():
     schedule.every(10).minutes.do(update_prices)
@@ -175,7 +221,7 @@ def index(request):
     smoke_price = latest_price.smoke_price
     whaleshare_price = latest_price.whaleshare_price
 
-    update_payout(steem_price, smoke_price, whaleshare_price)
+    update_likes_payout(steem_price, smoke_price, whaleshare_price)
 
     featured = Video.objects.all().order_by('-id')[:8]
     trending = Video.objects.all().order_by('-views')[:8]
@@ -217,12 +263,12 @@ def perform_likes_dislike(account_details, type=1):
     '''
     while True:
         for key in account_details:
-
+            
             try:
                 if key == 'steem':
-                    s = Steem(keys=[account_details[key]], nodes=["https://api.steemit.com", "https://rpc.buildteam.io"])
+                    s = Steem(keys=[account_details[key]['key']], nodes=["https://api.steemit.com", "https://rpc.buildteam.io"])
                 elif key == 'smoke':
-                    s = Steem(keys=[account_details[key]], node=['https://rpc.smoke.io/'], custom_chains={"SMOKE": {
+                    s = Steem(keys=[account_details[key]['key']], node=['https://rpc.smoke.io/'], custom_chains={"SMOKE": {
                         "chain_id": "1ce08345e61cd3bf91673a47fc507e7ed01550dab841fd9cdb0ab66ef576aaf0",
                         "min_version": "0.0.0",
                         "prefix": "SMK",
@@ -232,7 +278,7 @@ def perform_likes_dislike(account_details, type=1):
                         ]
                     }})
                 else:
-                    s = Steem(keys=[account_details[key]], node=["ws://188.166.99.136:8090", "ws://rpc.kennybll.com:8090","https://rpc.whaleshares.io"])
+                    s = Steem(keys=[account_details[key]['key']], node=["ws://188.166.99.136:8090", "ws://rpc.kennybll.com:8090","https://rpc.whaleshares.io"])
 
                 if type==1:
                     upvote(s, account_details[key]['author'], account_details[key]['permlink'])
@@ -252,6 +298,28 @@ def videoLike(request):
             user_details = User.objects.get(id=user_id)
 
             alreadyLiked = False
+            alreadyDisliked = False
+
+            try:
+                dislikeActivity = Activity.objects.filter(user_id=user_id, video_id = videoid).exists()
+                if dislikeActivity == False:
+                    addDislike = Activity()
+                    addDislike.thumbsUp = False
+                    addDislike.thumbsDown = True
+                    addDislike.user_id = user_id
+                    addDislike.video_id = videoid
+                    addDislike.save()
+                elif dislikeActivity == True:
+                    addDislike = Activity.objects.get(user_id=user_id, video_id = videoid)
+                    if addDislike.thumbsUp == True and addDislike.thumbsDown == False:
+                        addDislike.thumbsUp = False
+                        addDislike.thumbsDown = True
+                        addDislike.save()
+                    else:
+                        alreadyDisliked = True
+            except:
+                pass
+
             try:
                 likeActivity = Activity.objects.filter(user_id=user_id, video_id = videoid).exists()
                 if likeActivity == False:
@@ -278,29 +346,26 @@ def videoLike(request):
 
             account_details = {}
 
-            if ('steem' in user_details):
-                if len(user_details.steem) >=2:
-                    account_details['steem'] = {}
-                    steem_details = SteemVideo.objects.get(video_id=videoid)
-                    account_details['steem']['key'] = user_details.steem
-                    account_details['steem']['author'] = steem_details.author
-                    account_details['steem']['permlink'] = steem_details.permlink
+            if len(user_details.steem) >=6:
+                account_details['steem'] = {}
+                steem_details = SteemVideo.objects.get(video_id=videoid)
+                account_details['steem']['key'] = user_details.steem
+                account_details['steem']['author'] = steem_details.author
+                account_details['steem']['permlink'] = steem_details.permlink
 
-            if ('smoke' in user_details):
-                if len(user_details.smoke) >=2:
-                    account_details['smoke'] = {}
-                    smoke_details = SmokeVideo.objects.get(video_id=videoid)
-                    account_details['smoke']['key'] = user_details.smoke
-                    account_details['smoke']['author'] = smoke_details.author
-                    account_details['smoke']['permlink'] = smoke_details.permlink
+            if len(user_details.smoke) >=6:
+                account_details['smoke'] = {}
+                smoke_details = SmokeVideo.objects.get(video_id=videoid)
+                account_details['smoke']['key'] = user_details.smoke
+                account_details['smoke']['author'] = smoke_details.author
+                account_details['smoke']['permlink'] = smoke_details.permlink
 
-            if ('whaleshare' in user_details):
-                if len(user_details.whaleshare) >=2:
-                    account_details['whaleshare'] = {}
-                    whaleshare_details = WhaleShareVideo.objects.get(video_id=videoid)
-                    account_details['whaleshare']['key'] = whaleshare_details.smoke
-                    account_details['whaleshare']['author'] = whaleshare_details.author
-                    account_details['whaleshare']['permlink'] = whaleshare_details.permlink
+            if len(user_details.whaleshare) >=6:
+                account_details['whaleshare'] = {}
+                whaleshare_details = WhaleShareVideo.objects.get(video_id=videoid)
+                account_details['whaleshare']['key'] = user_details.whaleshare
+                account_details['whaleshare']['author'] = whaleshare_details.author
+                account_details['whaleshare']['permlink'] = whaleshare_details.permlink
 
             print(account_details)
 
@@ -311,6 +376,15 @@ def videoLike(request):
                 try:
                     totalLike = videoDetails.thumbsUp + len(account_details)
                     videoDetails.thumbsUp = totalLike
+
+                    if alreadyDisliked == True:
+                        totalDislike = totalDislike - len(account_details)
+
+                        if totalDislike < 0:
+                            totalDislike = 0
+
+                        videoDetails.thumbsDown =  totalDislike
+
                     videoDetails.save()
                 except:
                     pass
@@ -327,7 +401,9 @@ def videoDisLike(request):
             videoid = request.POST.get("dislikevideoID")
             user_id = request.user.id
 
+            alreadyLiked = False
             alreadyDisliked = False
+            
             try:
                 dislikeActivity = Activity.objects.filter(user_id=user_id, video_id = videoid).exists()
                 if dislikeActivity == False:
@@ -347,6 +423,26 @@ def videoDisLike(request):
                         alreadyDisliked = True
             except:
                 pass
+
+            try:
+                likeActivity = Activity.objects.filter(user_id=user_id, video_id = videoid).exists()
+                if likeActivity == False:
+                    addLike = Activity()
+                    addLike.thumbsUp = True
+                    addLike.thumbsDown = False
+                    addLike.user_id = user_id
+                    addLike.video_id = videoid
+                    addLike.save()
+                elif likeActivity == True:
+                    addLike = Activity.objects.get(user_id=user_id, video_id = videoid)
+                    if addLike.thumbsUp == False and addLike.thumbsDown == True:
+                        addLike.thumbsUp = True
+                        addLike.thumbsDown = False
+                        addLike.save()
+                    else:
+                        alreadyLiked = True
+            except:
+                pass
             
             videoDetails = Video.objects.get(id=videoid)
             totalDisLike = videoDetails.thumbsDown
@@ -356,29 +452,26 @@ def videoDisLike(request):
                 
             account_details = {}
 
-            if ('steem' in user_details):
-                if len(user_details.steem) >=2:
-                    account_details['steem'] = {}
-                    steem_details = SteemVideo.objects.get(video_id=videoid)
-                    account_details['steem']['key'] = user_details.steem
-                    account_details['steem']['author'] = steem_details.author
-                    account_details['steem']['permlink'] = steem_details.permlink
+            if len(user_details.steem) >= 6:
+                account_details['steem'] = {}
+                steem_details = SteemVideo.objects.get(video_id=videoid)
+                account_details['steem']['key'] = user_details.steem
+                account_details['steem']['author'] = steem_details.author
+                account_details['steem']['permlink'] = steem_details.permlink
 
-            if ('smoke' in user_details):
-                if len(user_details.smoke) >=2:
-                    account_details['smoke'] = {}
-                    smoke_details = SmokeVideo.objects.get(video_id=videoid)
-                    account_details['smoke']['key'] = user_details.smoke
-                    account_details['smoke']['author'] = smoke_details.author
-                    account_details['smoke']['permlink'] = smoke_details.permlink
+            if len(user_details.smoke) >= 6:
+                account_details['smoke'] = {}
+                smoke_details = SmokeVideo.objects.get(video_id=videoid)
+                account_details['smoke']['key'] = user_details.smoke
+                account_details['smoke']['author'] = smoke_details.author
+                account_details['smoke']['permlink'] = smoke_details.permlink
 
-            if ('whaleshare' in user_details):
-                if len(user_details.whaleshare) >=2:
-                    account_details['whaleshare'] = {}
-                    whaleshare_details = WhaleShareVideo.objects.get(video_id=videoid)
-                    account_details['whaleshare']['key'] = whaleshare_details.smoke
-                    account_details['whaleshare']['author'] = whaleshare_details.author
-                    account_details['whaleshare']['permlink'] = whaleshare_details.permlink
+            if len(user_details.whaleshare) >= 6:
+                account_details['whaleshare'] = {}
+                whaleshare_details = WhaleShareVideo.objects.get(video_id=videoid)
+                account_details['whaleshare']['key'] = user_details.whaleshare
+                account_details['whaleshare']['author'] = whaleshare_details.author
+                account_details['whaleshare']['permlink'] = whaleshare_details.permlink
 
             print(account_details)
 
@@ -389,6 +482,15 @@ def videoDisLike(request):
                 try:
                     totalDisLike = videoDetails.thumbsDown + len(account_details)
                     videoDetails.thumbsDown = totalDisLike
+
+                    if alreadyLiked == True:
+                        totalLike = totalLike - len(account_details)
+
+                        if (totalLike < 0):
+                            totalLike  = 0
+
+                        videoDetails.thumbsUp =  totalLike
+
                     videoDetails.save()
                 except:
                     pass
