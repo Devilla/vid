@@ -281,8 +281,8 @@ def perform_likes_dislike(account_details, type=1):
                     upvote(s, account_details[key]['author'], account_details[key]['permlink'])
                 else:
                     downvote(s, account_details[key]['author'], account_details[key]['permlink'])
-            except Exception as e:
-                print("Error while like/dislike: {}".format(str(e)))
+        except Exception as e:
+            print("Error while like/dislike: {}".format(str(e)))
 
 def videoLike(request):
     if request.method == "POST":
