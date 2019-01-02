@@ -15,7 +15,7 @@
                 <div class="img">
                         <div class="img-image">
                                 <img src='https://gateway.ipfs.io/ipfs/{{ request.user.channel_cover }}' alt="" class="c-banner" style="height:40vh; size:cover">                        </div>
-                        <div class="c-avatar">
+                        <div class="c-avatar" style="border:2px solid rgb(234, 44, 90); border-radius:2px;">
                                 <img src='https://gateway.ipfs.io/ipfs/{{ request.user.channel_picture }}' alt="">
                         </div>
                         <a href="#" class="add"><i class="cv cvicon-cv-plus"></i></a>
@@ -38,7 +38,7 @@
 
 <div class="channel-details">
         <div class="row">
-                <div class="col-lg-10 col-lg-offset-2 col-xs-12">
+                <div class="col-lg-10 col-md-10 col-lg-offset-2 col-xs-12">
                         <div class="c-details">
                                 <div class="c-name">
                                         {{ channel }}
@@ -46,7 +46,26 @@
                                                 <img src="images/verified-profile-icon.png" alt="">
                                         </div>
                                 </div>
-                                
+                                <div class="c-nav">
+                                        <ul class="list-inline">
+                                            <li><a href="#">Videos</a></li>
+                                            <li><a href="#">Playlist</a></li>
+                                            <li class="#"><a href="#">About</a></li>
+                                            <li class="#"><a href="#">Settings</a></li>
+                                        </ul>
+                                        <div class="btn-group dropup pull-right">
+                                            <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Discussion <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="#"><i class="cv cvicon-cv-relevant"></i> Relevant</a></li>
+                                                <li><a href="#"><i class="cv cvicon-cv-calender"></i> Recent</a></li>
+                                                <li><a href="#"><i class="cv cvicon-cv-view-stats"></i> Viewed</a></li>
+                                                <li><a href="#"><i class="cv cvicon-cv-star"></i> Top Rated</a></li>
+                                                <li><a href="#"><i class="cv cvicon-cv-watch-later"></i> Longest</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
                                 <div class="c-sub pull-right hidden-xs">
                                         <div class="c-sub-wrap">
                                                 <div class="c-f">
@@ -75,7 +94,7 @@
                                         <div class="b-video">
                                                 <div class="v-img">
                                                         <a href="{% url 'watch:index'  i.bestHash_Trending   i.id  %}">
-                                                                <img src='https://gateway.ipfs.io/ipfs/{{ i.thumbNail }}' alt="">
+                                                                <img src='https://gateway.ipfs.io/ipfs/{{ i.thumbNail }}' class='thumbnailImage' alt="">
                                                         </a>
                                                         <div class="time">{{ i.duration }}</div>
                                                 </div>
@@ -85,7 +104,7 @@
                                                         </a>
                                                 </div>
                                                 <div class="v-views">
-                                                        {{ i.views }} <span class="v-percent"><span class="fa fa-dollar"></span> 78</span><span class="glyphicon glyphicon-thumbs-up" style="float:right"></span>
+                                                        {{ i.views }} <span class="v-percent"><span class="fa fa-dollar"></span> 78</span>
                                                 </div>
                                         </div>
                                 </div>

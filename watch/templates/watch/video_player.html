@@ -21,7 +21,7 @@
     <div class="author-head">
         <a href="#"><img src='{% static "images/channel-user.png" %}' alt="" class="sv-avatar"></a>
         <div class="sv-name">
-            <div><a href="{% url 'single_channel:detail' current.user_id  %}">{{ user.channel_name }}</a> . {{ count }} Videos</div>
+            <div><a href="{% url 'single_channel:mychannel' current.user_id  %}">{{ user.channel_name }}</a> . {{ count }} Videos</div>
             <div class="c-sub hidden-xs">
                 <div class="c-f">
                     Follow
