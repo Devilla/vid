@@ -1,0 +1,42 @@
+{% extends 'core/base.html' %}
+
+{% block navigation %}
+
+{% include "core/navbar.html" %}
+{% include "core/goto.html" %}
+
+{% endblock navigation %}
+
+{% block content %}
+
+<div class="col-lg-12 upload-page">
+
+    <div class="u-area">
+        <form method="post" enctype='multipart/form-data' id="uploadForm">
+            {% csrf_token %}
+
+            {% if fileHash %}
+            <p>File uploaded at: {{ fileHash }}</a></p>
+            {% endif %}
+    
+            <label for="upload" style="cursor:pointer">
+                <i class="cv cvicon-cv-upload-video"></i>
+            </label>
+
+
+            <p class="u-text1">Select Video files to upload</p>
+            <input id="upload" type="file" name="video" value="video" style="display: none" onchange="uploadForm.submit()">
+
+        </form>
+    </div>
+
+    <div class="u-terms">
+        <p>By submitting your videos to circle, you acknowledge that you agree to circle's <a href="#">Terms of Service</a>
+            and <a href="#">Community Guidelines</a>.</p>
+        <p class="hidden-xs">Please be sure not to violate others' copyright or privacy rights. Learn more</p>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block title %} Upload {% endblock title %}

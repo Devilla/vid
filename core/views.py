@@ -208,8 +208,7 @@ def index(request):
             channels.remove(each_channel)
     
 
-    return render(request, "core/home.html", {'instance': featured, 'trend': trending, 
-                                                  'subscription': channels})
+    return render(request, "core/home.html", {'instance': featured, 'trend': trending, 'subscription': channels})
 
 def videoLike(request):
     if request.method == "POST":
