@@ -14,6 +14,7 @@ from upload.models import Video, SteemVideo, WhaleShareVideo, SmokeVideo
 from beem import Steem
 from beem.comment import Comment
 from register.models import User
+import time
 
 # Create your views here.
 def index(request):
@@ -177,8 +178,10 @@ def info(request):
                     tags = ['vidsocial']
                     name = current.name
                     print(name)
+
                     if steemPost == True and request.user.steem != 'false' and request.user.steem_name != 'false':
                         try:
+                            time.sleep(0.2)
                             print("Steem: {} Steem Name: {}".format(request.user.steem, request.user.steem_name))
                             s_res = post_steem(request.user.steem, request.user.steem_name, tags, name, body)
                             save_data(s_res, 'steem', current.id, tags)
