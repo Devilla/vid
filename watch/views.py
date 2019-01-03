@@ -17,24 +17,24 @@ def get_post_details(vid_id):
     try:
         steem = SteemVideo.objects.get(video_id=vid_id)
         steem_url = steem.post_url
-        permalink = steem.permlink
-        author = steem.author
+        # permalink = steem.permlink
+        # author = steem.author
     except Exception as e:
         print('Got Error: {}'.format(str(e)))
 
     try:
         whale = WhaleShareVideo.objects.get(video_id=vid_id)
         whale_url = whale.post_url
-        permalink = whale.permlink
-        author = whale.author
+        # permalink = whale.permlink
+        # author = whale.author
     except Exception as e: 
         print('Got Error: {}'.format(str(e)))
 
     try:
         smoke = SmokeVideo.objects.get(video_id=vid_id)
         smoke_url = smoke.post_url
-        permalink = smoke.permlink
-        author = smoke.author
+        # permalink = smoke.permlink
+        # author = smoke.author
 
     except Exception as e: 
         print('Got Error: {}'.format(str(e)))
@@ -42,16 +42,15 @@ def get_post_details(vid_id):
     videoDetails = Video.objects.get(id=vid_id)
     total_dislikes = videoDetails.thumbsDown
     total_likes = videoDetails.thumbsUp
+    total_earning = videoDetails.total_earning
 
-    print("Likes: {} Dislikes: {}".format(total_likes, total_dislikes))
-
-    return steem_url, smoke_url, whale_url, total_likes, total_dislikes
+    return steem_url, smoke_url, whale_url, total_likes, total_dislikes, total_earning
 
 def index(request, video_hash, video_id):
     current = Video.objects.get(id=video_id)
 
     update_single_earning_like_dislike(video_id)
-    steem_url, smoke_url, whale_url, total_likes, total_dislikes = get_post_details(current.id)
+    steem_url, smoke_url, whale_url, total_likes, total_dislikes, total_earning = get_post_details(current.id)
 
     current = Video.objects.get(id=video_id)
     hash = json.loads(current.video)
@@ -110,7 +109,7 @@ def index(request, video_hash, video_id):
         return render(request, "watch/base.html", {'video_hash': hash, 'cont': video_content,
         'latest': featured, 'recommended': recommend, 'current': current,
         'user': user, 'count': count, 'steem_url': steem_url, 'smoke_url': smoke_url, 'whale_url': whale_url, 'chkLike': chkLike, 'chkDislike':chkDislike,
-        'total_likes': total_likes, 'total_dislikes': total_dislikes})
+        'total_likes': total_likes, 'total_dislikes': total_dislikes, 'total_earning': total_earning})
     
 
 def likedordisliked (request, user_id, video_id):
