@@ -140,71 +140,75 @@ def info(request):
         if current.user_id == request.user.id:
             optform = postOptionsForm()
             if request.method == 'POST':
-                form = postOptionsForm(request.POST)
+                optform = postOptionsForm(request.POST)
+                form = optform
                 if form.is_valid():
+
                     name = form.cleaned_data['name']
                     steemPost = form.cleaned_data['steem']
                     smokePost = form.cleaned_data['smoke']
                     whalePost = form.cleaned_data['whale']
 
-                if name != '':
-                    if request.POST.getlist("#"):
-                        current.name = name
-                        current.nsfw = True
+                    if name != '':
+                        if request.POST.getlist("#"):
+                            current.name = name
+                            current.nsfw = True
+                        else:
+                            current.name = name
+                            current.nsfw = False
                     else:
-                        current.name = name
-                        current.nsfw = False
-                else:
-                    if request.POST.getlist("#"):
-                        current.nsfw = True
+                        if request.POST.getlist("#"):
+                            current.nsfw = True
+                        else:
+                            current.nsfw = False
+
+                    #current.tags = form.cleaned_data['video_tags']
+                    current.description =form.cleaned_data['description']
+                    current.language = form.cleaned_data['language']
+                    current.publish = True
+                    current.save()
+                    
+                    arb_url = 'https://vidsocial.org/watch/'+ bestHash + '/'+ str(current.id) + '/'
+                    thumbnail_url = 'https://gateway.ipfs.io/ipfs/' + current.thumbNail
+                    body = get_body(name, thumbnail_url, arb_url)
+                    tags = ['vidsocial']
+                    name = current.name
+                    print(name)
+                    if steemPost == True and request.user.steem != 'false' and request.user.steem_name != 'false':
+                        try:
+                            print("Steem: {} Steem Name: {}".format(request.user.steem, request.user.steem_name))
+                            s_res = post_steem(request.user.steem, request.user.steem_name, tags, name, body)
+                            save_data(s_res, 'steem', current.id, tags)
+                        except Exception as e:
+                            print(str(e))
+                            print('Errorsss')
                     else:
-                        current.nsfw = False
-                current.tags = form.cleaned_data['tags']
-                current.description =form.cleaned_data['description']
-                current.language = form.cleaned_data['language']
-                current.publish = True
-                current.save()
-                
-                arb_url = 'https://vidsocial.org/watch/'+ bestHash + '/'+ str(current.id) + '/'
-                thumbnail_url = 'https://gateway.ipfs.io/ipfs/' + current.thumbNail
-                body = get_body(name, thumbnail_url, arb_url)
-                tags = ['vidsocial']
-                name = current.name
-                print(name)
-                if steemPost == True and request.user.steem != 'false' and request.user.steem_name != 'false':
-                    try:
-                        print("Steem: {} Steem Name: {}".format(request.user.steem, request.user.steem_name))
-                        s_res = post_steem(request.user.steem, request.user.steem_name, tags, name, body)
-                        save_data(s_res, 'steem', current.id, tags)
-                    except Exception as e:
-                        print(str(e))
-                        print('Errorsss')
-                else:
-                    print('No Steem')
+                        print('No Steem')
 
-                if whalePost == True and request.user.whaleshare != 'false' and request.user.whaleshare_name != 'false':
-                    try:
-                        print("Whale: {} Whale Name: {}".format(request.user.whaleshare, request.user.whaleshare_name))
-                        wls_res = post_whaleshare(request.user.whaleshare, request.user.whaleshare_name, tags, name, body)
-                        save_data(wls_res, 'whale', current.id, tags)
-                    except Exception as e:
-                        print(str(e))
-                        print('Error Whale')
-                else:
-                    print('No Whaleshare')
+                    if whalePost == True and request.user.whaleshare != 'false' and request.user.whaleshare_name != 'false':
+                        try:
+                            print("Whale: {} Whale Name: {}".format(request.user.whaleshare, request.user.whaleshare_name))
+                            wls_res = post_whaleshare(request.user.whaleshare, request.user.whaleshare_name, tags, name, body)
+                            save_data(wls_res, 'whale', current.id, tags)
+                        except Exception as e:
+                            print(str(e))
+                            print('Error Whale')
+                    else:
+                        print('No Whaleshare')
 
-                if smokePost == True and request.user.smoke != 'false' and request.user.smoke_name != 'false':
-                    try:
-                        print("Smoke: {} Smoke Name: {}".format(request.user.smoke, request.user.smoke_name))
-                        smk_res = post_smoke(request.user.smoke, request.user.smoke_name, tags, name, body)
-                        save_data(smk_res, 'smoke', current.id, tags)
-                    except Exception as e:
-                        print(str(e))
-                        print('Error smoke')
-                else:
-                    print('No smoke')
+                    if smokePost == True and request.user.smoke != 'false' and request.user.smoke_name != 'false':
+                        try:
+                            print("Smoke: {} Smoke Name: {}".format(request.user.smoke, request.user.smoke_name))
+                            smk_res = post_smoke(request.user.smoke, request.user.smoke_name, tags, name, body)
+                            save_data(smk_res, 'smoke', current.id, tags)
+                        except Exception as e:
+                            print(str(e))
+                            print('Error smoke')
+                    else:
+                        print('No smoke')
 
-                return redirect('watch:index', video_hash=bestHash, video_id=current.id)
+                    return redirect('watch:index', video_hash=bestHash, video_id=current.id)                        
+
             user = User.objects.get(id=current.user_id)
             key ={}
             if user.steem == 'false':
@@ -221,7 +225,6 @@ def info(request):
                 key['whalechk'] = False
             else:
                 key['whalechk'] = True
-                
             return render(request, 'upload/upload-edit.html', {'filehash':request.session.get('hash'), 'postOptionsForm':optform, 'keychk':key, 'current':current})  
         else:
             print('Not sufficient privilege')
