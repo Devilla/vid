@@ -173,7 +173,7 @@ def info(request):
                     
                     arb_url = 'https://vidsocial.org/watch/'+ bestHash + '/'+ str(current.id) + '/'
                     thumbnail_url = 'https://gateway.ipfs.io/ipfs/' + current.thumbNail
-                    body = get_body(name, thumbnail_url, arb_url)
+                    body = get_body(name, thumbnail_url, arb_url, current.description)
                     tags = ['vidsocial']
                     name = current.name
                     print(name)
@@ -235,8 +235,8 @@ def info(request):
     else:
         return redirect('/login')
 
-def get_body(title, thumbnail, url):
-    body = '<html><p><img src="{}" width="480" height="360"/></p> <p><a href="{}">{}</a></p></html>'.format(thumbnail, url, title)
+def get_body(title, thumbnail, url, description):
+    body = '<html><p><img src="{}" width="480" height="360"/></p> <p><a href="{}">{}</a></p><p>{}</p></html>'.format(thumbnail, url, title, description)
     print(body)
     return body
 
