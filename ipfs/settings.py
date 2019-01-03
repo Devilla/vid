@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'advertisement',
     'single_channel',
     'channel',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [

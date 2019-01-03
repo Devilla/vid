@@ -159,6 +159,9 @@ def info(request):
                         current.nsfw = True
                     else:
                         current.nsfw = False
+                current.tags = form.cleaned_data['tags']
+                current.description =form.cleaned_data['description']
+                current.language = form.cleaned_data['language']
                 current.publish = True
                 current.save()
                 
@@ -219,7 +222,7 @@ def info(request):
             else:
                 key['whalechk'] = True
                 
-            return render(request, 'upload/upload_process.html', {'filehash':request.session.get('hash'), 'postOptionsForm':optform, 'keychk':key})  
+            return render(request, 'upload/upload-edit.html', {'filehash':request.session.get('hash'), 'postOptionsForm':optform, 'keychk':key, 'current':current})  
         else:
             print('Not sufficient privilege')
 

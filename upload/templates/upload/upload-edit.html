@@ -1,0 +1,172 @@
+{% extends 'core/base.html' %}
+{% load staticfiles %}
+
+{% block title %} Upload {% endblock title %}
+
+{% block navigation %}
+
+{% include "core/navbar.html" %}
+{% include "core/goto.html" %}
+
+{% endblock navigation %}
+
+{% block content %}
+{% load widget_tweaks %}
+<div class="content-wrapper upload-page edit-page">
+    <div class="container-fluid u-details-wrap">
+        <div class="row">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="u-details">
+                            <div class="row">
+                                <div class="col-lg-12 ud-caption">Upload Details</div>
+                                <div class="col-lg-4"><video poster='{% static "images/single-video.png" %}' style="height:30vh" controls="controls"
+                                    width="100%" height="30%">
+                                        <source src='http://gateway.ipfs.io/ipfs/{{ filehash }}' type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>
+                                    </video></div>
+                                <div class="col-lg-8">
+                                    <div class="u-size">102.6 MB . 2:13 MIN Remaining</div>
+                                    <div class="u-progress">
+                                        <div class="progress">
+                                            <div class="progress-bar" role="progressbar" aria-valuenow="99" aria-valuemin="0" aria-valuemax="100" style="width: 35%;">
+                                                <span class="sr-only">35</span><span class="glyphicon glyphicon-thumbs-up" style="float:right"> Complete</span>
+                                            </div>
+                                        </div>
+                                        <div class="u-close">
+                                            <a href="#"><i class="cvicon-cv-cancel"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="u-desc">Your Video is still uploading, please keep this page open until it's done.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+                <div class="col-lg-4">
+                </div>
+            <div class="col-lg-8">
+                    <form class="form-horizontal" method="POST">
+                            {% csrf_token %} 
+                <div class="u-form " style="margin-bottom:10%;">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label for="e1">Video Title</label>
+                                {{ postOptionsForm.name|attr:"placeholder:Title for your video"}}
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label for="e2">Description</label>
+                                    {{ postOptionsForm.description|attr:"Write some words about your video"}}                           
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label for="e2">Tags</label>
+                                    {{ postOptionsForm.tags|attr:"placeholder:Gaming, Funny, Prank,"}}                           
+                            </div>
+                        </div>
+
+                        
+                    </div>
+
+                    
+                        <div class="col-lg-5">
+                            <div class="form-group">
+                                <label for="id_language">Language in Video (Optional)</label>
+                                {{ postOptionsForm.language}}
+                            </div>
+                        </div>
+
+                        <div class="col-sm-7">
+                                <div class="col-sm-12 col-md-12">
+                                        <div class="form-group">
+                                        <label class='pull-left'> Choose where to post:</label> <br>
+                                        </div>
+                                </div>
+                                <div class="col-sm-12 col-md-12">
+                                    
+                                    {% if keychk.smokechk is True %}
+                                    <div class="col-lg-4 col-md-4 col-sm-6">
+                                            <div class="checkbox">
+                                                    <label>
+                                                        <label class="checkbox">
+                                                                {{ postOptionsForm.smoke}}
+                                                            <span class="arrow"></span>
+                                                        </label> Smoke
+                                                    </label>
+                                                </div>
+                                    </div>
+                                        
+                                    
+                                    {% endif %}
+                                    {% if keychk.steemchk is True %}
+                                    <div class="col-lg-4 col-md-4 col-sm-6 p-0">
+                                            <div class="checkbox">
+                                                    <label>
+                                                        <label class="checkbox">
+                                                                {{ postOptionsForm.steem}}
+                                                            <span class="arrow"></span>
+                                                        </label> Steem
+                                                    </label>
+                                                </div>
+                                        </div>
+                                    
+                                    {% endif %}
+                                    
+                                    {% if keychk.whalechk is True %}
+                                    <div class="col-lg-4 col-md-4 col-sm-6">
+                                            <div class="checkbox">
+                                                    <label>
+                                                        <label class="checkbox">
+                                                                {{ postOptionsForm.whale}}
+                                                            <span class="arrow"></span>
+                                                        </label> Whale
+                                                    </label>
+                                                </div>
+                                        </div>
+
+                                    {% endif %}
+                                    <div class="col-lg-12 col-md-12 col-sm-12" style= 'margin-bottom:10%;'>
+                                            <span id="tt"></span>
+                                    </div>
+                            </div>
+                             </div>
+                    </div>
+
+
+                    
+
+                <div class="u-area mt-small">
+                        <button type="submit" class="btn btn-cv1">Publish</button>
+                </div>
+                <div class="u-terms">
+                    <p>By submitting your videos to circle, you acknowledge that you agree to circle's <a href="#">Terms of Service</a> and <a href="#">Community Guidelines</a>.</p>
+                    <p class="hidden-xs">Please be sure not to violate others' copyright or privacy rights. Learn more</p>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+        $('#id_smoke').click(function() {
+        
+               if(this.checked){
+                    document.getElementById('tt').innerHTML = ' Warning: Smoke is a cannabis first network and is not a regular DPOS blogging platform. You may get flagged for inappropriate contents.';
+                    }
+                else{
+                    document.getElementById('tt').innerHTML = '';
+                }
+              });
+        </script>
+        {% endblock content %}
+        
+        
