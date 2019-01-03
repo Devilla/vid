@@ -347,7 +347,7 @@ def videoLike(request):
             account_details = {}
 
             try:
-                if len(user_details.    ) >=6:
+                if len(user_details.steem) >=6:
                     account_details['steem'] = {}
                     steem_details = SteemVideo.objects.get(video_id=videoid)
                     account_details['steem']['key'] = user_details.steem
