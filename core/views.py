@@ -29,13 +29,13 @@ def get_payout(s, author, permlink):
     
     return payout
 
-def upvote(s, author, permlink):
-    acc = Comment("@{}/{}".format(author, permlink), steem_instance=s)
-    votes = acc.upvote(voter=author)
+def upvote(s, post_author, permlink, voter):
+    acc = Comment("@{}/{}".format(post_author, permlink), steem_instance=s)
+    votes = acc.upvote(voter=voter)
 
-def downvote(s, author, permlink):
-    acc = Comment("@{}/{}".format(author, permlink), steem_instance=s)
-    votes = acc.downvote(voter=author)
+def downvote(s, post_author, permlink, voter):
+    acc = Comment("@{}/{}".format(post_author, permlink), steem_instance=s)
+    votes = acc.downvote(voter=voter)
 
 
 s_no_auth = Steem(nodes=["https://api.steemit.com", "https://rpc.buildteam.io"])
@@ -112,89 +112,100 @@ def get_votes(s, author, permlink):
 
     return upvotes, downvotes
 
-def update_likes_payout(steem_price, smoke_price, whaleshare_price):
+def update_single_earning_like_dislike(video_id):
+
+    total_likes = 0
+    total_dislikes = 0
+
+    total_earning = 0.0
+
+    latest_price = AssetPrice.objects.all().order_by('-curr_time')[:1][0]
+    steem_price = latest_price.steem_price
+    smoke_price = latest_price.smoke_price
+    whaleshare_price = latest_price.whaleshare_price
+
+    video_details = Video.objects.get(video_id=video_id)
+
+    try:
+        single_val = SteemVideo.objects.get(video_id=video_id)
+
+        permlink = single_val.permlink
+        author = single_val.author
+
+        try:
+            s_upvote, s_downvote = get_votes(s_no_auth, author, permlink)
+            total_likes = total_likes + s_upvote
+            total_dislikes = total_dislikes + s_downvote
+        except Exception as e:
+            print("Steem upvote error: {}".format(str(e)))
+
+        steem_payout = get_payout(s_no_auth, author, permlink) * steem_price
+        total_earning = total_earning + steem_payout
+
+        video_details.steem = steem_payout
+
+        print("Updated")
+    except Exception as e: 
+        print('No Steem. Error is {}'.format(str(e)))
+
+    try:
+        single_val = SmokeVideo.objects.get(video_id=video_id)
+
+        permlink = single_val.permlink
+        author = single_val.author
+
+        try:
+            sm_upvote, sm_downvote = get_votes(sm_no_auth, author, permlink)
+            total_likes = total_likes + sm_upvote
+            total_dislikes = total_dislikes + sm_downvote
+        except Exception as e:
+            print("Smoke upvote error: {}".format(str(e)))
+
+        smoke_payout = get_payout(sm_no_auth, author, permlink) * smoke_price
+        total_earning = total_earning + smoke_payout
+        
+        video_details.smoke = smoke_payout
+
+        print("Updated")
+    except Exception as e: 
+        print('No Smoke. Error is {}'.format(str(e)))
+
+    try:
+        single_val = WhaleShareVideo.objects.get(video_id=video_id)
+
+        permlink = single_val.permlink
+        author = single_val.author
+
+        try:
+            w_upvote, w_downvote = get_votes(w_no_auth, author, permlink)
+            total_likes = total_likes + w_upvote
+            total_dislikes = total_dislikes + w_downvote
+        except Exception as e:
+            print("Whaleshare upvote error: {}".format(str(e)))
+
+        whale_payout = get_payout(w_no_auth, author, permlink) * whaleshare_price
+        total_earning = total_earning + whale_payout
+        
+        video_details.whaleshares = whale_payout
+
+        print("Updated")
+    except Exception as e: 
+        print('No Whaleshares. Error is {}'.format(str(e)))
+
+    video_details.total_earning = total_earning
+    video_details.thumbsUp =  total_likes
+    video_details.thumbsDown = total_dislikes
+    video_details.save()
+
+def update_likes_payout():
     '''
     Updates all payouts and likes
     '''
     get_videos = Video.objects.all()
     
     for all_videos in get_videos:
-        total_likes = 0
-        total_dislikes = 0
-
-        total_earning = 0.0
-
-        try:
-            single_val = SteemVideo.objects.get(video_id=all_videos.id)
-
-            permlink = single_val.permlink
-            author = single_val.author
-
-            try:
-                s_upvote, s_downvote = get_votes(s_no_auth, author, permlink)
-                total_likes = total_likes + s_upvote
-                total_dislikes = total_dislikes + s_downvote
-            except Exception as e:
-                print("Steem upvote error: {}".format(str(e)))
-
-            steem_payout = get_payout(s_no_auth, author, permlink) * steem_price
-            total_earning = total_earning + steem_payout
-
-            all_videos.steem = steem_payout
-
-            print("Updated")
-        except Exception as e: 
-            print('No Steem. Error is {}'.format(str(e)))
-
-        try:
-            single_val = SmokeVideo.objects.get(video_id=all_videos.id)
-
-            permlink = single_val.permlink
-            author = single_val.author
-
-            try:
-                sm_upvote, sm_downvote = get_votes(sm_no_auth, author, permlink)
-                total_likes = total_likes + sm_upvote
-                total_dislikes = total_dislikes + sm_downvote
-            except Exception as e:
-                print("Smoke upvote error: {}".format(str(e)))
-
-            smoke_payout = get_payout(sm_no_auth, author, permlink) * smoke_price
-            total_earning = total_earning + smoke_payout
-            
-            all_videos.smoke = smoke_payout
-
-            print("Updated")
-        except Exception as e: 
-            print('No Smoke. Error is {}'.format(str(e)))
-
-        try:
-            single_val = WhaleShareVideo.objects.get(video_id=all_videos.id)
-
-            permlink = single_val.permlink
-            author = single_val.author
-
-            try:
-                w_upvote, w_downvote = get_votes(w_no_auth, author, permlink)
-                total_likes = total_likes + w_upvote
-                total_dislikes = total_dislikes + w_downvote
-            except Exception as e:
-                print("Whaleshare upvote error: {}".format(str(e)))
-
-            whale_payout = get_payout(w_no_auth, author, permlink) * whaleshare_price
-            total_earning = total_earning + whale_payout
-            
-            all_videos.whaleshares = whale_payout
-
-            print("Updated")
-        except Exception as e: 
-            print('No Whaleshares. Error is {}'.format(str(e)))
-
-        all_videos.total_earning = total_earning
-        all_videos.thumbsUp =  total_likes
-        all_videos.thumbsDown = total_dislikes
-        all_videos.save()
-
+        video_id = all_videos.id
+        update_single_earning_like_dislike(video_id)
 
 
 def keep_updating():
@@ -213,12 +224,7 @@ def index(request):
     if (len(AssetPrice.objects.all())) == 0:
         AssetPrice().save()
 
-    latest_price = AssetPrice.objects.all().order_by('-curr_time')[:1][0]
-    steem_price = latest_price.steem_price
-    smoke_price = latest_price.smoke_price
-    whaleshare_price = latest_price.whaleshare_price
-
-    update_likes_payout(steem_price, smoke_price, whaleshare_price)
+    update_likes_payout()
 
     featured = Video.objects.all().order_by('-id')[:8]
     trending = Video.objects.all().order_by('-views')[:8]
@@ -278,9 +284,9 @@ def perform_likes_dislike(account_details, type=1):
                     s = Steem(keys=[account_details[key]['key']], node=["ws://188.166.99.136:8090", "ws://rpc.kennybll.com:8090","https://rpc.whaleshares.io"])
 
                 if type==1:
-                    upvote(s, account_details[key]['author'], account_details[key]['permlink'])
+                    upvote(s, account_details[key]['author'], account_details[key]['permlink'], account_details[key]['username'])
                 else:
-                    downvote(s, account_details[key]['author'], account_details[key]['permlink'])
+                    downvote(s, account_details[key]['author'], account_details[key]['permlink'], account_details[key]['username'])
         except Exception as e:
             print("Error while like/dislike: {}".format(str(e)))
 
@@ -404,6 +410,11 @@ def videoDisLike(request):
             videoid = request.POST.get("dislikevideoID")
             user_id = request.user.id
 
+            user = User.objects.get(id=user_id)
+
+
+            #get username
+
             alreadyLiked = False
             alreadyDisliked = False
             
@@ -459,6 +470,7 @@ def videoDisLike(request):
                 if len(user_details.steem) >= 6:
                     account_details['steem'] = {}
                     steem_details = SteemVideo.objects.get(video_id=videoid)
+                    account_details['steem']['username'] = user_details.steem_name
                     account_details['steem']['key'] = user_details.steem
                     account_details['steem']['author'] = steem_details.author
                     account_details['steem']['permlink'] = steem_details.permlink
@@ -469,6 +481,7 @@ def videoDisLike(request):
                 if len(user_details.smoke) >= 6:
                     account_details['smoke'] = {}
                     smoke_details = SmokeVideo.objects.get(video_id=videoid)
+                    account_details['smoke']['username'] = user_details.smoke_name
                     account_details['smoke']['key'] = user_details.smoke
                     account_details['smoke']['author'] = smoke_details.author
                     account_details['smoke']['permlink'] = smoke_details.permlink
@@ -480,6 +493,7 @@ def videoDisLike(request):
                 if len(user_details.whaleshare) >= 6:
                     account_details['whaleshare'] = {}
                     whaleshare_details = WhaleShareVideo.objects.get(video_id=videoid)
+                    account_details['whaleshare']['username'] = user_details.whaleshare_name
                     account_details['whaleshare']['key'] = user_details.whaleshare
                     account_details['whaleshare']['author'] = whaleshare_details.author
                     account_details['whaleshare']['permlink'] = whaleshare_details.permlink
