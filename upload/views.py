@@ -174,7 +174,7 @@ def info(request):
                     
                     arb_url = 'https://vidsocial.org/watch/'+ bestHash + '/'+ str(current.id) + '/'
                     thumbnail_url = 'https://gateway.ipfs.io/ipfs/' + current.thumbNail
-                    body = get_body(name, thumbnail_url, arb_url, current.description)
+                    body,old_body = get_body(name, thumbnail_url, arb_url, current.description)
                     tags = ['vidsocial']
                     name = current.name
                     print(name)
@@ -183,7 +183,7 @@ def info(request):
                         try:
                             time.sleep(0.2)
                             print("Steem: {} Steem Name: {}".format(request.user.steem, request.user.steem_name))
-                            s_res = post_steem(request.user.steem, request.user.steem_name, tags, name, body)
+                            s_res = post_steem(request.user.steem, request.user.steem_name, tags, name, old_body)
                             save_data(s_res, 'steem', current.id, tags)
                         except Exception as e:
                             print(str(e))
@@ -240,15 +240,15 @@ def info(request):
 
 def get_body(title, thumbnail, url, description):
     body = '<html><p><img src="{}" width="480" height="360"/></p> <p><a href="{}">{}</a></p><p>{}</p></html>'.format(thumbnail, url, title, description)
-    print(body)
-    return body
+    old_body = '<html><p><img src="{}" width="480" height="360"/></p> <p><a href="{}">{}</a></p></html>'.format(thumbnail, url, title)
+ 
+    return body, old_body
 
 def post_steem(steem_key, steem_username, tags, title, body):
     s = Steem(keys=[steem_key], nodes=["http://seed1.blockbrothers.io:2001", "http://seed.liondani.com:2016","https://rpc.buildteam.io"])
     s_res = s.post(title=title, body=body, author=steem_username, tags=tags, beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
 
     return s_res
-
 
 def post_smoke(smoke_key, smoke_username, tags, title, body):
     smk = Steem(node=['https://rpc.smoke.io/'], keys=[smoke_key], custom_chains={"SMOKE": {
