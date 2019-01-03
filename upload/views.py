@@ -271,7 +271,7 @@ def save_data(data, platform, id, tags):
     print(tag)
     
     if platform == 'smoke':
-        post_url = "https://smoke.io/{}/@{}/{}".format(tag, author, permlink)
+        post_url = "https://smoke.io/@{}/{}".format(author, permlink)
         print(id)
         smoke = SmokeVideo(video_id=int(id), permlink=permlink, author=author, tags=tags, post_url=post_url)
         smoke.save()
