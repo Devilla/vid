@@ -244,9 +244,9 @@ def get_body(title, thumbnail, url, description):
     return body
 
 def post_steem(steem_key, steem_username, tags, title, body):
-    s = Steem(keys=[steem_key], nodes=["https://api.steemit.com", "https://rpc.buildteam.io"])
-    print(body)
+    s = Steem(keys=[steem_key], nodes=["http://seed1.blockbrothers.io:2001", "http://seed.liondani.com:2016","https://rpc.buildteam.io"])
     s_res = s.post(title=title, body=body, author=steem_username, tags=tags, beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
+
     return s_res
 
 
