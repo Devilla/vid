@@ -12,6 +12,10 @@ class Video(models.Model):
     thumbNail = models.CharField(max_length=512)
     video = JSONField()
     duration = models.CharField(max_length=10)
+    tags = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    language_choices = [(1,'English'),(2,'Chinese'), (3,'Spanish'), (4,'German')]
+    language = models.CharField(max_length =20, choices=language_choices, default='1')
     smoke = models.FloatField(default=0.0)
     steem = models.FloatField(default=0.0)
     whaleshares = models.FloatField(default=0.0)
