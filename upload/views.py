@@ -82,18 +82,21 @@ def index(request):
 
                 # Generate multiple video quality to upload to the server
 
-                for small_res in resolution:
-                    if small_res < height :
-                        # Change the video to different quality
-                        res = 'ffmpeg -v -8 -i ' + os.path.join(videos_directory, current_name) + ' -vf scale=-2:' + str(small_res) + ' -preset slow -c:v libx264 -strict experimental -c:a aac -crf 24 -maxrate 500k -bufsize 500k -r 25 -f mp4 ' + os.path.join(videos_directory, str(small_res)+current_name)
-                        subprocess.check_call(res.split(" "))
-                        newHash = api.add(os.path.join(videos_directory, str(small_res)+current_name), trickle=True)
-                        os.remove(os.path.join(videos_directory, str(small_res)+current_name))
+                newHash = api.add(os.path.join(videos_directory, current_name))
+                hash = hash + "\"" + str(720) + "\": \"" + newHash['Hash'] + "\"}"
+
+                # for small_res in resolution:
+                #     if small_res < height :
+                #         # Change the video to different quality
+                #         res = 'ffmpeg -v -8 -i ' + os.path.join(videos_directory, current_name) + ' -vf scale=-2:' + str(small_res) + ' -preset slow -c:v libx264 -strict experimental -c:a aac -crf 24 -maxrate 500k -bufsize 500k -r 25 -f mp4 ' + os.path.join(videos_directory, str(small_res)+current_name)
+                #         subprocess.check_call(res.split(" "))
+                #         newHash = api.add(os.path.join(videos_directory, str(small_res)+current_name), trickle=True)
+                #         os.remove(os.path.join(videos_directory, str(small_res)+current_name))
                         
-                        if small_res == 144:
-                            hash = hash + "\"" + str(small_res) + "\": \"" + newHash['Hash'] + "\"}"
-                        else:
-                            hash = hash + "\"" + str(small_res) + "\": \"" + newHash['Hash'] + "\", \n"
+                #         if small_res == 144:
+                #             hash = hash + "\"" + str(small_res) + "\": \"" + newHash['Hash'] + "\"}"
+                #         else:
+                #             hash = hash + "\"" + str(small_res) + "\": \"" + newHash['Hash'] + "\", \n"
                                         
 
                 # Save the generated data in the server
