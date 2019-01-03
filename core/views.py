@@ -124,7 +124,7 @@ def update_single_earning_like_dislike(video_id):
     smoke_price = latest_price.smoke_price
     whaleshare_price = latest_price.whaleshare_price
 
-    video_details = Video.objects.get(video_id=video_id)
+    video_details = Video.objects.get(id=video_id)
 
     try:
         single_val = SteemVideo.objects.get(video_id=video_id)
