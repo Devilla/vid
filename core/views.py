@@ -37,8 +37,7 @@ def downvote(s, post_author, permlink, voter):
     acc = Comment("@{}/{}".format(post_author, permlink), steem_instance=s)
     votes = acc.downvote(voter=voter)
 
-
-s_no_auth = Steem(nodes=["https://api.steemit.com", "https://rpc.buildteam.io"])
+s_no_auth = Steem(nodes=["http://seed1.blockbrothers.io:2001", "http://seed.liondani.com:2016", "https://api.steemit.com", "https://rpc.buildteam.io"])
 w_no_auth = Steem(node=["https://rpc.whaleshares.io", "ws://188.166.99.136:8090", "ws://rpc.kennybll.com:8090"])
 sm_no_auth = Steem(node=['https://rpc.smoke.io/'], custom_chains={"SMOKE": {
                     "chain_id": "1ce08345e61cd3bf91673a47fc507e7ed01550dab841fd9cdb0ab66ef576aaf0",
@@ -270,7 +269,7 @@ def perform_likes_dislike(account_details, type=1):
         try:
             if 'key' in account_details[key]:
                 if key == 'steem':
-                    s = Steem(keys=[account_details[key]['key']], nodes=["https://api.steemit.com", "https://rpc.buildteam.io"])
+                    s = Steem(keys=[account_details[key]['key']], nodes=["http://seed1.blockbrothers.io:2001", "http://seed.liondani.com:2016", "https://api.steemit.com", "https://rpc.buildteam.io"])
                 elif key == 'smoke':
                     s = Steem(keys=[account_details[key]['key']], node=['https://rpc.smoke.io/'], custom_chains={"SMOKE": {
                         "chain_id": "1ce08345e61cd3bf91673a47fc507e7ed01550dab841fd9cdb0ab66ef576aaf0",
