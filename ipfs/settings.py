@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'single_channel',
     'channel',
     'widget_tweaks',
+    'file_upload',
 ]
 
 MIDDLEWARE = [

@@ -3,7 +3,6 @@ from upload.models import Video, SteemVideo, WhaleShareVideo, SmokeVideo
 from register.models import User
 import demjson
 from like_dislike.models import Activity
-from core.views import update_single_earning_like_dislike
 
 import json
 # Create your views here.
@@ -48,8 +47,6 @@ def get_post_details(vid_id):
 
 def index(request, video_hash, video_id):
     current = Video.objects.get(id=video_id)
-
-    update_single_earning_like_dislike(video_id)
     steem_url, smoke_url, whale_url, total_likes, total_dislikes, total_earning = get_post_details(current.id)
 
     current = Video.objects.get(id=video_id)
