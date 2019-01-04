@@ -205,4 +205,4 @@ while True:
         print(video_id)
         update_single_earning_like_dislike(video_id)
         
-    time.sleep(5)
+    time.sleep(1)
