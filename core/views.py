@@ -27,9 +27,6 @@ def downvote(s, post_author, permlink, voter):
 # Create your views here
 def index(request):
 
-    thread = Thread(target = keep_updating)
-    thread.start()
-
     if (len(AssetPrice.objects.all())) == 0:
         AssetPrice().save()
 
