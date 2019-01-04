@@ -197,7 +197,7 @@ def ipfs_check():
 subprocess.Popen(["python3.5","manage.py", "runserver"])
         
 while True:
-    ipfs_check()
+    #ipfs_check()
     get_videos = Video.objects.all()
 
     for all_videos in get_videos:
