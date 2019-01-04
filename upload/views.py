@@ -245,10 +245,33 @@ def get_body(title, thumbnail, url, description):
     return body, old_body
 
 def post_steem(steem_key, steem_username, tags, title, body):
-    s = Steem(keys=[steem_key], nodes=["http://seed1.blockbrothers.io:2001", "http://seed.liondani.com:2016","https://rpc.buildteam.io"])
-    s_res = s.post(title=title, body=body, author=steem_username, tags=tags, beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
+    nodelist_one = ['https://api.steemit.com/', 'http://appbasetest.timcliff.com/']
+    nodelist_two = ['http://rpc.buildteam.io', 'http://rpc.curiesteem.com/']
+    nodelist_three = ['https://rpc.steemliberator.com/', 'http://rpc.steemviz.com/']
+    nodelist_four = ['http://steemd.minnowsupportproject.org/', 'http://steemd.privex.io/']
 
-    return s_res
+    try:
+        s = Steem(keys=[steem_key], nodes=nodelist_one)
+        s_res = s.post(title=title, body=body, author=steem_username, tags=tags, beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
+        return s_res
+    except:
+        try:
+            s = Steem(keys=[steem_key], nodes=nodelist_two)
+            s_res = s.post(title=title, body=body, author=steem_username, tags=tags, beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
+            return s_res
+        except:
+            try:
+                s = Steem(keys=[steem_key], nodes=nodelist_three)
+                s_res = s.post(title=title, body=body, author=steem_username, tags=tags, beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
+                return s_res
+            except:
+                try:
+                    s = Steem(keys=[steem_key], nodes=nodelist_four)
+                    s_res = s.post(title=title, body=body, author=steem_username, tags=tags, beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
+                    return s_res
+                except:
+                    return {}
+        
 
 def post_smoke(smoke_key, smoke_username, tags, title, body):
     smk = Steem(node=['https://rpc.smoke.io/'], keys=[smoke_key], custom_chains={"SMOKE": {
