@@ -190,7 +190,7 @@ class UserRegistrationCompletionForm(forms.Form):
 
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'channel_name', 'channel_cover', 'profile_picture', 'channel_picture', 'smoke', 'steem', 'whaleshare', 'smoke_name', 'steem_name', 'whaleshare_name')
+        fields = ('first_name', 'last_name', 'channel_name', 'channel_cover', 'profile_picture', 'smoke', 'steem', 'whaleshare', 'smoke_name', 'steem_name', 'whaleshare_name')
 
     def clean_first(self):
         first_name = self.cleaned_data['first_name']
@@ -213,7 +213,6 @@ class UserRegistrationCompletionForm(forms.Form):
         u.channel_name = data['channel_name']
         u.channel_cover = data['channel_cover']
         u.profile_picture = data['profile_picture']
-        u.channel_picture = data['channel_picture']
     
         u.save()
         return True
