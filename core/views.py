@@ -336,3 +336,10 @@ def videoDisLike(request):
             data = {'totalDisLike': totalDisLike,'totalLike':totalLike,  'alreadyDisliked':alreadyDisliked}
             return JsonResponse(data)
         
+def about(request):
+    if request.method == 'GET':
+        return render(request, 'core/about.html')
+
+def help(request):
+    if request.method == 'GET':
+        return render(request, 'core/help.html')

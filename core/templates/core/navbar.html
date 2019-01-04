@@ -9,10 +9,6 @@
 </style>
 <div class="container-fluid">
     <div class="row">
-        <div class="btn-color-toggle">
-
-        <img src='{% static "images/icon_bulb_light.png" %}' alt="">
-        </div>
         <div class="navbar-container">
             <div class="container">
                 <div class="row">
@@ -21,14 +17,12 @@
                     </div>
                     <div class="col-lg-1 col-sm-4 col-xs-7">
                         <a class="navbar-brand" href="{% url 'core:index' %}">
-                            <img src="{% static "images/logo.png" %}" alt="Vid Social" class="logo" />
+                            <img src="{% static "images/logo.png" %}" alt="Vid Social logo" class="logo" />
                             <span>Vid Social</span>
                         </a>
                     </div>
                     <div class="col-lg-1 col-sm-10 hidden-xs">
-                        <ul class="list-inline menu">
-                            <li><a href="channel.html">Channels</a></li>
-                        </ul>
+
                     </div>
                     <div class="col-lg-6 col-sm-8 col-xs-3">
                         <form action="search.html" method="post">
@@ -69,13 +63,11 @@
                                 <ul class="dropdown-menu">
                                     <li><a href="{% url 'single_channel:mychannel' request.user.id  %}">My Profile</a></li>
                                     <li><a href="{% url 'logout:logout' %}">Logout</a></li>
-                                    
-                                    <li>{{ request.user.email }}</li>
                                 </ul>
                             </div>
                         </div>
                         {% else %}
-                        <div class="loginsignup pull-right">
+                        <div class="loginsignup pull-left">
                             <a href="{% url 'login:login' %}">Login</a> . <a href="{% url 'register:register' %}">Signup</a>
                         </div>
                         {% endif %}
