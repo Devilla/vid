@@ -181,11 +181,11 @@ class UserRegistrationCompletionForm(forms.Form):
         widget=forms.FileInput(attrs={'id': 'p-picture', 'placeholder': 'Select the profile picture for your account'})
     )
 
-    channel_picture = forms.FileField(
-        label="Channel Picture",
-        required=True,
-        widget=forms.FileInput(attrs={'id': 'c-picture', 'placeholder': 'Select the profile picture for your channel'})
-    )
+    # channel_picture = forms.FileField(
+    #     label="Channel Picture",
+    #     required=True,
+    #     widget=forms.FileInput(attrs={'id': 'c-picture', 'placeholder': 'Select the profile picture for your channel'})
+    # )
 
 
     class Meta:
