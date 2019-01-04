@@ -55,7 +55,6 @@ class User(AbstractBaseUser):
     is_admin = models.BooleanField(default=False)
     channel_cover = models.CharField(max_length=255, blank=True)
     profile_picture = models.CharField(max_length=255, blank=True)
-    channel_picture = models.CharField(max_length=255, blank=True)
     steem_name = models.CharField(max_length=256, default='false', blank=True)
     steem = models.CharField(max_length=1024, default='false', blank=True)
     smoke_name = models.CharField(max_length=256, default='false', blank=True)

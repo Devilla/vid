@@ -128,7 +128,6 @@ def update(request):
             api = ipfsapi.connect('127.0.0.1', 5001)
             profile_picture = api.add_bytes(request.FILES['profile_picture'].read())
             channel_cover = api.add_bytes(request.FILES['channel_cover'].read())
-            channel_picture = api.add_bytes(request.FILES['channel_picture'].read())
             
             if forma.is_valid():
                 data = {}
@@ -137,7 +136,6 @@ def update(request):
                 data['channel_name'] = forma.cleaned_data['channel_name']
                 data['channel_cover'] = channel_cover
                 data['profile_picture'] = profile_picture
-                data['channel_picture'] = channel_picture
 
                 if forma.save(data, current.id):
                     return redirect('register:steem_blockchain')
