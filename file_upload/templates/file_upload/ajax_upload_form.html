@@ -13,6 +13,11 @@
 </form>
 <table class="table table-striped" id="result">
 </table>
+
+<div class="progress">
+  <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+</div>
+
 {% endblock %}
 
 
@@ -74,7 +79,9 @@ $(document).ready(function(){
         var current = e.loaded;
 
         var Percentage = (current * 100)/max;
-        console.log(Percentage);
+        
+
+        $('.progress-bar').attr('aria-valuenow', Percentage).css('width', Percentage + "%").text(Percentage + "%");
 
 
         if(Percentage >= 100)
