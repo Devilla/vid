@@ -19,7 +19,7 @@ import logging
 import uuid
 
 def get_unique_permlink(title):
-    title=lower(title)
+    title=title.lower()
     title = title.replace(" ", "-")
     uid = uuid.uuid4()
     title = title + "-" + uid.hex[:8]
