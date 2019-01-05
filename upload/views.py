@@ -15,6 +15,7 @@ from beem import Steem
 from beem.comment import Comment
 from register.models import User
 import time
+import logging
 
 # Create your views here.
 def index(request):
@@ -249,34 +250,33 @@ def post_steem(steem_key, steem_username, tags, title, body):
     nodelist_three = ['https://rpc.steemliberator.com/', 'http://rpc.steemviz.com/']
     nodelist_four = ['http://steemd.minnowsupportproject.org/', 'http://steemd.privex.io/']
 
+    f = open("error", "w")
+
     try:
         s = Steem(keys=[steem_key], nodes=nodelist_one)
         s_res = s.post(title=title, body=body, author=steem_username, tags=tags, beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
+        f.write("Uploaded in steem")
         return s_res
     except Exception as e:
-        print("Error in steem")
-        print(str(e))
+        f.write("Error in steem: {}".format(str(e)))
         try:
             s = Steem(keys=[steem_key], nodes=nodelist_two)
             s_res = s.post(title=title, body=body, author=steem_username, tags=tags, beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
             return s_res
         except Exception as e:
-            print("Error in steem")
-            print(str(e))
+            f.write("Error in steem: {}".format(str(e)))
             try:
                 s = Steem(keys=[steem_key], nodes=nodelist_three)
                 s_res = s.post(title=title, body=body, author=steem_username, tags=tags, beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
                 return s_res
             except Exception as e:
-                print("Error in steem")
-                print(str(e))
+                f.write("Error in steem: {}".format(str(e)))
                 try:
                     s = Steem(keys=[steem_key], nodes=nodelist_four)
                     s_res = s.post(title=title, body=body, author=steem_username, tags=tags, beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
                     return s_res
                 except Exception as e:
-                    print("Error in steem")
-                    print(str(e))
+                    f.write("Error in steem: {}".format(str(e)))
                     return {}
         
 
