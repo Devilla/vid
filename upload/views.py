@@ -197,7 +197,7 @@ def info(request):
                             except Exception as e:
                                 print("error in posting: {}".format(str(e)))
                                 permlink=get_unique_permlink(name)
-                                s_res = post_steem(request.user.steem, request.user.steem_name, tags, name, body, permlink=permlink)
+                                s_res = post_steem(request.user.steem, request.user.steem_name, [permlink], name, body)
                             
                             save_data(s_res, 'steem', current.id, tags)
                         except Exception as e:
@@ -215,7 +215,7 @@ def info(request):
                             except Exception as e:
                                 print("error in posting: {}".format(str(e)))
                                 permlink=get_unique_permlink(name)
-                                wls_res = post_whaleshare(request.user.whaleshare, request.user.whaleshare_name, tags, name, body, permlink=permlink)
+                                wls_res = post_whaleshare(request.user.whaleshare, request.user.whaleshare_name, [permlink], name, body)
                             
                             save_data(wls_res, 'whale', current.id, tags)
                         except Exception as e:
@@ -233,7 +233,7 @@ def info(request):
                             except Exception as e:
                                 print("error in posting: {}".format(str(e)))
                                 permlink=get_unique_permlink(name)
-                                smk_res = post_smoke(request.user.smoke, request.user.smoke_name, tags, name, body, permlink=permlink)
+                                smk_res = post_smoke(request.user.smoke, request.user.smoke_name, [permlink], name, body)
 
 
                             
