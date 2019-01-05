@@ -183,7 +183,7 @@ def info(request):
                     
                     arb_url = 'https://vidsocial.org/watch/'+ bestHash + '/'+ str(current.id) + '/'
                     thumbnail_url = 'https://gateway.ipfs.io/ipfs/' + current.thumbNail
-                    body,old_body = get_body(name, thumbnail_url, arb_url, current.description)
+                    body = get_body(name, thumbnail_url, arb_url, current.description)
                     tags = ['vidsocial']
                     name = current.name
                     print(name)
@@ -191,7 +191,7 @@ def info(request):
                     if steemPost == True and request.user.steem != 'false' and request.user.steem_name != 'false':
                         try:
                             print("Steem: {} Steem Name: {}".format(request.user.steem, request.user.steem_name))
-                            s_res = post_steem(request.user.steem, request.user.steem_name, tags, name, old_body)
+                            s_res = post_steem(request.user.steem, request.user.steem_name, tags, name, body)
                             save_data(s_res, 'steem', current.id, tags)
                         except Exception as e:
                             print(str(e))
@@ -247,10 +247,8 @@ def info(request):
         return redirect('/login')
 
 def get_body(title, thumbnail, url, description):
-    body = '<html><p><img src="{}" width="480" height="360"/></p> <p><a href="{}">{}</a></p><p>{}</p></html>'.format(thumbnail, url, title, description)
-    old_body = '<html><p><img src="{}" width="480" height="360"/></p> <p><a href="{}">{}</a></p></html>'.format(thumbnail, url, title)
- 
-    return body, old_body
+    body = '<html><p><img src="{}" width="480" height="360"/></p> <p><a href="{}">{}</a></p><p>{}</p></html>'.format(thumbnail, url, title, description) 
+    return body
 
 def post_steem(steem_key, steem_username, tags, title, body, permlink=""):
     nodelist_one = ['https://api.steemit.com/', 'http://appbasetest.timcliff.com/']
