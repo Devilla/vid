@@ -181,7 +181,6 @@ def info(request):
 
                     if steemPost == True and request.user.steem != 'false' and request.user.steem_name != 'false':
                         try:
-                            time.sleep(0.2)
                             print("Steem: {} Steem Name: {}".format(request.user.steem, request.user.steem_name))
                             s_res = post_steem(request.user.steem, request.user.steem_name, tags, name, old_body)
                             save_data(s_res, 'steem', current.id, tags)
@@ -254,22 +253,30 @@ def post_steem(steem_key, steem_username, tags, title, body):
         s = Steem(keys=[steem_key], nodes=nodelist_one)
         s_res = s.post(title=title, body=body, author=steem_username, tags=tags, beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
         return s_res
-    except:
+    except Exception as e:
+        print("Error in steem")
+        print(str(e))
         try:
             s = Steem(keys=[steem_key], nodes=nodelist_two)
             s_res = s.post(title=title, body=body, author=steem_username, tags=tags, beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
             return s_res
-        except:
+        except Exception as e:
+            print("Error in steem")
+            print(str(e))
             try:
                 s = Steem(keys=[steem_key], nodes=nodelist_three)
                 s_res = s.post(title=title, body=body, author=steem_username, tags=tags, beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
                 return s_res
-            except:
+            except Exception as e:
+                print("Error in steem")
+                print(str(e))
                 try:
                     s = Steem(keys=[steem_key], nodes=nodelist_four)
                     s_res = s.post(title=title, body=body, author=steem_username, tags=tags, beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
                     return s_res
-                except:
+                except Exception as e:
+                    print("Error in steem")
+                    print(str(e))
                     return {}
         
 
