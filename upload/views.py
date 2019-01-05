@@ -271,7 +271,8 @@ def post_steem(steem_key, steem_username, tags, title, body, permlink=""):
         if permlink == "":
             post_steem(steem_key, steem_username, tags, title, body, permlink=get_unique_permlink(title))
         else:
-            print("Error in steem: {}".format(str(e)))
+            f = open("error", "w")
+            f.write("Error in steem: {}".format(str(e)))
 
     return {}
 
