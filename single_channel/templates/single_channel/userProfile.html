@@ -1,0 +1,123 @@
+{% extends 'single_channel/base.html' %}
+
+{% load staticfiles %}
+
+{% block navigation %}
+        {% include "core/navbar.html" %}
+
+{% endblock navigation %}
+
+
+{% block content %}
+<script>
+function User(){
+
+}
+
+function Steem(){
+    $("#steemtab").show();
+    $("#whaletab").hide();
+    $("#smoketab").hide();
+    
+}
+
+function Whale(){
+    $("#whaletab").show();
+    $("#smoketab").hide();
+    $("#steemtab").hide();
+}
+
+function Smoke(){
+    $("#smoketab").show();
+    $("#steemtab").hide();
+    $("#whaletab").hide();
+}
+
+{% if success == 'true' %}
+    alert('Successfully updated.')
+{% else %}
+    alert('The given data is invalid.')
+{% endif %}
+
+</script>
+
+<div class="col-md-12" style="padding-top:5%; padding-bottom:5%;">
+
+    <div class="col-md-3">
+        <div class="tab-4">
+                <div class="block-list">
+                    <div onclick="User()">
+                        <span class="name text-white">Change User Details</span>
+                    </div>
+                    <div onclick="Steem()">
+                        <span class="name text-white">Change Steem Key</span>
+                    </div>
+                    <div onclick="Smoke()">
+                        <span class="name text-white">Change Smoke Key</span>
+                    </div>
+                    <div onclick="Whale()">
+                        <span class="name text-white">Change Whale Share Key</span>
+                    </div>
+                </div>
+            </div>
+            <!-- END tab-4 -->
+    </div>
+    <div class="col-md-1"></div>
+    <div class="col-md-6">
+            <div class="tab-4" id="steemtab" style="display:none">
+                    <form action="/channel/steemUpdate/" method="POST" enctype='multipart/form-data'>{% csrf_token %}
+                        <div class="block-list">
+                            
+                                <div>
+                                        {{ steemForm.steem_name}} 
+                                </div>
+                                <div>
+                                        {{ steemForm.steem}}
+                                </div>
+                                <div>
+                                        <button type="submit" class="btn btn-cv1">Update</button>
+                                </div>
+                            
+                        </div>
+                    </form>
+                </div>
+                <div class="tab-4" id="smoketab" style="display:none">
+                        <form action="/channel/smokeUpdate/" method="POST" enctype='multipart/form-data'>{% csrf_token %}
+                            <div class="block-list">
+                                
+                                    <div>
+                                            {{ smokeForm.smoke_name}} 
+                                    </div>
+                                    <div>
+                                            {{ smokeForm.smoke}}
+                                    </div>
+                                    <div>
+                                            <button type="submit" class="btn btn-cv1">Update</button>
+                                    </div>
+                                
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-4" id="whaletab" style="display:none">
+                            <form action="/channel/whaleUpdate/" method="POST" enctype='multipart/form-data'>{% csrf_token %}
+                                <div class="block-list">
+                                    
+                                        <div>
+                                                {{ whaleForm.whaleshare_name}} 
+                                        </div>
+                                        <div>
+                                                {{ whaleForm.whaleshare}}
+                                        </div>
+                                        <div>
+                                                <button type="submit" class="btn btn-cv1">Update</button>
+                                        </div>
+                                    
+                                </div>
+                            </form>
+                        </div>
+                <!-- END tab-4 -->
+        </div>
+</div>              
+{% endblock content %}
+
+{% block title %} {{ channel }} {% endblock title %}
