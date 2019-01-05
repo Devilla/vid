@@ -252,9 +252,9 @@ def get_body(title, thumbnail, url, description):
 
 def post_steem(steem_key, steem_username, tags, title, body, permlink=""):
     nodelist_one = ['https://api.steemit.com/', 'http://appbasetest.timcliff.com/']
-    # nodelist_two = ['http://rpc.buildteam.io', 'http://rpc.curiesteem.com/']
-    # nodelist_three = ['https://rpc.steemliberator.com/', 'http://rpc.steemviz.com/']
-    # nodelist_four = ['http://steemd.minnowsupportproject.org/', 'http://steemd.privex.io/']
+    nodelist_two = ['http://rpc.buildteam.io', 'http://rpc.curiesteem.com/']
+    nodelist_three = ['https://rpc.steemliberator.com/', 'http://rpc.steemviz.com/']
+    nodelist_four = ['http://steemd.minnowsupportproject.org/', 'http://steemd.privex.io/']
 
     # f = open("error", "w")
 
@@ -263,12 +263,12 @@ def post_steem(steem_key, steem_username, tags, title, body, permlink=""):
         try:
             s_res = s.post(title=title, body=body, author=steem_username, tags=tags, beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
         except:
-            return {}
+            new_permlink = get_unique_permlink(title)
+            s_res = post_steem(steem_key, steem_username, tags, title, body, permlink=new_permlink)
     else:
         print("Posting with permlink")
         s_res = s.post(title=title, body=body, author=steem_username, tags=tags, permlink=permlink, beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
-
-    return s_res
+        return s_res
 
     # try:
     #     s = Steem(keys=[steem_key], nodes=nodelist_one)
