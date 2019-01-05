@@ -263,7 +263,7 @@ def post_steem(steem_key, steem_username, tags, title, body, permlink=""):
         try:
             s_res = s.post(title=title, body=body, author=steem_username, tags=tags, beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
         except:
-            pass
+            return {}
     else:
         print("Posting with permlink")
         s_res = s.post(title=title, body=body, author=steem_username, tags=tags, permlink=permlink, beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
