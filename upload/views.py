@@ -258,21 +258,30 @@ def post_steem(steem_key, steem_username, tags, title, body, permlink=""):
 
     # f = open("error", "w")
 
-    try:
-        s = Steem(keys=[steem_key], nodes=nodelist_one)
-        if (permlink == ""):
-            s_res = s.post(title=title, body=body, author=steem_username, tags=tags, beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
-        else:
-            print("Posting with permlink")
-            s_res = s.post(title=title, body=body, author=steem_username, tags=tags, permlink=permlink,beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
+    s = Steem(keys=[steem_key], nodes=nodelist_one)
+    if (permlink == ""):
+        s_res = s.post(title=title, body=body, author=steem_username, tags=tags, beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
+    else:
+        print("Posting with permlink")
+        s_res = s.post(title=title, body=body, author=steem_username, tags=tags, permlink=permlink, beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
 
-        return s_res
-    except Exception as e:
-        if permlink == "":
-            post_steem(steem_key, steem_username, tags, title, body, permlink=get_unique_permlink(title))
-        else:
-            f = open("error", "w")
-            f.write("Error in steem: {}".format(str(e)))
+    return s_res
+
+    # try:
+    #     s = Steem(keys=[steem_key], nodes=nodelist_one)
+    #     if (permlink == ""):
+    #         s_res = s.post(title=title, body=body, author=steem_username, tags=tags, beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
+    #     else:
+    #         print("Posting with permlink")
+    #         s_res = s.post(title=title, body=body, author=steem_username, tags=tags, permlink=permlink, beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
+
+    #     return s_res
+    # except Exception as e:
+    #     if permlink == "":
+    #         post_steem(steem_key, steem_username, tags, title, body, permlink=get_unique_permlink(title))
+    #     else:
+    #         f = open("error", "w")
+    #         f.write("Error in steem: {}".format(str(e)))
 
     return {}
 
