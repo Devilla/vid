@@ -22,6 +22,7 @@ def get_unique_permlink(title):
     title = title.replace(" ", "-")
     uid = uuid.uuid4()
     title = title + "-" + uid.hex[:8]
+    print("The unique title is: {}".format(title))
     return title
 
 # Create your views here.
@@ -264,6 +265,7 @@ def post_steem(steem_key, steem_username, tags, title, body, permlink=""):
         if (permlink == ""):
             s_res = s.post(title=title, body=body, author=steem_username, tags=tags, beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
         else:
+            print("Posting with permlink")
             s_res = s.post(title=title, body=body, author=steem_username, tags=tags, permlink=permlink,beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
 
         return s_res
@@ -271,7 +273,7 @@ def post_steem(steem_key, steem_username, tags, title, body, permlink=""):
         if permlink == "":
             post_steem(steem_key, steem_username, tags, title, body, permlink=get_unique_permlink(title))
         else:
-            print("Error in steem: {}".formt(str(e)))
+            print("Error in steem: {}".format(str(e)))
 
     return {}
 
@@ -309,7 +311,7 @@ def post_smoke(smoke_key, smoke_username, tags, title, body, permlink=""):
         if permlink == "":
             post_smoke(smoke_key, smoke_username, tags, title, body, permlink=get_unique_permlink(title))
         else:
-            print("Error in smoke: {}".formt(str(e)))
+            print("Error in smoke: {}".format(str(e)))
 
     return {}
 
@@ -340,7 +342,7 @@ def post_whaleshare(whaleshares_key, whaleshares_username, tags, title, body, pe
         if permlink == "":
             post_whaleshare(whaleshares_key, whaleshares_username, tags, title, body, permlink=get_unique_permlink(title))
         else:
-            print("Error in Whaleshare: {}".formt(str(e)))
+            print("Error in Whaleshare: {}".format(str(e)))
 
     return {}
 
