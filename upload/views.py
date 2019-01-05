@@ -19,6 +19,7 @@ import logging
 import uuid
 
 def get_unique_permlink(title):
+    title=lower(title)
     title = title.replace(" ", "-")
     uid = uuid.uuid4()
     title = title + "-" + uid.hex[:8]
@@ -191,7 +192,13 @@ def info(request):
                     if steemPost == True and request.user.steem != 'false' and request.user.steem_name != 'false':
                         try:
                             print("Steem: {} Steem Name: {}".format(request.user.steem, request.user.steem_name))
-                            s_res = post_steem(request.user.steem, request.user.steem_name, tags, name, body)
+                            try:
+                                s_res = post_steem(request.user.steem, request.user.steem_name, tags, name, body)
+                            except Exception as e:
+                                print("error in posting: {}".format(str(e)))
+                                permlink=get_unique_permlink(name)
+                                s_res = post_steem(request.user.steem, request.user.steem_name, tags, name, body, permlink=permlink)
+                            
                             save_data(s_res, 'steem', current.id, tags)
                         except Exception as e:
                             print(str(e))
@@ -202,7 +209,14 @@ def info(request):
                     if whalePost == True and request.user.whaleshare != 'false' and request.user.whaleshare_name != 'false':
                         try:
                             print("Whale: {} Whale Name: {}".format(request.user.whaleshare, request.user.whaleshare_name))
-                            wls_res = post_whaleshare(request.user.whaleshare, request.user.whaleshare_name, tags, name, body)
+                            
+                            try:
+                                wls_res = post_whaleshare(request.user.whaleshare, request.user.whaleshare_name, tags, name, body)
+                            except Exception as e:
+                                print("error in posting: {}".format(str(e)))
+                                permlink=get_unique_permlink(name)
+                                wls_res = post_whaleshare(request.user.whaleshare, request.user.whaleshare_name, tags, name, body, permlink=permlink)
+                            
                             save_data(wls_res, 'whale', current.id, tags)
                         except Exception as e:
                             print(str(e))
@@ -213,7 +227,16 @@ def info(request):
                     if smokePost == True and request.user.smoke != 'false' and request.user.smoke_name != 'false':
                         try:
                             print("Smoke: {} Smoke Name: {}".format(request.user.smoke, request.user.smoke_name))
-                            smk_res = post_smoke(request.user.smoke, request.user.smoke_name, tags, name, body)
+
+                            try:
+                                smk_res = post_smoke(request.user.smoke, request.user.smoke_name, tags, name, body)
+                            except Exception as e:
+                                print("error in posting: {}".format(str(e)))
+                                permlink=get_unique_permlink(name)
+                                smk_res = post_smoke(request.user.smoke, request.user.smoke_name, tags, name, body, permlink=permlink)
+
+
+                            
                             save_data(smk_res, 'smoke', current.id, tags)
                         except Exception as e:
                             print(str(e))
@@ -250,114 +273,48 @@ def get_body(title, thumbnail, url, description):
     body = '<html><p><img src="{}" width="480" height="360"/></p> <p><a href="{}">{}</a></p><p>{}</p></html>'.format(thumbnail, url, title, description) 
     return body
 
-def post_steem(steem_key, steem_username, tags, title, body, permlink=""):
+def post_steem(steem_key, steem_username, tags, title, body, permlink=None):
     nodelist_one = ['https://api.steemit.com/', 'http://appbasetest.timcliff.com/']
     nodelist_two = ['http://rpc.buildteam.io', 'http://rpc.curiesteem.com/']
     nodelist_three = ['https://rpc.steemliberator.com/', 'http://rpc.steemviz.com/']
     nodelist_four = ['http://steemd.minnowsupportproject.org/', 'http://steemd.privex.io/']
 
-    # f = open("error", "w")
-
     s = Steem(keys=[steem_key], nodes=nodelist_one)
-    if (permlink == ""):
-        try:
-            s_res = s.post(title=title, body=body, author=steem_username, tags=tags, beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
-        except:
-            new_permlink = get_unique_permlink(title)
-            s_res = post_steem(steem_key, steem_username, tags, title, body, permlink=new_permlink)
-    else:
-        print("Posting with permlink")
-        s_res = s.post(title=title, body=body, author=steem_username, tags=tags, permlink=permlink, beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
-        return s_res
+    s_res = s.post(title=title, body=body, author=steem_username, tags=tags, permlink=permlink, beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
+    return s_res
 
-    # try:
-    #     s = Steem(keys=[steem_key], nodes=nodelist_one)
-    #     if (permlink == ""):
-    #         s_res = s.post(title=title, body=body, author=steem_username, tags=tags, beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
-    #     else:
-    #         print("Posting with permlink")
-    #         s_res = s.post(title=title, body=body, author=steem_username, tags=tags, permlink=permlink, beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
+def post_smoke(smoke_key, smoke_username, tags, title, body, permlink=None):
+    smk = Steem(node=['https://rpc.smoke.io/'], keys=[smoke_key], custom_chains={"SMOKE": {
+        "chain_id": "1ce08345e61cd3bf91673a47fc507e7ed01550dab841fd9cdb0ab66ef576aaf0",
+        "min_version": "0.0.0",
+        "prefix": "SMK",
+        "chain_assets": [
+            {"asset": "STEEM", "symbol": "SMOKE", "precision": 3, "id": 1},
+            {"asset": "VESTS", "symbol": "VESTS", "precision": 6, "id": 2}
+        ]
+    }})
 
-    #     return s_res
-    # except Exception as e:
-    #     if permlink == "":
-    #         post_steem(steem_key, steem_username, tags, title, body, permlink=get_unique_permlink(title))
-    #     else:
-    #         f = open("error", "w")
-    #         f.write("Error in steem: {}".format(str(e)))
+    smk_res = smk.post(title=title, body=body, author=smoke_username, tags=tags, permlink=permlink, json_metadata={
+                        'extensions': [[0, {
+                            'beneficiaries': [
+                                {'account': 'fiasteem', 'weight': 2500},
+                            ]}
+                        ]]
+                    })
 
-    return {}
+    return smk_res
 
-def post_smoke(smoke_key, smoke_username, tags, title, body, permlink=""):
-    try:
-        smk = Steem(node=['https://rpc.smoke.io/'], keys=[smoke_key], custom_chains={"SMOKE": {
-            "chain_id": "1ce08345e61cd3bf91673a47fc507e7ed01550dab841fd9cdb0ab66ef576aaf0",
-            "min_version": "0.0.0",
-            "prefix": "SMK",
-            "chain_assets": [
-                {"asset": "STEEM", "symbol": "SMOKE", "precision": 3, "id": 1},
-                {"asset": "VESTS", "symbol": "VESTS", "precision": 6, "id": 2}
-            ]
-        }})
-
-        if (permlink == ""):
-            smk_res = smk.post(title=title, body=body, author=smoke_username, tags=tags, json_metadata={
-                'extensions': [[0, {
-                    'beneficiaries': [
-                        {'account': 'fiasteem', 'weight': 2500},
-                    ]}
-                ]]
-            })
-        else:
-            smk_res = smk.post(title=title, body=body, author=smoke_username, tags=tags, permlink=permlink,json_metadata={
-                                'extensions': [[0, {
-                                    'beneficiaries': [
-                                        {'account': 'fiasteem', 'weight': 2500},
-                                    ]}
-                                ]]
-                            })
-
-        return smk_res
-    except Exception as e:
-        if permlink == "":
-            post_smoke(smoke_key, smoke_username, tags, title, body, permlink=get_unique_permlink(title))
-        else:
-            print("Error in smoke: {}".format(str(e)))
-
-    return {}
-
-def post_whaleshare(whaleshares_key, whaleshares_username, tags, title, body, permlink=""):
-    try:
-        wls = Steem(node=["https://rpc.whaleshares.io", "ws://188.166.99.136:8090", "ws://rpc.kennybll.com:8090"], keys=[whaleshares_key])
+def post_whaleshare(whaleshares_key, whaleshares_username, tags, title, body, permlink=None):
+    wls = Steem(node=["https://rpc.whaleshares.io", "ws://188.166.99.136:8090", "ws://rpc.kennybll.com:8090"], keys=[whaleshares_key])
         
-        
-        if (permlink == ""):
-            wls_res = wls.post(title=title, body=body, author=whaleshares_username, tags=tags, json_metadata={
+    wls_res = wls.post(title=title, body=body, author=whaleshares_username, tags=tags, permlink=permlink, json_metadata={
                     'extensions': [[0, {
                         'beneficiaries': [
                             {'account': 'fiasteemproject', 'weight': 2500},
                         ]}
                     ]]
                 })
-        else:
-            wls_res = wls.post(title=title, body=body, author=whaleshares_username, tags=tags, permlink=permlink,json_metadata={
-                            'extensions': [[0, {
-                                'beneficiaries': [
-                                    {'account': 'fiasteemproject', 'weight': 2500},
-                                ]}
-                            ]]
-                        })
 
-        return wls_res
-    except Exception as e:
-        if permlink == "":
-            post_whaleshare(whaleshares_key, whaleshares_username, tags, title, body, permlink=get_unique_permlink(title))
-        else:
-            print("Error in Whaleshare: {}".format(str(e)))
-
-    return {}
-
-    
     return wls_res
 
 def save_data(data, platform, id, tags):
