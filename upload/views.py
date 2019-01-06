@@ -176,21 +176,19 @@ def index(request):
                 print(name)
 
                 if steemPost == True and request.user.steem != 'false' and request.user.steem_name != 'false':
-                    s_res = post_steem(request.user.steem, request.user.steem_name, tags, name, body)
-                    save_data(s_res, 'steem', current.id, tags)
-                    # try:
-                    #     print("Steem: {} Steem Name: {}".format(request.user.steem, request.user.steem_name))
-                    #     try:
-                    #         s_res = post_steem(request.user.steem, request.user.steem_name, tags, name, body)
-                    #     except Exception as e:
-                    #         print("error in posting: {}".format(str(e)))
-                    #         permlink=get_unique_permlink(name)
-                    #         s_res = post_steem(request.user.steem, request.user.steem_name, [permlink], name, body)
+                    try:
+                        print("Steem: {} Steem Name: {}".format(request.user.steem, request.user.steem_name))
+                        try:
+                            s_res = post_steem(request.user.steem, request.user.steem_name, tags, name, body)
+                        except Exception as e:
+                            print("error in posting: {}".format(str(e)))
+                            # permlink=get_unique_permlink(name)
+                            s_res = post_steem(request.user.steem, request.user.steem_name, tags, name, body, benificiary=False)
                         
-                    #     save_data(s_res, 'steem', current.id, tags)
-                    # except Exception as e:
-                    #     print(str(e))
-                    #     print('Errorsss')
+                        save_data(s_res, 'steem', current.id, tags)
+                    except Exception as e:
+                        print(str(e))
+                        print('Errorsss')
                 else:
                     print('No Steem')
 
@@ -264,14 +262,24 @@ def get_body(title, thumbnail, url, description):
     body = '<html><p><img src="{}" width="480" height="360"/></p> <p><a href="{}">{}</a></p><p>{}</p></html>'.format(thumbnail, url, title, description) 
     return body
 
-def post_steem(steem_key, steem_username, tags, title, body, permlink=None):
+def post_steem(steem_key, steem_username, tags, title, body, permlink=None, benificiary=False):
     nodelist_one = ['https://api.steemit.com/', 'http://appbasetest.timcliff.com/']
     nodelist_two = ['http://rpc.buildteam.io', 'http://rpc.curiesteem.com/']
     nodelist_three = ['https://rpc.steemliberator.com/', 'http://rpc.steemviz.com/']
     nodelist_four = ['http://steemd.minnowsupportproject.org/', 'http://steemd.privex.io/']
 
     s = Steem(keys=[steem_key], nodes=nodelist_one)
-    s_res = s.post(title=title, body=body, author=steem_username, tags=tags, permlink=permlink, beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
+
+    if benificiary == False:
+        s_res = s.post(title=title, body=body, author=steem_username, tags=tags, permlink=permlink, beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
+    else:
+        s_res = s.post(title=title, body=body, author=steem_username, tags=tags, permlink=permlink, json_metadata={
+        'extensions': [[0, {
+            'beneficiaries': [
+                {'account': 'fiasteem', 'weight': 2500},
+            ]}
+        ]]
+    })
     return s_res
 
 def post_smoke(smoke_key, smoke_username, tags, title, body, permlink=None):
