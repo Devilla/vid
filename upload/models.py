@@ -2,8 +2,18 @@ from django.db import models
 from register.models import User
 from django.contrib.postgres.fields import JSONField
 from django.contrib.postgres.fields import ArrayField
+import os
+import uuid
 
-# Create your models here.
+def user_directory_path(instance, filename):
+    ext = filename.split('.')[-1]
+    filename = '{}.{}'.format(uuid.uuid4().hex[:10], ext)
+    return os.path.join("files", filename)
+
+
+class File(models.Model):
+    file = models.FileField(upload_to=user_directory_path, null=True)
+
 class Video(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='videos')
     views = models.IntegerField(default=0)

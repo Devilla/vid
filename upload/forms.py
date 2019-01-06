@@ -1,5 +1,26 @@
 from django import forms
 
+from .models import File
+
+# Model form
+class FileUploadModelForm(forms.ModelForm):
+    class Meta:
+        model = File
+        fields = ('file',)
+
+        widgets = {
+            'file': forms.ClearableFileInput(attrs={'class': 'form-control', 'id':'upload', 'style': 'display:none'}),
+        }
+
+    def clean_file(self):
+        file = self.cleaned_data['file']
+        ext = file.name.split('.')[-1].lower()
+        # if ext not in ["jpg", "pdf", "xlsx"]:
+        #     raise forms.ValidationError("Only jpg, pdf and xlsx files are allowed.")
+        # return cleaned data is very important.
+        
+        return file
+
 class postOptionsForm(forms.Form):
     name = forms.CharField(label='Name', required=True, max_length=200)
     steem = forms.BooleanField(required = False)

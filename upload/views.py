@@ -5,6 +5,9 @@ import random
 
 from django.conf import settings
 from django.shortcuts import render, redirect
+from django.http import JsonResponse
+
+from .forms import FileUploadModelForm
 
 import cv2
 import ipfsapi
@@ -18,6 +21,10 @@ import time
 import logging
 import uuid
 
+from .models import File
+from .forms import FileUploadModelForm
+
+
 def get_unique_permlink(title):
     title=title.lower()
     title = title.replace(" ", "-")
@@ -26,245 +33,227 @@ def get_unique_permlink(title):
     print("The unique title is: {}".format(title))
     return title
 
+def ajax_upload(request):
+    if request.method == "POST":
+        form = FileUploadModelForm(data=request.POST, files=request.FILES)
+        if form.is_valid():
+            file = request.FILES['file'].read()
+            current_name = ''.join(random.choice('0123456789ABCDEF') for i in range(16)) + "." + str(request.FILES['file']).split('.')[-1]
+            videos_directory = os.path.join(os.path.join(settings.BASE_DIR, "static"), 'videos')
+
+
+            if not(os.path.isdir(videos_directory)):
+                os.makedirs(videos_directory)
+
+            open(os.path.join(videos_directory, current_name), 'wb').write(file)
+            
+            # Connect to the ipfs through ipfsapi and add the uploaded file to the ipfs
+            api = ipfsapi.connect('127.0.0.1', 5001)
+            fileHash = api.add_bytes(file)
+            
+
+            # Define the path to save the thumbnail of the uploaded video
+            path = os.path.join(os.path.join(settings.BASE_DIR, "static"), 'images') 
+
+            thumbnail_name = '%s%s' % (''.join(random.choice('0123456789ABCDEF') for i in range(16)) +'video_Pranish', 'thumb.jpg')
+            thumbnail_path = os.path.join(path, thumbnail_name)
+            
+
+            # Generate the thumnail of the video using ffmpeg tool
+            runCommand = 'ffmpeg -ss 00:0:01 -i '+ os.path.join(videos_directory, current_name) +' -frames:v 1 '+ thumbnail_path
+            # ffMpegPAth = "C:\\ffmpeg\\bin"
+            # runCommand = ffMpegPAth + "\\" + runCommand
+            subprocess.check_call(runCommand.split(" ")) #we have a command line injection vulnerability here
+
+            durationCommand = 'ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 ' + os.path.join(videos_directory, current_name)
+   
+            # durationCommand = ffMpegPAth + "\\" + durationCommand
+            time = ''
+            duration = subprocess.check_output(durationCommand.split(' '))
+            floatDuration = float(duration)/60
+            decimal = floatDuration - int(floatDuration)
+            seconds = int(decimal*60)
+            
+            if int(floatDuration) > 60:
+                hours = int(floatDuration/60)
+                minutes = int(floatDuration - hours*60)
+                time = str(hours) + ':' + str(minutes) + ':' + str(seconds).zfill(2)
+            else:
+                time = str(int(floatDuration)) + ':' + str(seconds).zfill(2)
+
+
+            # Find the resolution of the uploaded video
+            vid = cv2.VideoCapture(os.path.join(videos_directory, current_name))
+            height = int(vid.get(cv2.CAP_PROP_FRAME_HEIGHT))
+            width = vid.get(cv2.CAP_PROP_FRAME_WIDTH)
+            vid.release()
+
+            hash = "{\"" + str(height) + "\": \"" + fileHash + "\", \n"
+
+            # Declare the supported resolution 
+            resolution = [2160, 1440, 1080, 720, 480, 360, 240  , 144]
+
+            # Generate multiple video quality to upload to the server
+
+            newHash = api.add(os.path.join(videos_directory, current_name))
+            hash = hash + "\"" + str(720) + "\": \"" + newHash['Hash'] + "\"}"
+
+            thumbnailHash = api.add(thumbnail_path)
+            video = Video(views=0, duration=time, thumbsUp=0, thumbsDown=0, video=hash, user_id=request.user.id, thumbNail=thumbnailHash['Hash'])
+            video.save()
+            
+            try:
+                os.remove(thumbnail_path)
+                os.remove(os.path.join(videos_directory, current_name))
+            except:
+                    
+                print('Delete Error')
+
+            request.session['video_id'] = video.id
+            request.session['hash'] = fileHash
+            
+            data = []
+            return JsonResponse(data, safe=False)
+        else:
+            data = {'error_msg': "Only jpg, pdf and xlsx files are allowed."}
+            return JsonResponse(data)
+    return JsonResponse({'error_msg': 'only POST method accpeted.'})
+
+
+def after_clicked(request):
+    return render(request, 'upload/uploading.html') 
+
 # Create your views here.
 def index(request):
     if request.user.is_authenticated == True:
         if request.method == 'POST':
-            try:
+            current = Video.objects.get(id=request.session.get('video_id'))
+            hash = json.loads(current.video) 
 
-                # Get the uploaded file and rename it to make it unique and save locally
-                file = request.FILES['video'].read()
-                current_name = ''.join(random.choice('0123456789ABCDEF') for i in range(16)) + "." + str(request.FILES['video']).split('.')[-1]
-                videos_directory = os.path.join(os.path.join(settings.BASE_DIR, "static"), 'videos')
+            bestHash = ''
 
+            resolution = [2160, 1440, 1080, 720, 480, 360, 240  , 144]
 
-                if not(os.path.isdir(videos_directory)):
-                    os.makedirs(videos_directory)
+            for each_res in resolution:
+                if str(each_res) in current.video:
+                    bestHash = hash[str(each_res)]
+                    break 
 
-                open(os.path.join(videos_directory, current_name), 'wb').write(file)
-                
-                # Connect to the ipfs through ipfsapi and add the uploaded file to the ipfs
-                api = ipfsapi.connect('127.0.0.1', 5001)
-                fileHash = api.add_bytes(file)
-                
-
-                # Define the path to save the thumbnail of the uploaded video
-                path = os.path.join(os.path.join(settings.BASE_DIR, "static"), 'images') 
-
-                thumbnail_name = '%s%s' % (''.join(random.choice('0123456789ABCDEF') for i in range(16)) +'video_Pranish', 'thumb.jpg')
-                thumbnail_path = os.path.join(path, thumbnail_name)
-                
-
-                # Generate the thumnail of the video using ffmpeg tool
-                runCommand = 'ffmpeg -ss 00:0:01 -i '+ os.path.join(videos_directory, current_name) +' -frames:v 1 '+ thumbnail_path
-                # ffMpegPAth = "C:\\ffmpeg\\bin"
-                # runCommand = ffMpegPAth + "\\" + runCommand
-                subprocess.check_call(runCommand.split(" ")) #we have a command line injection vulnerability here
-
-
-                # Get the duration of the video file
-                durationCommand = 'ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 ' + os.path.join(videos_directory, current_name)
-   
-                # durationCommand = ffMpegPAth + "\\" + durationCommand
-                time = ''
-                duration = subprocess.check_output(durationCommand.split(' '))
-                floatDuration = float(duration)/60
-                decimal = floatDuration - int(floatDuration)
-                seconds = int(decimal*60)
-                
-                if int(floatDuration) > 60:
-                    hours = int(floatDuration/60)
-                    minutes = int(floatDuration - hours*60)
-                    time = str(hours) + ':' + str(minutes) + ':' + str(seconds).zfill(2)
-                else:
-                    time = str(int(floatDuration)) + ':' + str(seconds).zfill(2)
-
-
-                # Find the resolution of the uploaded video
-                vid = cv2.VideoCapture(os.path.join(videos_directory, current_name))
-                height = int(vid.get(cv2.CAP_PROP_FRAME_HEIGHT))
-                width = vid.get(cv2.CAP_PROP_FRAME_WIDTH)
-                vid.release()
-
-                hash = "{\"" + str(height) + "\": \"" + fileHash + "\", \n"
-
-                # Declare the supported resolution 
-                resolution = [2160, 1440, 1080, 720, 480, 360, 240  , 144]
-
-                # Generate multiple video quality to upload to the server
-
-                newHash = api.add(os.path.join(videos_directory, current_name))
-                hash = hash + "\"" + str(720) + "\": \"" + newHash['Hash'] + "\"}"
-
-                # for small_res in resolution:
-                #     if small_res < height :
-                #         # Change the video to different quality
-                #         res = 'ffmpeg -v -8 -i ' + os.path.join(videos_directory, current_name) + ' -vf scale=-2:' + str(small_res) + ' -preset slow -c:v libx264 -strict experimental -c:a aac -crf 24 -maxrate 500k -bufsize 500k -r 25 -f mp4 ' + os.path.join(videos_directory, str(small_res)+current_name)
-                #         subprocess.check_call(res.split(" "))
-                #         newHash = api.add(os.path.join(videos_directory, str(small_res)+current_name), trickle=True)
-                #         os.remove(os.path.join(videos_directory, str(small_res)+current_name))
-                        
-                #         if small_res == 144:
-                #             hash = hash + "\"" + str(small_res) + "\": \"" + newHash['Hash'] + "\"}"
-                #         else:
-                #             hash = hash + "\"" + str(small_res) + "\": \"" + newHash['Hash'] + "\", \n"
-                                        
-
-                # Save the generated data in the server
-                thumbnailHash = api.add(thumbnail_path)
-                video = Video(views=0, duration=time, thumbsUp=0, thumbsDown=0, video=hash, user_id=request.user.id, thumbNail=thumbnailHash['Hash'])
-                video.save()
-                
-                try:
-                    os.remove(thumbnail_path)
-                    os.remove(os.path.join(videos_directory, current_name))
-                except:
-                     
-                    print('Delete Error')
-
-                request.session['video_id'] = video.id
-                request.session['hash'] = fileHash
-                return redirect('upload:info')
-
-            except Exception as e:
-                print('Not uploaded, server error: {}'.format(str(e)))
-            
-                
-        return render(request, 'upload/upload.html')
-
-    else:
-        return redirect('/login')
-
-def info(request):
-    if request.user.is_authenticated == True:
-        current = Video.objects.get(id=request.session.get('video_id'))
-        
-        hash = json.loads(current.video) 
-
-        bestHash = ''
-
-        resolution = [2160, 1440, 1080, 720, 480, 360, 240  , 144]
-
-        for each_res in resolution:
-            if str(each_res) in current.video:
-                bestHash = hash[str(each_res)]
-                break 
-
-        
-        if current.user_id == request.user.id:
             optform = postOptionsForm()
-            if request.method == 'POST':
-                optform = postOptionsForm(request.POST)
-                form = optform
-                if form.is_valid():
+            optform = postOptionsForm(request.POST)
+            form = optform
+            
+            if form.is_valid():
+                name = form.cleaned_data['name']
+                steemPost = form.cleaned_data['steem']
+                smokePost = form.cleaned_data['smoke']
+                whalePost = form.cleaned_data['whale']
 
-                    name = form.cleaned_data['name']
-                    steemPost = form.cleaned_data['steem']
-                    smokePost = form.cleaned_data['smoke']
-                    whalePost = form.cleaned_data['whale']
-
-                    if name != '':
-                        if request.POST.getlist("#"):
-                            current.name = name
-                            current.nsfw = True
-                        else:
-                            current.name = name
-                            current.nsfw = False
+                if name != '':
+                    if request.POST.getlist("#"):
+                        current.name = name
+                        current.nsfw = True
                     else:
-                        if request.POST.getlist("#"):
-                            current.nsfw = True
-                        else:
-                            current.nsfw = False
+                        current.name = name
+                        current.nsfw = False
+                else:
+                    if request.POST.getlist("#"):
+                        current.nsfw = True
+                    else:
+                        current.nsfw = False
 
-                    #current.tags = form.cleaned_data['video_tags']
-                    current.description =form.cleaned_data['description']
-                    current.language = form.cleaned_data['language']
-                    current.publish = True
-                    current.save()
-                    
-                    arb_url = 'https://vidsocial.org/watch/'+ bestHash + '/'+ str(current.id) + '/'
-                    thumbnail_url = 'https://gateway.ipfs.io/ipfs/' + current.thumbNail
-                    body = get_body(name, thumbnail_url, arb_url, current.description)
-                    tags = ['vidsocial']
-                    name = current.name
-                    print(name)
+                #current.tags = form.cleaned_data['video_tags']
+                current.description =form.cleaned_data['description']
+                current.language = form.cleaned_data['language']
+                current.publish = True
+                current.save()
+                
+                arb_url = 'https://vidsocial.org/watch/'+ bestHash + '/'+ str(current.id) + '/'
+                thumbnail_url = 'https://gateway.ipfs.io/ipfs/' + current.thumbNail
+                body = get_body(name, thumbnail_url, arb_url, current.description)
+                tags = ['vidsocial']
+                name = current.name
+                print(name)
 
-                    if steemPost == True and request.user.steem != 'false' and request.user.steem_name != 'false':
+                if steemPost == True and request.user.steem != 'false' and request.user.steem_name != 'false':
+                    try:
+                        print("Steem: {} Steem Name: {}".format(request.user.steem, request.user.steem_name))
                         try:
-                            print("Steem: {} Steem Name: {}".format(request.user.steem, request.user.steem_name))
-                            try:
-                                s_res = post_steem(request.user.steem, request.user.steem_name, tags, name, body)
-                            except Exception as e:
-                                print("error in posting: {}".format(str(e)))
-                                permlink=get_unique_permlink(name)
-                                s_res = post_steem(request.user.steem, request.user.steem_name, [permlink], name, body)
-                            
-                            save_data(s_res, 'steem', current.id, tags)
+                            s_res = post_steem(request.user.steem, request.user.steem_name, tags, name, body)
                         except Exception as e:
-                            print(str(e))
-                            print('Errorsss')
-                    else:
-                        print('No Steem')
+                            print("error in posting: {}".format(str(e)))
+                            permlink=get_unique_permlink(name)
+                            s_res = post_steem(request.user.steem, request.user.steem_name, [permlink], name, body)
+                        
+                        save_data(s_res, 'steem', current.id, tags)
+                    except Exception as e:
+                        print(str(e))
+                        print('Errorsss')
+                else:
+                    print('No Steem')
 
-                    if whalePost == True and request.user.whaleshare != 'false' and request.user.whaleshare_name != 'false':
+                if whalePost == True and request.user.whaleshare != 'false' and request.user.whaleshare_name != 'false':
+                    try:
+                        print("Whale: {} Whale Name: {}".format(request.user.whaleshare, request.user.whaleshare_name))
+                        
                         try:
-                            print("Whale: {} Whale Name: {}".format(request.user.whaleshare, request.user.whaleshare_name))
-                            
-                            try:
-                                wls_res = post_whaleshare(request.user.whaleshare, request.user.whaleshare_name, tags, name, body)
-                            except Exception as e:
-                                print("error in posting: {}".format(str(e)))
-                                permlink=get_unique_permlink(name)
-                                wls_res = post_whaleshare(request.user.whaleshare, request.user.whaleshare_name, [permlink], name, body)
-                            
-                            save_data(wls_res, 'whale', current.id, tags)
+                            wls_res = post_whaleshare(request.user.whaleshare, request.user.whaleshare_name, tags, name, body)
                         except Exception as e:
-                            print(str(e))
-                            print('Error Whale')
-                    else:
-                        print('No Whaleshare')
+                            print("error in posting: {}".format(str(e)))
+                            permlink=get_unique_permlink(name)
+                            wls_res = post_whaleshare(request.user.whaleshare, request.user.whaleshare_name, [permlink], name, body)
+                        
+                        save_data(wls_res, 'whale', current.id, tags)
+                    except Exception as e:
+                        print(str(e))
+                        print('Error Whale')
+                else:
+                    print('No Whaleshare')
 
-                    if smokePost == True and request.user.smoke != 'false' and request.user.smoke_name != 'false':
+                if smokePost == True and request.user.smoke != 'false' and request.user.smoke_name != 'false':
+                    try:
+                        print("Smoke: {} Smoke Name: {}".format(request.user.smoke, request.user.smoke_name))
+
                         try:
-                            print("Smoke: {} Smoke Name: {}".format(request.user.smoke, request.user.smoke_name))
-
-                            try:
-                                smk_res = post_smoke(request.user.smoke, request.user.smoke_name, tags, name, body)
-                            except Exception as e:
-                                print("error in posting: {}".format(str(e)))
-                                permlink=get_unique_permlink(name)
-                                smk_res = post_smoke(request.user.smoke, request.user.smoke_name, [permlink], name, body)
-
-
-                            
-                            save_data(smk_res, 'smoke', current.id, tags)
+                            smk_res = post_smoke(request.user.smoke, request.user.smoke_name, tags, name, body)
                         except Exception as e:
-                            print(str(e))
-                            print('Error smoke')
-                    else:
-                        print('No smoke')
+                            print("error in posting: {}".format(str(e)))
+                            permlink=get_unique_permlink(name)
+                            smk_res = post_smoke(request.user.smoke, request.user.smoke_name, [permlink], name, body)
 
-                    return redirect('watch:index', video_hash=bestHash, video_id=current.id)                        
 
-            user = User.objects.get(id=current.user_id)
-            key ={}
-            if user.steem == 'false':
-                key['steemchk'] = False
-            else:
-                key['steemchk'] = True
+                        
+                        save_data(smk_res, 'smoke', current.id, tags)
+                    except Exception as e:
+                        print(str(e))
+                        print('Error smoke')
+                else:
+                    print('No smoke')
 
-            if user.smoke == 'false':
-                key['smokechk'] = False
-            else:
-                key['smokechk'] = True
-
-            if user.whaleshare == 'false':
-                key['whalechk'] = False
-            else:
-                key['whalechk'] = True
-            return render(request, 'upload/upload-edit.html', {'filehash':request.session.get('hash'), 'postOptionsForm':optform, 'keychk':key, 'current':current})  
+                return redirect('watch:index', video_hash=bestHash, video_id=current.id)
+        
+        optform = postOptionsForm()
+        form = FileUploadModelForm()
+        
+        user = User.objects.get(id=request.user.id)
+        
+        key ={}
+        if user.steem == 'false':
+            key['steemchk'] = False
         else:
-            print('Not sufficient privilege')
+            key['steemchk'] = True
+
+        if user.smoke == 'false':
+            key['smokechk'] = False
+        else:
+            key['smokechk'] = True
+
+        if user.whaleshare == 'false':
+            key['whalechk'] = False
+        else:
+            key['whalechk'] = True
+
+        return render(request, 'upload/upload.html', {'form': form, 'postOptionsForm': postOptionsForm, 'keychk':key})
 
     else:
         return redirect('/login')
