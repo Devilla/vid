@@ -176,19 +176,21 @@ def index(request):
                 print(name)
 
                 if steemPost == True and request.user.steem != 'false' and request.user.steem_name != 'false':
-                    try:
-                        print("Steem: {} Steem Name: {}".format(request.user.steem, request.user.steem_name))
-                        try:
-                            s_res = post_steem(request.user.steem, request.user.steem_name, tags, name, body)
-                        except Exception as e:
-                            print("error in posting: {}".format(str(e)))
-                            permlink=get_unique_permlink(name)
-                            s_res = post_steem(request.user.steem, request.user.steem_name, [permlink], name, body)
+                    s_res = post_steem(request.user.steem, request.user.steem_name, tags, name, body)
+                    save_data(s_res, 'steem', current.id, tags)
+                    # try:
+                    #     print("Steem: {} Steem Name: {}".format(request.user.steem, request.user.steem_name))
+                    #     try:
+                    #         s_res = post_steem(request.user.steem, request.user.steem_name, tags, name, body)
+                    #     except Exception as e:
+                    #         print("error in posting: {}".format(str(e)))
+                    #         permlink=get_unique_permlink(name)
+                    #         s_res = post_steem(request.user.steem, request.user.steem_name, [permlink], name, body)
                         
-                        save_data(s_res, 'steem', current.id, tags)
-                    except Exception as e:
-                        print(str(e))
-                        print('Errorsss')
+                    #     save_data(s_res, 'steem', current.id, tags)
+                    # except Exception as e:
+                    #     print(str(e))
+                    #     print('Errorsss')
                 else:
                     print('No Steem')
 
