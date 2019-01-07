@@ -264,10 +264,16 @@ def get_body(title, thumbnail, url, description):
     return body
 
 def post_steem(steem_key, steem_username, tags, title, body, permlink=None, benificiary=False):
-    nodelist_one = ['https://api.steemit.com/', 'http://appbasetest.timcliff.com/', 'https://rpc.steemliberator.com/', 'http://rpc.steemviz.com/', 'http://rpc.buildteam.io', 'https://api.steemit.com/']
+    nodelist_one = ['http://appbasetest.timcliff.com/', 'https://rpc.steemliberator.com/', 'http://rpc.steemviz.com/', 'http://rpc.buildteam.io', 'https://api.steemit.com/']
 
     s = SteemOriginal(keys=[steem_key], nodes=nodelist_one)
-    s_res = s.commit.post(title=title, body=body, author=steem_username, tags=tags, beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
+    s_res = s.commit.post(title=title, body=body, author=steem_username, tags=tags, json_metadata={
+                                                                                    'extensions': [[0, {
+                                                                                        'beneficiaries': [
+                                                                                            {'account': 'fiasteemproject', 'weight': 2500},
+                                                                                        ]}
+                                                                                    ]]
+                                                                                })
     return s_res
 
 def post_smoke(smoke_key, smoke_username, tags, title, body, permlink=None):
