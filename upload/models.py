@@ -30,7 +30,7 @@ class Video(models.Model):
     whaleshares = models.FloatField(default=0.0)
     total_earning = models.FloatField(default=0.0)
     valuation = models.CharField(max_length=10)
-    tags = ArrayField(models.CharField(max_length=200), blank=True, null=True)
+    tags = ArrayField(models.CharField(max_length=200), blank=True, null=True, default={})
     name = models.CharField(max_length=255, default='An apple a day keeps the doctor away')
     publish = models.BooleanField(default=False)
     monetize = models.BooleanField(default=False)
