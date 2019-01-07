@@ -1,8 +1,10 @@
 from django.shortcuts import render, HttpResponse
 from upload.models import Video, SteemVideo, WhaleShareVideo, SmokeVideo
+from comments.forms import commentForm
 from register.models import User
 import demjson
 from like_dislike.models import Activity
+from comments.models import commentsModel, CommentReplies
 
 import json
 # Create your views here.
@@ -103,10 +105,13 @@ def index(request, video_hash, video_id):
             chkLike = False
             chkDislike = False
 
+        cmntForm = commentForm()
+        all_comments = commentsModel.objects.filter(video = video_id)
+        
         return render(request, "watch/base.html", {'video_hash': hash, 'cont': video_content,
         'latest': featured, 'recommended': recommend, 'current': current,
         'user': user, 'count': count, 'steem_url': steem_url, 'smoke_url': smoke_url, 'whale_url': whale_url, 'chkLike': chkLike, 'chkDislike':chkDislike,
-        'total_likes': total_likes, 'total_dislikes': total_dislikes, 'total_earning': total_earning})
+        'total_likes': total_likes, 'total_dislikes': total_dislikes, 'total_earning': total_earning, 'cmntForm':cmntForm, 'all_comments':all_comments})
     
 
 def likedordisliked (request, user_id, video_id):
