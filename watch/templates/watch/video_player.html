@@ -88,12 +88,14 @@
             
             <h4>Tags :</h4>
             <p class="sv-tags">
-                <span><a href="#">Uncharted 4</a></span>
-                <span><a href="#">Playstation 4</a></span>
-                <span><a href="#">Gameplay</a></span>
-                <span><a href="#">1080P</a></span>
-                <span><a href="#">ps4Share</a></span>
-                <span><a href="#">+ 6</a></span>
+                {%if current.tags %}
+                    {%for tag in current.tags %}
+                    <span>{{ tag }}</span>
+                    {% endfor %}
+                {% else %}
+                No Tags
+                {% endif %}
+
             </p>
 
 

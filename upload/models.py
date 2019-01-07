@@ -22,7 +22,6 @@ class Video(models.Model):
     thumbNail = models.CharField(max_length=512)
     video = JSONField()
     duration = models.CharField(max_length=10)
-    tags = models.CharField(max_length=100, default='')
     description = models.TextField(blank=True)
     language_choices = [(1,'English'),(2,'Chinese'), (3,'Spanish'), (4,'German')]
     language = models.CharField(max_length =20, choices=language_choices, default='1')
@@ -31,9 +30,10 @@ class Video(models.Model):
     whaleshares = models.FloatField(default=0.0)
     total_earning = models.FloatField(default=0.0)
     valuation = models.CharField(max_length=10)
-    #tags = ArrayField(models.CharField(max_length=200), blank=True, null=True)
+    tags = ArrayField(models.CharField(max_length=200), blank=True, null=True)
     name = models.CharField(max_length=255, default='An apple a day keeps the doctor away')
     publish = models.BooleanField(default=False)
+    monetize = models.BooleanField(default=False)
     nsfw = models.BooleanField(default=False)
 
 class SteemVideo(models.Model):
