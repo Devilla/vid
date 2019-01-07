@@ -149,6 +149,7 @@ def index(request):
                 steemPost = form.cleaned_data['steem']
                 smokePost = form.cleaned_data['smoke']
                 whalePost = form.cleaned_data['whale']
+                monetize_status = form.cleaned_data['monetize']
 
                 if name != '':
                     if request.POST.getlist("#"):
@@ -162,8 +163,9 @@ def index(request):
                         current.nsfw = True
                     else:
                         current.nsfw = False
-
-                #current.tags = form.cleaned_data['video_tags']
+                raw_tags = form.cleaned_data['video_tags']
+                current.tags =raw_tags.split(',')
+                current.monetize = monetize_status
                 current.description =form.cleaned_data['description']
                 current.language = form.cleaned_data['language']
                 current.publish = True

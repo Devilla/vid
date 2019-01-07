@@ -26,6 +26,7 @@ class postOptionsForm(forms.Form):
     steem = forms.BooleanField(required = False)
     whale = forms.BooleanField(required = False)
     smoke = forms.BooleanField(required = False)
+    monetize = forms.BooleanField(required=False)
     duration = forms.CharField(max_length=10, required=False)
     video_tags = forms.CharField(max_length=100, required=False)
     description = forms.CharField(widget=forms.Textarea)
