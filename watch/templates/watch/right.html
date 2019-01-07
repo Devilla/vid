@@ -28,9 +28,9 @@
                     <a href="{% url 'watch:index'  i.featured   i.id  %}">{{i.name}}</a>
                 </div>
                 <div class="v-views">
-                    {{i.views}}
+                    {{i.views}} views
                 </div>
-                <div class="v-percent"><span class="fa fa-dollar"></span> {{ i.money }}</div>
+                <div class="v-percent"><span class="fa fa-dollar"></span> {{ i.total_earning }}</div>
             </div>
             <div class="clearfix"></div>
         </div>
@@ -65,9 +65,9 @@
                     <a href="{% url 'watch:index'  i.recommend   i.id  %}">{{i.name}}</a>
                 </div>
                 <div class="v-views">
-                   {{i.views}}
+                   {{i.views}} views
                 </div>
-                <div class="v-percent"><span class="fa fa-dollar"></span> {{ i.money }}</div>
+                <div class="v-percent"><span class="fa fa-dollar"></span> {{ i.total_earning }}</div>
                 
             </div>
             <div class="clearfix"></div>
