@@ -202,7 +202,6 @@ while True:
 
     for all_videos in get_videos:
         video_id = all_videos.id
-        print(video_id)
         update_single_earning_like_dislike(video_id)
         
     time.sleep(1)
