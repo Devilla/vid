@@ -20,6 +20,7 @@ from register.models import User
 import time
 import logging
 import uuid
+from steem import Steem as SteemOriginal
 
 from .models import File
 from .forms import FileUploadModelForm
@@ -268,18 +269,8 @@ def post_steem(steem_key, steem_username, tags, title, body, permlink=None, beni
     nodelist_three = ['https://rpc.steemliberator.com/', 'http://rpc.steemviz.com/']
     nodelist_four = ['http://steemd.minnowsupportproject.org/', 'http://steemd.privex.io/']
 
-    s = Steem(keys=[steem_key], nodes=nodelist_one)
-
-    if benificiary == False:
-        s_res = s.post(title=title, body=body, author=steem_username, tags=tags, permlink=permlink, beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
-    else:
-        s_res = s.post(title=title, body=body, author=steem_username, tags=tags, permlink=permlink, json_metadata={
-        'extensions': [[0, {
-            'beneficiaries': [
-                {'account': 'fiasteem', 'weight': 2500},
-            ]}
-        ]]
-    })
+    s = SteemOriginal(keys=[steem_key], nodes=nodelist_one)
+    s_res = s.commit.post(title=title, body=body, author=steem_username, tags=tags, beneficiaries=[{'account': 'fiasteem', 'weight': 2500}])
     return s_res
 
 def post_smoke(smoke_key, smoke_username, tags, title, body, permlink=None):
