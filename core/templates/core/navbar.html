@@ -138,5 +138,70 @@
            });
     
     });
+
+    $(document).ready(function() {
+           $("#addcommentForm").submit(function(event){
+                event.preventDefault();
+                $.ajax({
+                     method:"POST",
+                     url:"/comments/addComment/",
+                     data: {
+                            'id_comment': $('#id_comment').val(),
+                            'id_video': $('#vidID').val(),
+                            'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+                            },
+                     success: function(data){
+                        if (data.status == 'success'){
+                            document.getElementById('id_comment').innerHTML = '';
+                            var cmnt ="<div class='cl-comment'>"+
+                                "<div class='cl-avatar'><a href='/channel/"+data.uid+"/'><img src='https://gateway.ipfs.io/ipfs/"+data.profilepic+"' style='height:80px; width:80px; border-radius:100px;' alt=''></a></div>"+
+                                "<div class='cl-comment-text'>"+
+                                    "<div class='cl-name-date'><a href='/channel/"+data.uid+"/'>"+data.userName+"</a></div>"+
+                                    "<div class='cl-text'>"+data.comment+"</div>"+
+                                "</div>"+
+                                "<div class='clearfix'></div></div>";
+                            $('#cmntbox').prepend(cmnt)
+                        }
+                        else{
+                            document.getElementById('ertxt').innerHTML = 'Error while posting. Please try again later.';
+                        }
+                     }
+                });
+                return false; //<---- move it here
+           });
+    
+    });
+
+var refsd =''
+function addreply(comment_id){
+
+    $.ajax({
+                        method:"POST",
+                        url:"/comments/commentReplies/",
+                        data: {'comment_id': $('#comment_id_'+comment_id).val(),
+                                'reply':$('#reply_'+comment_id).val(),
+                                'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+
+                        },
+                        success: function(data){
+                            if (data.status == 'success'){
+                                document.getElementById('id_comment').innerHTML = '';
+                                var cmnt ="<div class='cl-comment-reply'>"+
+                                                "<div class='cl-avatar'><a href='/channel/"+data.uid+"/'><img src='https://gateway.ipfs.io/ipfs/"+data.profilepic+"' style='height:50px; width:50px; border-radius:100px;' alt=''></a></div>"+
+                                                        "<div class='cl-comment-text'>"+
+                                                            "<div class='cl-name-date'><a href='/channel/"+data.uid+"/'>"+data.userName+"</a></div>"+
+                                                            "<div class='cl-text'>"+data.comment+"</div>"+
+                                                        "</div>"+
+                                                        "<div class='clearfix'></div></div>";
+                                var di = '#replyFor'+ data.cmnt_id;
+                                $(di).append(cmnt)
+                            }
+
+                        }
+                    });
+                    return false; //<---- move it here
+  }
+
+    
     </script>
     
