@@ -195,6 +195,7 @@ def ipfs_check():
     subprocess.Popen(["ipfs","daemon"])
 
 subprocess.Popen(["python3.5","manage.py", "runserver"])
+time.sleep(5)
         
 while True:
     #ipfs_check()
