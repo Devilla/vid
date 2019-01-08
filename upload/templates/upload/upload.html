@@ -20,10 +20,19 @@
                         <div class="u-details">
                             <div class="row">
                                 <div class="col-lg-12 ud-caption">Upload Details</div>
-                                <div class="col-lg-4"><video poster='{% static "images/single-video.png" %}' style="height:30vh" controls="controls"
-                                    width="100%" height="30%">
-                                        <source src='' type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>
-                                    </video></div>
+                                <div class="col-lg-4" id="vidcontainer">
+                                    <div style="height:30vh;  background-color:black !important; padding-top:60px;" controls="controls" width="100%" height="30%;" >                          
+                                        <div>
+                                                <center><i class="fas fa-spinner fa-spin" style="font-size:30px;"></i>
+                                                    <br>
+                                                    Uploading video...
+                                                </center>
+
+
+                                        </div>
+                                    </div>
+
+                                    </div>
                                 <div class="col-lg-8">
                                     <div class="u-size">Your Video is still uploading, please keep this page open until it's done</div>
                                     <div class="u-progress">
@@ -249,6 +258,10 @@ $(document).ready(function(){
             var content= "Video uploaded and processed succesfully";
             $('.u-size').html(content);
             $('.progress-bar').attr('aria-valuenow', '100').css('width', "100%").text("100%");
+            var vid ="<video poster='{% static 'images/single-video.png' %}'  controls='controls'>"+
+                                        "<source src='http://gateway.ipfs.io/ipfs/{{ hash }}' type='video/mp4; codecs='avc1.42E01E, mp4a.40.2''>"+
+                                    "</video>";
+            document.getElementById('vidcontainer').innerHTML=vid;
              }
            },
         });

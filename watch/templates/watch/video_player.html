@@ -1,8 +1,8 @@
 {% load staticfiles %}
 {% load widget_tweaks %}
 
-<div class="sv-video">
-    <video id="player" controls data-setup='{{ current.id }}'  poster='{% static "images/single-video.png" %}' style="width:100%;height:60%;">
+<div class="sv-video" style="width: 770px; height: 433px;">
+    <video id="player" controls data-setup='{{ current.id }}'  poster='{% static "images/single-video.png" %}'>
         
         {% for quality, hash in video_hash.items %}
             <source src='http://gateway.ipfs.io/ipfs/{{ hash }}' type='video/mp4' size='{{ quality }}' />
@@ -10,6 +10,19 @@
 
     </video>
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <h1><a href="#">{{ current.name }}</a></h1>
 
