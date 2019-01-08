@@ -38,6 +38,7 @@ def ajax_upload(request):
     if request.method == "POST":
         form = FileUploadModelForm(data=request.POST, files=request.FILES)
         if form.is_valid():
+            print(form.monetize)
             file = request.FILES['file'].read()
             current_name = ''.join(random.choice('0123456789ABCDEF') for i in range(16)) + "." + str(request.FILES['file']).split('.')[-1]
             videos_directory = os.path.join(os.path.join(settings.BASE_DIR, "static"), 'videos')
