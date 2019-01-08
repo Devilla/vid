@@ -37,8 +37,8 @@ def get_unique_permlink(title):
 def ajax_upload(request):
     if request.method == "POST":
         form = FileUploadModelForm(data=request.POST, files=request.FILES)
+
         if form.is_valid():
-            print(form.monetize)
             file = request.FILES['file'].read()
             current_name = ''.join(random.choice('0123456789ABCDEF') for i in range(16)) + "." + str(request.FILES['file']).split('.')[-1]
             videos_directory = os.path.join(os.path.join(settings.BASE_DIR, "static"), 'videos')
@@ -68,7 +68,7 @@ def ajax_upload(request):
             subprocess.check_call(runCommand.split(" ")) #we have a command line injection vulnerability here
 
             durationCommand = 'ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 ' + os.path.join(videos_directory, current_name)
-   
+
             # durationCommand = ffMpegPAth + "\\" + durationCommand
             time = ''
             duration = subprocess.check_output(durationCommand.split(' '))
@@ -101,18 +101,11 @@ def ajax_upload(request):
             hash = hash + "\"" + str(720) + "\": \"" + newHash['Hash'] + "\"}"
 
             thumbnailHash = api.add(thumbnail_path)
-            video = Video(views=0, duration=time, thumbsUp=0, thumbsDown=0, video=hash, user_id=request.user.id, thumbNail=thumbnailHash['Hash'])
-            video.save()
-            
-            try:
-                os.remove(thumbnail_path)
-                os.remove(os.path.join(videos_directory, current_name))
-            except:
-                    
-                print('Delete Error')
-
-            request.session['video_id'] = video.id
-            request.session['hash'] = fileHash
+            request.session['thumbnailHash'] = thumbnailHash
+            request.session['hash'] = hash
+            request.session['time'] = time
+            request.session['videopath'] = os.path.join(videos_directory, current_name)
+            request.session['thumbnail_path'] = thumbnail_path
             
             data = []
             return JsonResponse(data, safe=False)
@@ -129,7 +122,22 @@ def after_clicked(request):
 def index(request):
     if request.user.is_authenticated == True:
         if request.method == 'POST':
-            current = Video.objects.get(id=request.session.get('video_id'))
+            video = Video(views=0, duration=request.session['time'], thumbsUp=0, thumbsDown=0, video=request.session['hash'], user_id=request.user.id, thumbNail=request.session['thumbnailHash'])
+            video.save()
+
+            print("Saved above this")
+            
+            try:
+                os.remove(request.session['thumbnail_path'])
+                os.remove(request.session['videopath'])
+            except:
+                    
+                print('Delete Error')
+
+            # request.session['video_id'] = video.id
+            # request.session['hash'] = fileHash
+
+            current = Video.objects.get(id=video.id)
             hash = json.loads(current.video) 
 
             bestHash = ''
@@ -301,7 +309,7 @@ def post_smoke(smoke_key, smoke_username, tags, title, body, permlink=None):
     return smk_res
 
 def post_whaleshare(whaleshares_key, whaleshares_username, tags, title, body, permlink=None):
-    wls = Steem(node=["https://rpc.whaleshares.io", "ws://188.166.99.136:8090", "ws://rpc.kennybll.com:8090"], keys=[whaleshares_key])
+    wls = Steem(node=["https://wls.kennybll.com", "https://rpc.whaleshares.io", "ws://188.166.99.136:8090"], keys=[whaleshares_key])
         
     wls_res = wls.post(title=title, body=body, author=whaleshares_username, tags=tags, permlink=permlink, json_metadata={
                     'extensions': [[0, {
