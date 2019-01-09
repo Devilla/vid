@@ -103,6 +103,7 @@ def ajax_upload(request):
             thumbnailHash = api.add(thumbnail_path)
             request.session['thumbnailHash'] = thumbnailHash['Hash']
             request.session['hash'] = hash
+            request.session['video_only'] = newHash['Hash']
             request.session['time'] = time
             request.session['videopath'] = os.path.join(videos_directory, current_name)
             request.session['thumbnail_path'] = thumbnail_path
