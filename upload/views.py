@@ -272,7 +272,7 @@ def index(request):
     else:
         return redirect('/login')
 
-def get_body(ipfs_url, thumbnail, url, description):
+def get_body(ipfs_url, thumbnail, vidsocial_url, description):
     body = '<center><a href="{}" rel="noopener" title="This link will take you away"><img src="{}" width="480" height="360"></a></center><hr><p></p><p>{}</p><hr><a href="{}" rel="noopener" title="This link will take you away"> ▶️ Vidsocial</a><br><a href="{}" rel="noopener" title="This link will take you away"> ▶️ IPFS</a></div></div>'.format(vidsocial_url, thumbnail, description, vidsocial_url, ipfs_url)
     return body
 
