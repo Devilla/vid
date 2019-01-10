@@ -183,7 +183,8 @@ def index(request):
                 
                 arb_url = 'https://vidsocial.org/watch/'+ bestHash + '/'+ str(current.id) + '/'
                 thumbnail_url = 'https://gateway.ipfs.io/ipfs/' + current.thumbNail
-                body = get_body(name, thumbnail_url, arb_url, current.description)
+                ipfs_url = 'https://gateway.ipfs.io/ipfs/' + request.session['video_only']
+                body = get_body(ipfs_url, thumbnail_url, arb_url, current.description)
                 tags = ['vidsocial']
                 name = current.name
                 print(name)
@@ -271,8 +272,8 @@ def index(request):
     else:
         return redirect('/login')
 
-def get_body(title, thumbnail, url, description):
-    body = '<html><p><img src="{}" width="480" height="360"/></p> <p><a href="{}">{}</a></p><p>{}</p></html>'.format(thumbnail, url, title, description) 
+def get_body(ipfs_url, thumbnail, url, description):
+    body = '<center><a href="{}" rel="noopener" title="This link will take you away"><img src="{}" width="480" height="360"></a></center><hr><p></p><p>{}</p><hr><a href="{}" rel="noopener" title="This link will take you away"> ▶️ Vidsocial</a><br><a href="{}" rel="noopener" title="This link will take you away"> ▶️ IPFS</a></div></div>'.format(vidsocial_url, thumbnail, description, vidsocial_url, ipfs_url)
     return body
 
 def post_steem(steem_key, steem_username, tags, title, body, permlink=None, benificiary=False):
