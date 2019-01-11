@@ -24,7 +24,7 @@
                     <div class="col-lg-1 col-sm-10 hidden-xs">
 
                     </div>
-                    <div class="col-lg-6 col-sm-8 col-xs-3">
+                    <div class="col-lg-5 col-sm-8 col-xs-3">
                         <form action="search.html" method="post">
                             <div class="topsearch">
                                 <i class="cv cvicon-cv-cancel topsearch-close"></i>
@@ -47,6 +47,9 @@
                             </div>
                         </form>
                     </div>
+                    <div class="col-lg-1 col-sm-10 hidden-xs">
+
+                        </div>
                     <div class="col-lg-4 col-sm-4 hidden-xs">
                         {% if request.user.is_authenticated %}
                         <div class="avatar pull-left">
@@ -61,6 +64,18 @@
                                     <span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu">
+                                    <li>
+                                            <form id="changeNSFWSTATUS" method="POST">{% csrf_token %}
+                                                    {% if request.session.display_nsfw is True %}
+                                
+                                                        <input type="checkbox" name="nsfw" value="False" id="nsfwstat" onchange = "changeNSFW()" checked> <span> NSFW</span>  
+                                                        
+                                                    {% elif request.session.display_nsfw is False %}
+                                                    <input type="checkbox" name="nsfw" value="True" id="nsfwstat" onchange = "changeNSFW()"><span> NSFW</span>    
+                                                    {% endif %}
+                                                </form>
+
+                                    </li>
                                     <li><a href="{% url 'single_channel:mychannel' request.user.id  %}">My Channel</a></li>
                                     <li><a href="/channel/myprofile/{{ request.user.id }}/">My Settings</a></li>
                                     <li><a href="{% url 'logout:logout' %}">Logout</a></li>
@@ -72,14 +87,15 @@
                             <a href="{% url 'login:login' %}">Login</a> . <a href="{% url 'register:register' %}">Signup</a>
                         </div>
                         {% endif %}
-
-                        <div class="clearfix"></div>
                     </div>
                 </div>
+                
+
+
                 <div class="hidden-xs">
                     <a href="{% url 'upload:index' %}">
-                        <div class="upload-button">
-                            <i class="cv cvicon-cv-upload-video"></i>
+                        <div class="upload-button" style="height:45px !important; width:45px !important; right:1px !important;">
+                            <i class="cv cvicon-cv-upload-video" style="font-size:15px;"></i>
                         </div>
                     </a>
                 </div>
@@ -88,6 +104,21 @@
     </div>
 </div>
 <script>    
+function changeNSFW(){
+    $.ajax({
+                     method:"POST",
+                     url:"/nsfw_status/",
+                     data: {
+                            'stat': $('#nsfwstat').val(),
+                            'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+                            },
+                     success: function(data){
+                        location.reload();
+                     }
+                });
+                return false; //<---- move it here
+
+}
 
 
     $(document).ready(function() {
@@ -204,4 +235,4 @@ function addreply(comment_id){
 
     
     </script>
-    
+ 

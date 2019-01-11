@@ -26,13 +26,19 @@ def downvote(s, post_author, permlink, voter):
 
 # Create your views here
 def index(request):
+    if 'display_nsfw' not in request.session:
+        request.session['display_nsfw'] = False
 
     if (len(AssetPrice.objects.all())) == 0:
         AssetPrice().save()
 
-
-    featured = Video.objects.all().order_by('-id')[:8]
-    trending = Video.objects.all().order_by('-views')[:8]
+    if request.session['display_nsfw'] == False:
+        featured = Video.objects.filter(nsfw=False).order_by('-id')[:8]
+        trending = Video.objects.filter(nsfw=False).order_by('-views')[:8]
+    else:
+        featured = Video.objects.all().order_by('-id')[:8]
+        trending = Video.objects.all().order_by('-views')[:8]
+        
     channels = User.objects.all().order_by('-id')[:11]
     
     bestHash_Featured = []
@@ -95,6 +101,19 @@ def perform_likes_dislike(account_details, type=1):
                     downvote(s, account_details[key]['author'], account_details[key]['permlink'], account_details[key]['username'])
         except Exception as e:
             print("Error while like/dislike: {}".format(str(e)))
+
+def nsfw_status(request):
+    if request.method == "POST":
+        nsfw_stat = request.POST.get("stat")
+        if 'display_nsfw' not in request.session:
+            request.session['display_nsfw'] = False
+        elif nsfw_stat == "True":
+            request.session['display_nsfw'] = True
+        elif nsfw_stat == "False":
+            request.session['display_nsfw'] = False
+            
+        data = {'nsfw_status': request.session['display_nsfw']}
+        return JsonResponse(data)
 
 def videoLike(request):
     if request.method == "POST":

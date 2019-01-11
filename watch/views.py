@@ -48,6 +48,9 @@ def get_post_details(vid_id):
     return steem_url, smoke_url, whale_url, total_likes, total_dislikes, total_earning
 
 def index(request, video_hash, video_id):
+    if 'display_nsfw' not in request.session:
+        request.session['display_nsfw'] = False
+
     current = Video.objects.get(id=video_id)
     steem_url, smoke_url, whale_url, total_likes, total_dislikes, total_earning = get_post_details(current.id)
 
@@ -68,8 +71,12 @@ def index(request, video_hash, video_id):
         current.views = views+1
         current.save()
 
-        featured = Video.objects.all().order_by('-id')[:1]
-        recommend = Video.objects.all().order_by('-views')[:1]
+        if request.session['display_nsfw'] == False:
+            featured = Video.objects.filter(nsfw=False).order_by('-id')[:1]
+            recommend = Video.objects.filter(nsfw=False).order_by('-views')[:1]
+        else:
+            featured = Video.objects.all().order_by('-id')[:2]
+            recommend = Video.objects.all().order_by('-views')[:2]
 
         user = User.objects.get(id=current.user_id)
         count = Video.objects.filter(user_id=current.user_id).count()
