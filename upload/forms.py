@@ -30,6 +30,17 @@ class postOptionsForm(forms.Form):
     nsfw = forms.BooleanField(required=False)
     duration = forms.CharField(max_length=10, required=False)
     video_tags = forms.CharField(max_length=100, required=False)
+
+    def clean_video_tags(self):
+        raw_tags = self.cleaned_data['video_tags']
+        splitted_tags = raw_tags.split(',')
+
+        if len(splitted_tags) > 4:
+            print("Validation error")
+            raise forms.ValidationError('Maximum of only 4 tags allowed')
+
+        return self.cleaned_data['video_tags']
+
     description = forms.CharField(widget=forms.Textarea)
     language_choices = [(1,'English'),(2,'Chinese'), (3,'Spanish'), (4,'German')]
     language = forms.ChoiceField(choices=language_choices,  widget=forms.Select(), required=True)

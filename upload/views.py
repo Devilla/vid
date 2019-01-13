@@ -113,48 +113,44 @@ def ajax_upload(request):
         else:
             data = {'error_msg': "Only jpg, pdf and xlsx files are allowed."}
             return JsonResponse(data)
-    return JsonResponse({'error_msg': 'only POST method accpeted.'})
-
-
-def after_clicked(request):
-    return render(request, 'upload/uploading.html') 
+    return JsonResponse({'error_msg': 'only POST method accpeted.'}) 
 
 # Create your views here.
 def index(request):
     if request.user.is_authenticated == True:
         if request.method == 'POST':
-            video = Video(views=0, duration=request.session['time'], thumbsUp=0, thumbsDown=0, video=request.session['hash'], user_id=request.user.id, thumbNail=request.session['thumbnailHash'])
-            video.save()
-
-            print("Saved above this")
-            
-            try:
-                os.remove(request.session['thumbnail_path'])
-                os.remove(request.session['videopath'])
-            except:
-                    
-                print('Delete Error')
-
-            # request.session['video_id'] = video.id
-            # request.session['hash'] = fileHash
-
-            current = Video.objects.get(id=video.id)
-            hash = json.loads(current.video) 
-
-            bestHash = ''
-
-            resolution = [2160, 1440, 1080, 720, 480, 360, 240  , 144]
-
-            for each_res in resolution:
-                if str(each_res) in current.video:
-                    bestHash = hash[str(each_res)]
-                    break 
-
             optform = postOptionsForm()
             optform = postOptionsForm(request.POST)
             form = optform
-            
+
             if form.is_valid():
+                video = Video(views=0, duration=request.session['time'], thumbsUp=0, thumbsDown=0, video=request.session['hash'], user_id=request.user.id, thumbNail=request.session['thumbnailHash'])
+                video.save()
+
+                print("Saved above this")
+                
+                try:
+                    os.remove(request.session['thumbnail_path'])
+                    os.remove(request.session['videopath'])
+                except:
+                        
+                    print('Delete Error')
+
+                # request.session['video_id'] = video.id
+                # request.session['hash'] = fileHash
+
+                current = Video.objects.get(id=video.id)
+                hash = json.loads(current.video) 
+
+                bestHash = ''
+
+                resolution = [2160, 1440, 1080, 720, 480, 360, 240  , 144]
+
+                for each_res in resolution:
+                    if str(each_res) in current.video:
+                        bestHash = hash[str(each_res)]
+                        break 
+            
                 name = form.cleaned_data['name']
                 steemPost = form.cleaned_data['steem']
                 smokePost = form.cleaned_data['smoke']
@@ -175,8 +171,13 @@ def index(request):
                     else:
                         current.nsfw = False
             
-                raw_tags = form.cleaned_data['video_tags']
-                current.tags =raw_tags.split(',')
+                raw_tags = form.cleaned_data['video_tags'].split(',')
+                    
+                splitted_tags = [x.strip() for x in raw_tags]
+
+                tags = ['vidsocial'] + splitted_tags
+
+                current.tags = tags
                 current.monetize = monetize_status
                 current.nsfw = nsfw
                 current.description =form.cleaned_data['description']
@@ -188,7 +189,6 @@ def index(request):
                 thumbnail_url = 'https://gateway.ipfs.io/ipfs/' + current.thumbNail
                 ipfs_url = 'https://gateway.ipfs.io/ipfs/' + request.session['video_only']
                 body = get_body(ipfs_url, thumbnail_url, arb_url, current.description)
-                tags = ['vidsocial']
                 name = current.name
                 print(name)
 
@@ -248,6 +248,9 @@ def index(request):
                     print('No smoke')
 
                 return redirect('watch:index', video_hash=bestHash, video_id=current.id)
+            else:
+                return redirect('watch:index', video_hash=bestHash, video_id=current.id)
+                
         
         optform = postOptionsForm()
         form = FileUploadModelForm()
