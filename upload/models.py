@@ -2,6 +2,7 @@ from django.db import models
 from register.models import User
 from django.contrib.postgres.fields import JSONField
 from django.contrib.postgres.fields import ArrayField
+from django.utils.timezone import now
 import os
 import uuid
 
@@ -17,6 +18,8 @@ class File(models.Model):
 class Video(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='videos')
     views = models.IntegerField(default=0)
+    old_views = models.IntegerField(default=0)
+    old_views_time = models.DateTimeField(default=now)
     thumbsUp = models.IntegerField(default=0)
     thumbsDown = models.IntegerField(default=0)
     thumbNail = models.CharField(max_length=512)
@@ -35,6 +38,14 @@ class Video(models.Model):
     publish = models.BooleanField(default=False)
     monetize = models.BooleanField(default=False)
     nsfw = models.BooleanField(default=False)
+
+class TrendingVideo(models.Model):
+    video = models.ForeignKey(Video, on_delete=models.CASCADE, related_name='trendingVideos')
+    rank = models.IntegerField(default=1)
+
+class HotVideo(models.Model):
+    video = models.ForeignKey(Video, on_delete=models.CASCADE, related_name='hotVideos')
+    rank = models.IntegerField(default=1)
 
 class SteemVideo(models.Model):
     video = models.ForeignKey(Video, on_delete=models.CASCADE, related_name='steemVideos')

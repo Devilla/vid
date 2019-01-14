@@ -4,7 +4,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ipfs.settings")
 django.setup()
 
 from core.models import AssetPrice
-from upload.models import Video, SteemVideo, WhaleShareVideo, SmokeVideo
+from upload.models import Video, SteemVideo, WhaleShareVideo, SmokeVideo, TrendingVideo, HotVideo
 from beem import Steem
 from beem.comment import Comment
 import ipfsapi
@@ -13,11 +13,23 @@ import time
 import subprocess
 from urllib.request import urlopen
 import os
+from django_pandas.io import read_frame
+import pandas as pd
+import numpy as np
+from datetime import datetime
 
+try:
+    s_no_auth = Steem(nodes=["http://seed1.blockbrothers.io:2001", "http://seed.liondani.com:2016", "https://api.steemit.com", "https://rpc.buildteam.io"])
+except:
+    pass
 
-s_no_auth = Steem(nodes=["http://seed1.blockbrothers.io:2001", "http://seed.liondani.com:2016", "https://api.steemit.com", "https://rpc.buildteam.io"])
-w_no_auth = Steem(node=["ws://rpc.kennybll.com:8090", "https://rpc.whaleshares.io", "ws://188.166.99.136:8090"])
-sm_no_auth = Steem(node=['https://rpc.smoke.io/'], custom_chains={"SMOKE": {
+try:
+    w_no_auth = Steem(node=["https://wls.kennybll.com", "wss://wls.kennybll.com", "ws://rpc.kennybll.com:8090", "https://rpc.whaleshares.io", "ws://188.166.99.136:8090"])
+except:
+    pass
+
+try:
+    sm_no_auth = Steem(node=['https://rpc.smoke.io/'], custom_chains={"SMOKE": {
                     "chain_id": "1ce08345e61cd3bf91673a47fc507e7ed01550dab841fd9cdb0ab66ef576aaf0",
                     "min_version": "0.0.0",
                     "prefix": "SMK",
@@ -26,6 +38,8 @@ sm_no_auth = Steem(node=['https://rpc.smoke.io/'], custom_chains={"SMOKE": {
                         {"asset": "VESTS", "symbol": "VESTS", "precision": 6, "id": 2}
                     ]
                 }})
+except:
+    pass
 
 def get_votes(s, author, permlink):
     acc = Comment("@{}/{}".format(author, permlink), steem_instance=s)
@@ -194,11 +208,46 @@ def ipfs_check():
 
     subprocess.Popen(["ipfs","daemon"])
 
+def update_old_views():
+    get_videos = Video.objects.all()
+
+    for video in get_videos:
+        time_difference = int((datetime.utcnow() - datetime(1970, 1, 1)).total_seconds()) - int(video.old_views_time.strftime("%s"))
+
+        if time_difference >= (24 * 60 * 60):
+            video.old_views = video.views
+            video.old_views_time = django.utils.timezone.now()
+            video.save()
+
+def update_hot_trending():
+    update_old_views()
+    all_vids = Video.objects.all()
+
+    df = read_frame(all_vids).reset_index(drop=True)
+
+    trending = df.sort_values('views', ascending=False)
+
+    df['hot'] = (df['views'] - df['old_views'])/df['old_views']
+    df['hot'] = df['hot'].fillna(value=0)
+    hot = df.sort_values('hot', ascending=False)
+    
+    TrendingVideo.objects.all().delete()
+    HotVideo.objects.all().delete()
+    
+    for idx, row in hot.iterrows():
+        hv = HotVideo(video=Video.objects.get(id=row['id']), rank=idx+1)
+        hv.save()
+
+    for idx, row in trending.iterrows():
+        tv = TrendingVideo(video=Video.objects.get(id=row['id']), rank=idx+1)
+        tv.save()    
+
 subprocess.Popen(["python3.5","manage.py", "runserver"])
 time.sleep(5)
         
 while True:
-    #ipfs_check()
+    ipfs_check()
+    update_hot_trending()
     get_videos = Video.objects.all()
 
     for all_videos in get_videos:
