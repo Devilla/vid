@@ -26,7 +26,7 @@ def mychannel(request, pk):
                 own_channel = True
         else:
                 own_channel = False
-        context = {'video': video, 'channel':ch.channel_name, 'followerscount':followerscount,'channel_user':ch.id, 'is_following':is_following, 'own_channel':own_channel}
+        context = {'video': video, 'channel':ch.channel_name, 'followerscount':followerscount,'channel_user':ch.id, 'channel_userr':ch,'is_following':is_following, 'own_channel':own_channel}
         return render(request, 'single_channel/detail.html', context)  
 
 def myprofile(request,pk):
@@ -36,9 +36,9 @@ def myprofile(request,pk):
                 smokeForm = SmokeBlockChainForm()
                 steemForm = SteemBlockChainForm()
                 userdetails = UserRegistrationCompletionForm()
-
+                ch = User.objects.get(id=pk)
                 followerscount = followersModel.objects.filter(following=pk).count()
-                context = {'whaleForm':whaleForm,'followerscount':followerscount, 'smokeForm':smokeForm, 'steemForm':steemForm, 'userdetails':userdetails}
+                context = {'whaleForm':whaleForm,'followerscount':followerscount, 'smokeForm':smokeForm, 'steemForm':steemForm, 'userdetails':userdetails, 'channel_userr':ch}
                 return render(request, 'single_channel/userProfile.html', context) 
         else:
                 return redirect('/login')
