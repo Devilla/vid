@@ -130,7 +130,34 @@
 
 
 </div>
-                
+
+<script>
+function followUnfollow(){
+        $.ajax({
+                        method:"POST",
+                        url:"/followUnfollow/",
+                        data: {
+                                'followUnfollowID': "{{ channel_user}}",
+                                'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+                                },
+                        success: function(data){
+                                // location.reload();
+                                if (data.status == '1'){
+                                        document.getElementById('funf').innerHTML = 'Unfollow';
+                                        document.getElementById('followerCount').innerHTML = data.totalFollower;
+                                }
+                                else if(data.status == '0'){
+                                        document.getElementById('funf').innerHTML = 'Follow';
+                                        document.getElementById('followerCount').innerHTML = data.totalFollower;
+                                        
+                                }
+                        }
+                        });
+                        return true; //<---- move it here
+
+        }
+           
+           </script>
 {% endblock content %}
 
 {% block title %} {{ channel }} {% endblock title %}
