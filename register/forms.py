@@ -49,13 +49,13 @@ class SmokeBlockChainForm(forms.Form):
     smoke = forms.CharField(
         label="Smoke Posting Key",
         required=False,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Smoke Id'})
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Smoke Posting Key'})
     )
     
     smoke_name = forms.CharField(
         label="Smoke Username",
         required=False,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Smoke Name'})
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Smoke Username'})
     )
 
     class Meta:
@@ -80,13 +80,13 @@ class WhaleBlockChainForm(forms.Form):
     whaleshare = forms.CharField(
         label="Whaleshare Posting Key",
         required=False,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Whaleshare Id'})
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Whaleshare Posting Key'})
     )
     
     whaleshare_name = forms.CharField(
         label="Whaleshare Username",
         required=False,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Whaleshare Name'})
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Whaleshare Username'})
     )
 
     class Meta:
@@ -112,13 +112,13 @@ class SteemBlockChainForm(forms.Form):
     steem = forms.CharField(
         label="Steem Posting Key",
         required=False,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Steem Id'})
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Steem Posting Key'})
     )
     
     steem_name = forms.CharField(
         label="Steem Username", 
         required=False,                  
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Steem Name'})
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Steem Username'})
     )
 
     class Meta:
