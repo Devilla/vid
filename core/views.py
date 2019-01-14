@@ -334,11 +334,13 @@ def followChannel(request):
                         addFollow.user = request.user
                         addFollow.following = User.objects.get(id=followingID)
                         addFollow.save()
-                        data = {'response': 'Successfully Followed', 'status':'1'}
+                        countFollowing = followersModel.objects.filter(following = followingID).count()
+                        data = {'response': 'Successfully Followed', 'status':'1', 'totalFollower':countFollowing}
                         return JsonResponse(data)
                 elif checkFollowing == True:
                         removeFollowing = followersModel.objects.filter(user=request.user.id, following = followingID).delete()
-                        data = {'response': 'Successfully Unfollowed', 'status':'0'}
+                        countFollowing = followersModel.objects.filter(following = followingID).count()
+                        data = {'response': 'Successfully Unfollowed', 'status':'0','totalFollower':countFollowing, 'totalFollower':countFollowing}
                         return JsonResponse(data)
         else:
                 return redirect('/login')
