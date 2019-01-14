@@ -60,11 +60,11 @@
                                                        // location.reload();
                                                        if (data.status == '1'){
                                                                document.getElementById('funf').innerHTML = 'Unfollow';
-                                                               var count  = $('#followerCount').val();
+                                                               document.getElementById('followerCount').innerHTML = data.totalFollower;
                                                        }
                                                        else if(data.status == '0'){
                                                                document.getElementById('funf').innerHTML = 'Follow';
-                                                               var count  = $('#followerCount').val();
+                                                               document.getElementById('followerCount').innerHTML = data.totalFollower;
                                                                 
                                                        }
                                                }
