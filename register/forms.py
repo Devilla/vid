@@ -47,13 +47,13 @@ class UserRegistrationForm(UserCreationForm):
 class SmokeBlockChainForm(forms.Form):
 
     smoke = forms.CharField(
-        label="Smoke Id",
+        label="Smoke Posting Key",
         required=False,
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Smoke Id'})
     )
     
     smoke_name = forms.CharField(
-        label="Smoke Name",
+        label="Smoke Username",
         required=False,
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Smoke Name'})
     )
@@ -78,13 +78,13 @@ class SmokeBlockChainForm(forms.Form):
 class WhaleBlockChainForm(forms.Form):
 
     whaleshare = forms.CharField(
-        label="Whaleshare Id",
+        label="Whaleshare Posting Key",
         required=False,
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Whaleshare Id'})
     )
     
     whaleshare_name = forms.CharField(
-        label="Whaleshare name",
+        label="Whaleshare Username",
         required=False,
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Whaleshare Name'})
     )
@@ -110,13 +110,13 @@ class WhaleBlockChainForm(forms.Form):
 class SteemBlockChainForm(forms.Form):
 
     steem = forms.CharField(
-        label="Steem Id",
+        label="Steem Posting Key",
         required=False,
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Steem Id'})
     )
     
     steem_name = forms.CharField(
-        label="Steem Name", 
+        label="Steem Username", 
         required=False,                  
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Steem Name'})
     )
