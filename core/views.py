@@ -5,6 +5,7 @@ from register.models import User
 from django.http import JsonResponse
 from django.http import HttpResponse
 from threading import Thread
+from single_channel.models import followersModel
 
 import json
 import demjson
@@ -126,26 +127,6 @@ def videoLike(request):
             alreadyDisliked = False
 
             try:
-                dislikeActivity = Activity.objects.filter(user_id=user_id, video_id = videoid).exists()
-                if dislikeActivity == False:
-                    addDislike = Activity()
-                    addDislike.thumbsUp = False
-                    addDislike.thumbsDown = True
-                    addDislike.user_id = user_id
-                    addDislike.video_id = videoid
-                    addDislike.save()
-                elif dislikeActivity == True:
-                    addDislike = Activity.objects.get(user_id=user_id, video_id = videoid)
-                    if addDislike.thumbsUp == True and addDislike.thumbsDown == False:
-                        addDislike.thumbsUp = False
-                        addDislike.thumbsDown = True
-                        addDislike.save()
-                    else:
-                        alreadyDisliked = True
-            except:
-                pass
-
-            try:
                 likeActivity = Activity.objects.filter(user_id=user_id, video_id = videoid).exists()
                 if likeActivity == False:
                     addLike = Activity()
@@ -157,6 +138,7 @@ def videoLike(request):
                 elif likeActivity == True:
                     addLike = Activity.objects.get(user_id=user_id, video_id = videoid)
                     if addLike.thumbsUp == False and addLike.thumbsDown == True:
+                        alreadyDisliked=True
                         addLike.thumbsUp = True
                         addLike.thumbsDown = False
                         addLike.save()
@@ -164,7 +146,7 @@ def videoLike(request):
                         alreadyLiked = True
             except:
                 pass
-
+            
             videoDetails = Video.objects.get(id=videoid)
             totalLike = videoDetails.thumbsUp
             totalDislike = videoDetails.thumbsDown
@@ -258,31 +240,12 @@ def videoDisLike(request):
                 elif dislikeActivity == True:
                     addDislike = Activity.objects.get(user_id=user_id, video_id = videoid)
                     if addDislike.thumbsUp == True and addDislike.thumbsDown == False:
+                        alreadyLiked = True
                         addDislike.thumbsUp = False
                         addDislike.thumbsDown = True
                         addDislike.save()
                     else:
                         alreadyDisliked = True
-            except:
-                pass
-
-            try:
-                likeActivity = Activity.objects.filter(user_id=user_id, video_id = videoid).exists()
-                if likeActivity == False:
-                    addLike = Activity()
-                    addLike.thumbsUp = True
-                    addLike.thumbsDown = False
-                    addLike.user_id = user_id
-                    addLike.video_id = videoid
-                    addLike.save()
-                elif likeActivity == True:
-                    addLike = Activity.objects.get(user_id=user_id, video_id = videoid)
-                    if addLike.thumbsUp == False and addLike.thumbsDown == True:
-                        addLike.thumbsUp = True
-                        addLike.thumbsDown = False
-                        addLike.save()
-                    else:
-                        alreadyLiked = True
             except:
                 pass
             
@@ -359,3 +322,24 @@ def about(request):
 def help(request):
     if request.method == 'GET':
         return render(request, 'core/help.html')
+
+
+def followChannel(request):
+    if request.method == "POST":
+        if request.user.is_authenticated == True:
+                followingID = request.POST.get("followUnfollowID")
+                checkFollowing = followersModel.objects.filter(user=request.user.id, following = followingID).exists()
+                if checkFollowing == False:
+                        addFollow = followersModel()
+                        addFollow.user = request.user
+                        addFollow.following = User.objects.get(id=followingID)
+                        addFollow.save()
+                        data = {'response': 'Successfully Followed', 'status':'1'}
+                        return JsonResponse(data)
+                elif checkFollowing == True:
+                        removeFollowing = followersModel.objects.filter(user=request.user.id, following = followingID).delete()
+                        data = {'response': 'Successfully Unfollowed', 'status':'0'}
+                        return JsonResponse(data)
+        else:
+                return redirect('/login')
+
