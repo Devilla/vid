@@ -1,8 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from upload.models import Video
 from register.models import User
 import demjson
 import ipfsapi
+from django.http import JsonResponse
+from single_channel.models import followersModel
 from register.forms import WhaleBlockChainForm, SmokeBlockChainForm, SteemBlockChainForm, UserRegistrationCompletionForm
 # Create your views here.
 
@@ -18,18 +20,28 @@ def mychannel(request, pk):
                                 break  
 
         ch = User.objects.get(id=pk)
-        print(ch)
-        context = {'video': video, 'channel':ch.channel_name}
+        is_following = followersModel.objects.filter(user = request.user.id, following=pk).exists()
+        followerscount = followersModel.objects.filter(following=pk).count()
+        if request.user.is_authenticated and request.user.id == pk:
+                own_channel = True
+        else:
+                own_channel = False
+        context = {'video': video, 'channel':ch.channel_name, 'followerscount':followerscount,'channel_user':ch.id, 'is_following':is_following, 'own_channel':own_channel}
         return render(request, 'single_channel/detail.html', context)  
 
-def myprofile(request,pk ):
-        whaleForm = WhaleBlockChainForm()
-        smokeForm = SmokeBlockChainForm()
-        steemForm = SteemBlockChainForm()
-        userdetails = UserRegistrationCompletionForm()
+def myprofile(request,pk):
+        if request.user.is_authenticated:
+                pk =request.user.id
+                whaleForm = WhaleBlockChainForm()
+                smokeForm = SmokeBlockChainForm()
+                steemForm = SteemBlockChainForm()
+                userdetails = UserRegistrationCompletionForm()
 
-        context = {'whaleForm':whaleForm, 'smokeForm':smokeForm, 'steemForm':steemForm, 'userdetails':userdetails}
-        return render(request, 'single_channel/userProfile.html', context)  
+                followerscount = followersModel.objects.filter(following=pk).count()
+                context = {'whaleForm':whaleForm,'followerscount':followerscount, 'smokeForm':smokeForm, 'steemForm':steemForm, 'userdetails':userdetails}
+                return render(request, 'single_channel/userProfile.html', context) 
+        else:
+                return redirect('/login')
 
 def update(request):
         whaleForm = WhaleBlockChainForm()
@@ -150,3 +162,4 @@ def whale_blockchain(request):
                         
                         context = {'whaleForm':whaleForm, 'smokeForm':smokeForm, 'steemForm':steemForm, 'userdetails':userdetails,'success':success}
                         return render(request, 'single_channel/userProfile.html', context) 
+

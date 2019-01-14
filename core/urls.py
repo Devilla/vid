@@ -1,6 +1,6 @@
 from django.urls import path, re_path, include
 from django.conf.urls import url
-from core.views import index, videoLike, videoDisLike, about, help, nsfw_status
+from core.views import index, videoLike, videoDisLike, about, help, nsfw_status, followChannel
 
 app_name = 'core'
 
@@ -11,4 +11,6 @@ urlpatterns = [
     url(r'^about/$', about, name="about"),
     url(r'^help/$', help, name="help"),
     url(r'^nsfw_status/$', nsfw_status, name="nsfw_status"),
+    url(r'^followUnfollow/$',followChannel, name='followChannel'),
+
 ]

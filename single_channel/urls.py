@@ -11,4 +11,5 @@ urlpatterns = [
     path('steemUpdate/',steem_blockchain, name='steemUpdate'),
     path('smokeUpdate/',smoke_blockchain, name='smokeUpdate'),
     path('whaleUpdate/',whale_blockchain, name='whaleUpdate'),
+
 ]

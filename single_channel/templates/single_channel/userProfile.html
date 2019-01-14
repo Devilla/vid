@@ -6,13 +6,78 @@
         {% include "core/navbar.html" %}
 
 {% endblock navigation %}
+{% block extra %}
 
+<!-- channel -->
+<div class="container-fluid">
+        <div class="row">
+                <div class="img">
+                        <div class="img-image">
+                                <img src='https://gateway.ipfs.io/ipfs/{{ request.user.channel_cover }}' alt="" class="c-banner" style="height:40vh; size:cover">                        </div>
+                        <div class="c-avatar" style="border:2px solid rgb(234, 44, 90); border-radius:2px;">
+                                <img src='https://gateway.ipfs.io/ipfs/{{ request.user.profile_picture }}' alt="">
+                        </div>
+                        <a href="#" class="add"><i class="cv cvicon-cv-plus"></i></a>
+                        <div class="c-social hidden-xs">
+                                Social
+                                <a href="#" class="fb"><i class="fa fa-facebook"></i></a>
+                                <a href="#" class="tw"><i class="fa fa-twitter"></i></a>
+                                <a href="#" class="gp"><i class="fa fa-google-plus"></i></a>
+                        </div>
+                </div>
+        </div>
+</div>
+<!-- ///channel -->
+<div class="channel-details">
+        <div class="row">
+                <div class="col-lg-10 col-md-10 col-lg-offset-2 col-xs-12">
+                        <div class="c-details">
+                                <div class="c-name">
+                                        {{ channel }}
+                                        <div class="c-checkbox">
+                                                <img src="images/verified-profile-icon.png" alt="">
+                                        </div>
+                                </div>
+                                <div class="c-nav">
+                                        <ul class="list-inline">
+                                            <li><a href="#" class="active">Videos</a></li>
+                                            <li><a href="#">Playlist</a></li>
+                                            <li class="#"><a href="#">About</a></li>
+                                            <li class="#"><a href="/channel/myprofile/{{ request.user.id}}/">Settings</a></li>
+                                        </ul>
+                                        <div class="btn-group dropup pull-right">
+                                            <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Discussion <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="#"><i class="cv cvicon-cv-relevant"></i> Relevant</a></li>
+                                                <li><a href="#"><i class="cv cvicon-cv-calender"></i> Recent</a></li>
+                                                <li><a href="#"><i class="cv cvicon-cv-view-stats"></i> Viewed</a></li>
+                                                <li><a href="#"><i class="cv cvicon-cv-star"></i> Top Rated</a></li>
+                                                <li><a href="#"><i class="cv cvicon-cv-watch-later"></i> Longest</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="c-sub pull-right hidden-xs">
+                                                <div class="c-sub-wrap">
+                                                        <div class="c-f">Followers</div>
+                                                                
+                                                        <div class="c-s" id="followerCount">
+                                                                {{ followerscount }}
+                                                        </div>
+                                                        <div class="clearfix"></div>
+                                                </div>
+                                        </div>
+                                <div class="clearfix"></div>
+                        </div>
+                </div>
+        </div>
+</div>
+
+{% endblock extra %}
 
 {% block content %}
 <script>
-function User(){
-
-}
 
 function User(){
     $("#userdetailtab").show();
@@ -162,7 +227,35 @@ function Smoke(){
                         </div>
                 <!-- END tab-4 -->
         </div>
-</div>              
+</div>    
+
+<script>
+                function followUnfollow(){
+                   $.ajax({
+                                   method:"POST",
+                                   url:"/followUnfollow/",
+                                   data: {
+                                           'followUnfollowID': "{{ channel_user }}",
+                                           'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+                                           },
+                                   success: function(data){
+                                           // location.reload();
+                                           if (data.status == '1'){
+                                                   document.getElementById('funf').innerHTML = 'Unfollow';
+                                                   var count  = $('#followerCount').val();
+                                           }
+                                           else if(data.status == '0'){
+                                                   document.getElementById('funf').innerHTML = 'Follow';
+                                                   var count  = $('#followerCount').val();
+                                                    
+                                           }
+                                   }
+                                   });
+                                   return true; //<---- move it here
+        
+                   }
+           
+           </script>
 {% endblock content %}
 
 {% block title %} {{ channel }} {% endblock title %}

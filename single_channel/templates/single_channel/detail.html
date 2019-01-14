@@ -48,10 +48,10 @@
                                 </div>
                                 <div class="c-nav">
                                         <ul class="list-inline">
-                                            <li><a href="#">Videos</a></li>
+                                            <li><a href="#" class="active">Videos</a></li>
                                             <li><a href="#">Playlist</a></li>
                                             <li class="#"><a href="#">About</a></li>
-                                            <li class="#"><a href="#">Settings</a></li>
+                                           {% if request.user.is_authenticated %} <li class="#"><a href="/channel/myprofile/{{ request.user.id}}/">Settings</a></li>{%endif%}
                                         </ul>
                                         <div class="btn-group dropup pull-right">
                                             <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -68,11 +68,25 @@
                                     </div>
                                 <div class="c-sub pull-right hidden-xs">
                                         <div class="c-sub-wrap">
-                                                <div class="c-f">
-                                                        Follow
-                                                </div>
-                                                <div class="c-s">
-                                                        1
+                                                <form method="POST">
+                                                        {% csrf_token %}
+                                                        {% if request.user.is_authenticated %}
+                                                                {% if own_channel %}
+                                                                <div class="c-f">Followers</div>
+                                                                {% else %}
+                                                                        {% if is_following %} 
+                                                                                <button class="c-f" onclick="followUnfollow();return false;" id="funf">Unfollow</button>
+                                                                        {% else %}
+                                                                                <button class="c-f" onclick="followUnfollow();return false;" id="funf">Follow</button>
+                                                                        {% endif %}
+                                                                {% endif %}
+                                                        {% else %}
+                                                        <a href ="/login" class="c-f">Follow</a>
+                                                        {% endif %}
+                                                </form>
+                                                        
+                                                <div class="c-s" id="followerCount">
+                                                        {{ followerscount }}
                                                 </div>
                                                 <div class="clearfix"></div>
                                         </div>
