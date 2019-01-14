@@ -31,7 +31,6 @@ def mychannel(request, pk):
 
 def myprofile(request,pk):
         if request.user.is_authenticated:
-                pk =request.user.id
                 whaleForm = WhaleBlockChainForm()
                 smokeForm = SmokeBlockChainForm()
                 steemForm = SteemBlockChainForm()
