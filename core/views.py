@@ -13,7 +13,7 @@ from core.models import AssetPrice
 import pytz
 import requests
 import json
-
+from django.core import serializers
 from beem import Steem
 from beem.comment import Comment
 
@@ -68,8 +68,8 @@ def index(request):
         except:
             channels.remove(each_channel)
     
-
-    return render(request, "core/home.html", {'instance': featured, 'trend': trending, 'subscription': channels})
+    trendingJSONdata = serializers.serialize('json', trending)
+    return render(request, "core/home.html", {'instance': featured, 'trendingJSONdata':trendingJSONdata,'trend': trending, 'subscription': channels})
 
 def perform_likes_dislike(account_details, type=1):
     '''
