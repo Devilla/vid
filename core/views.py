@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from django.http import HttpResponse
 from threading import Thread
 from single_channel.models import followersModel
+from beem.account import Account
 
 import json
 import demjson
