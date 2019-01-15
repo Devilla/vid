@@ -5,8 +5,11 @@ django.setup()
 
 from core.models import AssetPrice
 from upload.models import Video, SteemVideo, WhaleShareVideo, SmokeVideo, TrendingVideo, HotVideo
+from register.models import User
+from single_channel.models import followersModel
 from beem import Steem
 from beem.comment import Comment
+from beem.account import Account
 import ipfsapi
 import psutil
 import time
@@ -113,7 +116,7 @@ def update_prices():
     a = AssetPrice(steem_price=steem_price, smoke_price=smoke_price, whaleshare_price=whaleshare_price)
     a.save()
 
-def update_single_earning_like_dislike(video_id):
+def update_single_earning_like_dislike_followers(video_id):
 
     total_likes = 0
     total_dislikes = 0
@@ -132,6 +135,19 @@ def update_single_earning_like_dislike(video_id):
 
         permlink = single_val.permlink
         author = single_val.author
+        
+        try:
+            update_followers = followersModel.objects.all()
+            
+            for follower in update_followers:
+                a = Account(author, steem_instance=s_no_auth)
+                new_followers=a.get_follow_count()['follower_count']
+                print("New followers for: {} is {}".format(author, new_followers))
+                follower.total_followers = new_followers
+                follower.save()
+                print("Followers updated")
+        except Exception as e:
+            print("error updating followers: {}".format(str(e)))
 
         try:
             s_upvote, s_downvote = get_votes(s_no_auth, author, permlink)
@@ -156,6 +172,19 @@ def update_single_earning_like_dislike(video_id):
         author = single_val.author
 
         try:
+            update_followers = followersModel.objects.all()
+
+            for follower in update_followers:
+                a = Account(author, steem_instance=sm_no_auth)
+                new_followers=int(follower.total_followers) + int(a.get_follow_count()['follower_count'])
+                print("New followers for: {} is {}".format(author, new_followers))
+                follower.total_followers = new_followers
+                follower.save()
+                print("Followers updated")
+        except Exception as e:
+            print("error updating followers: {}".format(str(e)))
+
+        try:
             sm_upvote, sm_downvote = get_votes(sm_no_auth, author, permlink)
             total_likes = total_likes + sm_upvote
             total_dislikes = total_dislikes + sm_downvote
@@ -176,6 +205,19 @@ def update_single_earning_like_dislike(video_id):
 
         permlink = single_val.permlink
         author = single_val.author
+        
+        try:
+            update_followers = followersModel.objects.all()
+
+            for follower in update_followers:
+                a = Account(author, steem_instance=w_no_auth)
+                new_followers=int(follower.total_followers) + int(a.get_follow_count()['follower_count'])
+                print("New followers for: {} is {}".format(author, new_followers))
+                follower.total_followers = new_followers
+                follower.save()
+                print("Followers updated")
+        except Exception as e:
+            print("error updating followers: {}".format(str(e)))
 
         try:
             w_upvote, w_downvote = get_votes(w_no_auth, author, permlink)
@@ -197,7 +239,7 @@ def update_single_earning_like_dislike(video_id):
     video_details.thumbsUp =  total_likes
     video_details.thumbsDown = total_dislikes
     video_details.save()
-
+    
 def ipfs_check():
     try:
         api = ipfsapi.connect('127.0.0.1', 5001)
@@ -240,7 +282,7 @@ def update_hot_trending():
 
     for idx, row in trending.iterrows():
         tv = TrendingVideo(video=Video.objects.get(id=row['id']), rank=idx+1)
-        tv.save()    
+        tv.save()  
 
 subprocess.Popen(["python3.5","manage.py", "runserver"])
 time.sleep(5)
@@ -252,6 +294,6 @@ while True:
 
     for all_videos in get_videos:
         video_id = all_videos.id
-        update_single_earning_like_dislike(video_id)
+        update_single_earning_like_dislike_followers(video_id)
         
     time.sleep(1)
