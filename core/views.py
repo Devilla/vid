@@ -71,6 +71,35 @@ def index(request):
 
     return render(request, "core/home.html", {'instance': featured, 'trend': trending, 'subscription': channels})
 
+def perform_follow_unfollow(account_details):
+    print("Follow unfollow function called")
+    for key in account_details:
+        print(key)
+        try:
+            if 'key' in account_details[key]:
+                if key == 'steem':
+                    s = Steem(keys=[account_details[key]['key']], nodes=["http://seed1.blockbrothers.io:2001", "http://seed.liondani.com:2016", "https://api.steemit.com", "https://rpc.buildteam.io"])
+                elif key == 'smoke':
+                    s = Steem(keys=[account_details[key]['key']], node=['https://rpc.smoke.io/'], custom_chains={"SMOKE": {
+                        "chain_id": "1ce08345e61cd3bf91673a47fc507e7ed01550dab841fd9cdb0ab66ef576aaf0",
+                        "min_version": "0.0.0",
+                        "prefix": "SMK",
+                        "chain_assets": [
+                            {"asset": "STEEM", "symbol": "SMOKE", "precision": 3, "id": 1},
+                            {"asset": "VESTS", "symbol": "VESTS", "precision": 6, "id": 2}
+                        ]
+                    }})
+                else:
+                    s = Steem(keys=[account_details[key]['key']], node=["ws://rpc.kennybll.com:8090","https://rpc.whaleshares.io", "ws://188.166.99.136:8090"])
+
+
+                a = Account(account=account_details[key]['username'], steem_instance=s)
+                a.follow(account_details[key]['author'])
+        except Exception as e:
+            print("Error while follow/unfollow: {}".format(str(e)))
+
+
+
 def perform_likes_dislike(account_details, type=1):
     '''
     type(int):
@@ -329,17 +358,64 @@ def followChannel(request):
         if request.user.is_authenticated == True:
                 followingID = request.POST.get("followUnfollowID")
                 checkFollowing = followersModel.objects.filter(user=request.user.id, following = followingID).exists()
+
+                followers_details = User.objects.get(id=request.user.id)
+                following_details = User.objects.get(id=followingID)
+
+
+                account_details = {}
+
+                try:
+                    if len(followers_details.steem) >=6 and len(following_details.steem) >=6:
+                        account_details['steem'] = {}
+                        account_details['steem']['key'] = followers_details.steem
+                        account_details['steem']['author'] = following_details.author
+                        account_details['steem']['username'] = followers_details.steem_name
+                except:
+                    pass
+
+                try:
+                    if len(followers_details.smoke) >=6 and len(following_details.smoke) >=6:
+                        account_details['smoke'] = {}
+                        account_details['smoke']['key'] = followers_details.smoke
+                        account_details['smoke']['author'] = following_details.author
+                        account_details['smoke']['username'] = followers_details.smoke_name
+                except:
+                    pass
+
+                try:
+                    if len(followers_details.whaleshare) >=6 and len(following_details.whaleshare) >=6:
+                        account_details['whaleshare'] = {}
+                        account_details['whaleshare']['key'] = followers_details.whaleshare
+                        account_details['whaleshare']['author'] = following_details.author
+                        account_details['whaleshare']['username'] = followers_details.whaleshare_name
+                except:
+                    pass
+
+
+                follow_unfollow_thread = Thread(target=perform_follow_unfollow, args=(account_details,))    
+                follow_unfollow_thread.start()
+
                 if checkFollowing == False:
                         addFollow = followersModel()
                         addFollow.user = request.user
                         addFollow.following = User.objects.get(id=followingID)
+                        countFollowing = addFollow.total_followers + len(account_details)
+                        addFollow.total_followers = countFollowing
                         addFollow.save()
-                        countFollowing = followersModel.objects.filter(following = followingID).count()
                         data = {'response': 'Successfully Followed', 'status':'1', 'totalFollower':countFollowing}
                         return JsonResponse(data)
                 elif checkFollowing == True:
-                        removeFollowing = followersModel.objects.filter(user=request.user.id, following = followingID).delete()
-                        countFollowing = followersModel.objects.filter(following = followingID).count()
+                        removeFollow = followersModel()
+                        removeFollow.objects.filter(user=request.user.id, following = followingID).delete()
+                        countFollowing = addFollow.total_followers - len(account_details)
+
+                        if countFollowing < 0:
+                            countFollowing = 0
+                            
+                        removeFollow.total_followers = countFollowing
+                        removeFollow.save()
+                        
                         data = {'response': 'Successfully Unfollowed', 'status':'0','totalFollower':countFollowing, 'totalFollower':countFollowing}
                         return JsonResponse(data)
         else:
