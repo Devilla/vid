@@ -70,13 +70,23 @@
                     if(counter < displayUpto && counter >= (displayUpto-4)){
                         var all_hash =element.fields.video;
                         var hash = JSON.parse(all_hash); 
+                        var vidHash ='';
+                        if(hash['720']){
+                            vidHash = hash['720'];
+                        }
+                        else if(hash['360']){
+                            vidHash = hash['360'];
+                        }
+                        else if(hash['240']){
+                            vidHash = hash['240'];
+                        }
                         var vid = "<div class='col-lg-3 col-sm-6 videoitem'><div class='b-video'><div class='v-img'>"+
-                                        "<a href='/watch/"+hash['360']+"/"+element.pk+"/'>"+
+                                        "<a href='/watch/"+vidHash+"/"+element.pk+"/'>"+
                                                 "<img src='https://gateway.ipfs.io/ipfs/"+element.fields.thumbNail+"' style='width:27.2rem; height:16rem;''></a>"+
                                                 "<div class='time'>"+element.fields.duration+"</div>"+
                                                 "</div>"+
                                                 "<div class='v-desc'>"+
-                                                        "<a href='/watch/"+hash['360']+"/"+element.pk+"/'>"+element.fields.name+"</a>"+
+                                                        "<a href='/watch/"+vidHash+"/"+element.pk+"/'>"+element.fields.name+"</a>"+
                                                         "</div>"+
                                                         "<div class='v-views'>"+
                                                                 element.fields.views+" views<span class='v-percent'><span class='fa fa-dollar'></span> "+element.fields.total_earning+" </span>"+
@@ -97,7 +107,7 @@
         
             for(var i=0; i< totalNewVideosPagignation; i++){
                 if (i==page-1){
-                var paginate =   "<li><button disabled style='padding:5px;' onclick='newdisplay("+(i+1)+")'><span style='color:#ea2c5a !important;'><b>"+(i+1)+"</b></span></button></li>";
+                var paginate =   "<li><button disabled style='padding:5px; /' onclick='newdisplay("+(i+1)+")'><span style='color:#ea2c5a !important;'><b>"+(i+1)+"</b></span></button></li>";
                 $('#newVideoPagignation').append(paginate);
                 }
                 else{
