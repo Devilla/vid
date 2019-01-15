@@ -1,9 +1,7 @@
 {% load staticfiles %}
 {% load i18n %}
 <div class="content-block head-div head-arrow">
-    <div class="head-arrow-icon">
-        <i class="cv cvicon-cv-next"></i>
-    </div>
+
     <div class="cb-header">
         <div class="row">
             <div class="col-lg-10 col-sm-10 col-xs-8">
@@ -52,15 +50,17 @@
     </div>
     <div class="col-md-3"></div>
     <div class='col-md-6'>
-        <div class="v-pagination" >
+        <center >
                     <ul class="list-inline" id="trendingPagignation">
                 
                         </ul>
             
-        </div>
+                    </center>
     </div>
     <div class="col-md-3"></div>
 </div>
+
+
 <script>
 var trendingVideos = {{trendingJSONdata|safe}} ;
 console.log(trendingVideos);
@@ -102,9 +102,6 @@ function display(page){
 
     $('#trendingPagignation').html('');
 
-    //var a="<li class='v-pagination-prev'><a href='#'><i class='cv cvicon-cv-previous'></i></a></li>";
-    //$('#trendingPagignation').append(a);
-
     for(var i=0; i< totalPagignation; i++){
         if (i==page-1){
         var paginate =   "<li><button disabled style='padding:5px;' onclick='display("+(i+1)+")'><span style='color:#ea2c5a !important;'><b>"+(i+1)+"</b></span></button></li>";
@@ -115,10 +112,6 @@ function display(page){
             $('#trendingPagignation').append(paginate);
         }
     }
-
-   // var b ="<li class='v-pagination-next'><a href='#'><i class='cv cvicon-cv-next'></i></a></li>";
-   // $('#trendingPagignation').append(b);
-
 }
 display(1);
 

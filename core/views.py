@@ -69,7 +69,8 @@ def index(request):
             channels.remove(each_channel)
     
     trendingJSONdata = serializers.serialize('json', trending)
-    return render(request, "core/home.html", {'instance': featured, 'trendingJSONdata':trendingJSONdata,'trend': trending, 'subscription': channels})
+    featuredJSONdata = serializers.serialize('json', featured)
+    return render(request, "core/home.html", {'instance': featured, 'trendingJSONdata':trendingJSONdata,'featuredJSONdata':featuredJSONdata,'trend': trending, 'subscription': channels})
 
 def perform_likes_dislike(account_details, type=1):
     '''
