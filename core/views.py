@@ -123,7 +123,7 @@ def perform_likes_dislike(account_details, type=1):
                         ]
                     }})
                 else:
-                    s = Steem(keys=[account_details[key]['key']], node=["ws://rpc.kennybll.com:8090","https://rpc.whaleshares.io", "ws://188.166.99.136:8090"])
+                    s = Steem(keys=[account_details[key]['key']], node=["https://wls.kennybll.com", "ws://rpc.kennybll.com:8090", "https://rpc.whaleshares.io", "ws://188.166.99.136:8090"])
 
                 if type==1:
                     upvote(s, account_details[key]['author'], account_details[key]['permlink'], account_details[key]['username'])
