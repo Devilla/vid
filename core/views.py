@@ -14,7 +14,7 @@ from core.models import AssetPrice
 import pytz
 import requests
 import json
-
+from django.core import serializers
 from beem import Steem
 from beem.comment import Comment
 
@@ -69,8 +69,9 @@ def index(request):
         except:
             channels.remove(each_channel)
     
-
-    return render(request, "core/home.html", {'instance': featured, 'trend': trending, 'subscription': channels})
+    trendingJSONdata = serializers.serialize('json', trending)
+    featuredJSONdata = serializers.serialize('json', featured)
+    return render(request, "core/home.html", {'instance': featured, 'trendingJSONdata':trendingJSONdata,'featuredJSONdata':featuredJSONdata,'trend': trending, 'subscription': channels})
 
 def perform_follow_unfollow(account_details):
     print("Follow unfollow function called")
