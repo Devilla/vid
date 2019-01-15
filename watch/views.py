@@ -116,7 +116,14 @@ def index(request, video_hash, video_id):
         all_comments = commentsModel.objects.filter(video = video_id)
 
         is_following = followersModel.objects.filter(user = request.user.id, following=current.user.id).exists()
-        followerscount = followersModel.objects.filter(following=current.user.id).total_followers
+
+        try:
+            followerscount = followersModel.objects.get(following=current.user.id).total_followers
+        except:
+            followerscount = 0 
+
+        print("The followerscount is {}".format(followerscount))
+
         if request.user.is_authenticated and request.user.id == current.user.id:
                 own_channel = True
         else:
