@@ -60,7 +60,10 @@ def index(request):
 
     trendingJSONdata = serializers.serialize('json', trendingvideos)
     hotJSONdata = serializers.serialize('json', hotvideos)
-    channels = User.objects.all().order_by('-id')[:11]    
+    channels = User.objects.all().order_by('-id')[:11] 
+
+    print(channels)
+
     featuredJSONdata = serializers.serialize('json', featured)
 
     return render(request, "core/home.html", {'instance': featured, 'trendingJSONdata':trendingJSONdata, 'hotJSONdata': hotJSONdata,'featuredJSONdata':featuredJSONdata, 'subscription': channels})
