@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect 
-from upload.models import Video, SteemVideo, WhaleShareVideo, SmokeVideo
+from upload.models import Video, SteemVideo, WhaleShareVideo, SmokeVideo, TrendingVideo, HotVideo
 from like_dislike.models import Activity
 from register.models import User
 from django.http import JsonResponse
@@ -34,44 +34,36 @@ def index(request):
     if (len(AssetPrice.objects.all())) == 0:
         AssetPrice().save()
 
+    trendingvideos = []
+    hotvideos = []
+
     if request.session['display_nsfw'] == False:
         featured = Video.objects.filter(nsfw=False).order_by('-id')[:50]
-        trending = Video.objects.filter(nsfw=False).order_by('-views')[:50]
     else:
         featured = Video.objects.all().order_by('-id')[:50]
-        trending = Video.objects.all().order_by('-views')[:50]
-        
-    channels = User.objects.all().order_by('-id')[:11]
-    
-    bestHash_Featured = []
-    bestHash_Trending = []
 
-    resolution = [2160, 1440, 1080, 720, 480, 360, 240  , 144]
+    for tv in TrendingVideo.objects.all().order_by('-rank'):
 
-    for each_video in featured:
-        for each_res in resolution:
-            if str(each_res) in each_video.video:
-                hash = demjson.decode(each_video.video)
-                each_video.bestHash_Featured = hash[str(each_res)]
-                break   
+        if request.session['display_nsfw'] == False:
+            if tv.video.nsfw == False:
+                trendingvideos.append(tv.video)
+            else:
+                trendingvideos.append(tv.video)
+    
+    for hv in HotVideo.objects.all().order_by('-rank'):
 
-    for each_videot in trending:
-        for each_res in resolution:
-            if str(each_res) in each_videot.video:
-                hasht = demjson.decode(each_videot.video)
-                each_videot.bestHash_Trending = hasht[str(each_res)]
-                break   
-    
-    for each_channel in channels:
-        try:
-            video = Video.objects.filter(user_id=each_channel.id).count()
-            each_channel.count = video
-        except:
-            channels.remove(each_channel)
-    
-    trendingJSONdata = serializers.serialize('json', trending)
+        if request.session['display_nsfw'] == False:
+            if hv.video.nsfw == False:
+                hotvideos.append(hv.video)
+            else:
+                hotvideos.append(hv.video)
+
+    trendingJSONdata = serializers.serialize('json', trendingvideos)
+    hotJSONdata = serializers.serialize('json', hotvideos)
+    channels = User.objects.all().order_by('-id')[:11]    
     featuredJSONdata = serializers.serialize('json', featured)
-    return render(request, "core/home.html", {'instance': featured, 'trendingJSONdata':trendingJSONdata,'featuredJSONdata':featuredJSONdata,'trend': trending, 'subscription': channels})
+
+    return render(request, "core/home.html", {'instance': featured, 'trendingJSONdata':trendingJSONdata, 'hotJSONdata': hotJSONdata,'featuredJSONdata':featuredJSONdata, 'subscription': channels})
 
 def perform_follow_unfollow(account_details):
     print("Follow unfollow function called")
