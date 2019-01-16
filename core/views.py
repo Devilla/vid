@@ -35,11 +35,11 @@ def index(request):
         AssetPrice().save()
 
     if request.session['display_nsfw'] == False:
-        featured = Video.objects.filter(nsfw=False).order_by('-id')[:8]
-        trending = Video.objects.filter(nsfw=False).order_by('-views')[:8]
+        featured = Video.objects.filter(nsfw=False).order_by('-id')[:50]
+        trending = Video.objects.filter(nsfw=False).order_by('-views')[:50]
     else:
-        featured = Video.objects.all().order_by('-id')[:8]
-        trending = Video.objects.all().order_by('-views')[:8]
+        featured = Video.objects.all().order_by('-id')[:50]
+        trending = Video.objects.all().order_by('-views')[:50]
         
     channels = User.objects.all().order_by('-id')[:11]
     

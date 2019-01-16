@@ -171,7 +171,7 @@ def index(request):
                     else:
                         current.nsfw = False
             
-                raw_tags = form.cleaned_data['video_tags'].split(',')
+                raw_tags = form.cleaned_data['video_tags'].replace(' ',',').split(',')
                     
                 splitted_tags = [x.strip() for x in raw_tags]
 
