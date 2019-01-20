@@ -1,0 +1,45 @@
+{% extends 'register/base.html' %}
+
+{% block title %} Tagged Videos {% endblock title %}
+
+{% block navigation %}
+
+{% include "core/navbar.html" %}
+
+{% endblock navigation %}
+
+{% block content %}
+
+
+<div class="container-fluid bg-image">
+    <div class="row">
+        <div class="login-wraper">
+
+            <div class="banner-text hidden-xs">
+                <div class="line"></div>
+                <div class="b-text text-white">
+                   <b>#</b> </span><span class="color-active"><b>{{tag}}</b></span>
+                       
+                </div>
+            </div>
+            <div class="login-window p-3">
+                <div class="col-md-12">
+
+                        {% for video in taggedVideos %}
+                        <div class="col-lg-3 col-sm-6 videoitem">
+                        <div class="b-video">
+                            <div class="v-img"><a href="/watch/QmQryPPcZSe1ReeJwceGfks4rJYqRgjvy995QyGfPcCyNa/25/"><img src="https://gateway.ipfs.io/ipfs/{{video.thumbNail}}" style="width:27.2rem; height:16rem;" '=""></a>
+                                <div class="time">{{ video.duration }}</div></div><div class="v-desc"><a href="/watch/QmQryPPcZSe1ReeJwceGfks4rJYqRgjvy995QyGfPcCyNa/{{ video.id}}/">{{ video.name }}</a></div>
+                                <div class="v-views">{{video.views}} views<span class="v-percent"><span class="fa fa-dollar"></span> {{ video.total_earning}} </span></div>
+                            </div>
+                        </div>
+                        {% endfor %}
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

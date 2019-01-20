@@ -418,3 +418,15 @@ def followChannel(request):
         else:
                 return redirect('/login')
 
+
+def singleTagVideos(request,tag):
+    if request.method == "GET":
+        tgvid = []
+        taggedVideos = Video.objects.all()
+        for video in taggedVideos:
+            if video.tags!=None:
+                for singletag in video.tags:
+                    if singletag == tag:
+                        tgvid.append(video)
+
+        return render(request, 'core/tagVideos.html',{'taggedVideos':tgvid, 'tag':tag})

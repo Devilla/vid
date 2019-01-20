@@ -134,7 +134,7 @@
             <p class="sv-tags">
                 {%if current.tags %}
                     {%for tag in current.tags %}
-                    <span>{{ tag }}</span>
+                    <span><a href ="/tagged/{{ tag }}/">{{ tag }}</a></span>
                     {% endfor %}
                 {% else %}
                 No Tags
