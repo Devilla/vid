@@ -104,7 +104,7 @@ def update_prices():
         pass
 
     try:
-        r=requests.get("https://cryptofresh.com/api/asset/markets?asset=WHALESHARE")
+        r=requests.get("https://cryptofresh.com/api/asset/markets?asset=RUDEX.WLS")
         res = json.loads(r.text)
         p = float(res['USD']['price'])
 
