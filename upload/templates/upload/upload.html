@@ -4,9 +4,6 @@
 {% load staticfiles %}
 {% load widget_tweaks %}
 
-{% include "core/navbar.html" %}
-{% include "core/goto.html" %}
-
 {% endblock navigation %}
 
 {% block content %}
@@ -41,9 +38,6 @@
                                                 <span class="sr-only">0</span><span class="glyphicon glyphicon-thumbs-up" style="float:right"> Complete</span>
                                             </div>
                                         </div>
-                                        <div class="u-close">
-                                            <a href="#"><i class="cvicon-cv-cancel"></i></a>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -55,12 +49,12 @@
     </div>
     <div class="container">
         <div class="row">
-                <div class="col-lg-4">
+                <div class="col-lg-4 hidden-xs hidden-sm">
                 </div>
-            <div class="col-lg-8">
+            <div class="col-lg-8" style="padding:30px !important;">
                     <form class="form-horizontal" enctype='multipart/form-data' method="POST">
                             {% csrf_token %} 
-                <div class="u-form " style="margin-bottom:10%;">
+                <div class="u-form ">
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="form-group">
@@ -81,97 +75,94 @@
                             </div>
                         </div>
 
-                        
-                    </div>
-
-                    
-                        <div class="col-lg-5">
-                            <div class="form-group">
-                                <label for="id_language">Language in Video (Optional)</label>
-                                {{ postOptionsForm.language}}
-                            </div>
-                        </div>
-
-                        <div class="col-sm-7">
-                                <div class="col-sm-12 col-md-12">
-                                        <div class="form-group">
-                                        <label class='pull-left'> Choose where to post:</label> <br>
-                                        </div>
+                        <div class="col-lg-5 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label for="id_language">Language in Video (Optional)</label><br>
+                                    {{ postOptionsForm.language}}
                                 </div>
-                                <div class="col-sm-12 col-md-12">
-                                    
-                                    {% if keychk.smokechk is True %}
-                                    <div class="col-lg-4 col-md-4 col-sm-6">
-                                            <div class="checkbox">
-                                                    <label>
-                                                        <label class="checkbox">
-                                                                {{ postOptionsForm.smoke}}
-                                                            <span class="arrow"></span>
-                                                        </label> Smoke
-                                                    </label>
-                                                </div>
-                                    </div>
-                                        
-                                    
-                                    {% endif %}
-                                    {% if keychk.steemchk is True %}
-                                    <div class="col-lg-4 col-md-4 col-sm-6 p-0">
-                                            <div class="checkbox">
-                                                    <label>
-                                                        <label class="checkbox">
-                                                                {{ postOptionsForm.steem}}
-                                                            <span class="arrow"></span>
-                                                        </label> Steem
-                                                    </label>
-                                                </div>
-                                        </div>
-                                    
-                                    {% endif %}
-                                    
-                                    {% if keychk.whalechk is True %}
-                                    <div class="col-lg-4 col-md-4 col-sm-6">
-                                            <div class="checkbox">
-                                                    <label>
-                                                        <label class="checkbox">
-                                                                {{ postOptionsForm.whale}}
-                                                            <span class="arrow"></span>
-                                                        </label> Whale
-                                                    </label>
-                                                </div>
-                                        </div>
-
-                                    {% endif %}
-                                    <div class="col-lg-12 col-md-12 col-sm-12">
-                                            <span id="tt"></span>
-                                    </div>
-
                             </div>
-                             </div>
-                    </div>
-                    <div class="col-lg-12 col-md-12 col-sm-12" style= 'margin-bottom:10%;'>
-                                <div class="col-lg-6 col-md-6 col-sm-12" >
+
+
+                            <div class="col-sm-12 col-xs-12 col-lg-12">
+                                    <div class="form-group">
+                                            <label > Choose where to post:</label>
+                                    </div> 
+                                
+                            </div> 
+
+                            <div class="col-sm-12 col-xs-12 col-lg-12">
+                                <div class="form-group">
+                                        {% if keychk.smokechk is True %}
+                                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 ">
+                                                <div class="checkbox">
+                                                        <label>
+                                                            <label class="checkbox">
+                                                                    {{ postOptionsForm.smoke}}
+                                                                <span class="arrow"></span>
+                                                            </label> Smoke
+                                                        </label>
+                                                    </div>
+                                        </div>
+                                            
+                                        
+                                        {% endif %}
+                                        {% if keychk.steemchk is True %}
+                                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 ">
+                                                <div class="checkbox">
+                                                        <label>
+                                                            <label class="checkbox">
+                                                                    {{ postOptionsForm.steem}}
+                                                                <span class="arrow"></span>
+                                                            </label> Steem
+                                                        </label>
+                                                    </div>
+                                            </div>
+                                        
+                                        {% endif %}
+                                        
+                                        {% if keychk.whalechk is True %}
+                                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                                <div class="checkbox">
+                                                        <label>
+                                                            <label class="checkbox">
+                                                                    {{ postOptionsForm.whale}}
+                                                                <span class="arrow"></span>
+                                                            </label> Whale
+                                                        </label>
+                                                    </div>
+                                            </div>
+    
+                                        {% endif %}
+                                    </div> 
+                                
+                                </div> 
+
+                            <div class="col-lg-12 col-md-6 col-sm-12" >
+                                    <div class="form-group">
                                         <div class="checkbox" >
                                                 <label>
                                                     <label class="checkbox">
                                                             {{ postOptionsForm.monetize}}
                                                         <span class="arrow"></span>
                                                     </label> 
-                                                    Accept and monetize this video.
+                                                   <b>Accept and monetize this video.</b> 
                                                 </label>
-                                            </div>
-                                </div>
-                                <div class="col-lg-6 col-md-6 col-sm-12" >
-                                    <div class="checkbox">
-                                            <label>
-                                                <label class="checkbox">
-                                                        {{ postOptionsForm.nsfw}}
-                                                    <span class="arrow"></span>
-                                                </label> 
-                                                NSFW
-                                            </label>
-                                </div>
-                            </div>
-                        </div>
+                                        </div>
+                                        <div class="checkbox">
+                                                <label>
+                                                    <label class="checkbox">
+                                                            {{ postOptionsForm.nsfw}}
+                                                        <span class="arrow"></span>
+                                                    </label> 
+                                                    <b>NSFW (Not Safe for Work)</b>
+                                                </label>
+                                        </div>
+                                    </div>
+                            </div> 
+                                                 
+                        </div>                        
+                    </div>
+
                     
 
                 <div class="u-area mt-small">

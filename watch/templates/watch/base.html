@@ -1,78 +1,68 @@
 {% extends 'core/base.html' %}
-
+ 
 {% block title %} {{ current.name }} {% endblock title %}
+ 
 
-{% block navigation %}
-
-    {% include "core/navbar.html" %}
-    {% include "core/goto.html" %}
-
-{% endblock navigation %}
-
+ 
 {% block content %}
+<div class="col-lg-8 col-md-8 col-xs-12 col-sm-12">
 
-    <div class="col-lg-8">
-        {% include "watch/video_player.html" %}
-        {% include "watch/info.html" %}
-        {% include "watch/adsense.html" %}
-    </div>
+{% include "watch/video_player.html" %}
+</div>
+ 
+<div class="col-lg-4 col-md-4 col-xs-12 col-sm-12 hidden-xs">
 
-    {% include "watch/right.html" %}
+{% include "watch/right.html" %}
+</div>
 
 {% endblock content %}
-
-{% block plyrScript %} 
-
-    <script>
-        
-        const player = new Plyr('#player');
-        
-        $('video').bind('timeupdate', myfunction);
-        
-        var ad = 'false';
-
-        function myfunction(){
-            time = this.currentTime;
-            
-            if(ad == 'false'){
-                if (parseInt(time) == 120){
-                    playAd();
-                }
-            }
-        }
-   
-        player.on('ended', function(event) {
-            if (ad == 'true'){
-                ad = 'false';
-                player.source = {type: 'video',
-                    sources: [
-                        {{ cont|safe }}
-                    ],
-                };
-                $('video').bind('timeupdate', myfunction);
-                document.getElementsByTagName("video")[0].currentTime = 121;  
-                player.play();
-            }
-            else {
-                player.stop();
-            }
-        });
-        
-        function playAd(){
-                ad = 'true';
-                player.source = {type: 'video',
-                    sources: [
-                        {
-                            src: 'http://gateway.ipfs.io/ipfs/Qmf2ncTDg7XjszqGVALN6n7qp69cqnYku7hsohidVugr7j',
-                            type: 'video/mp4',
-                            size: 360,
-                        },
-                    ],
-                };
-                $('video').bind('timeupdate', myfunction);
-                player.play();
-        }
-
-    </script>   
-
+ 
+{% block plyrScript %}
+ 
+<script>
+const player = new Plyr('#player');
+$('video').bind('timeupdate', myfunction);
+var ad = 'false';
+ 
+function myfunction(){
+time = this.currentTime;
+if(ad == 'false'){
+if (parseInt(time) == 120){
+playAd();
+}
+}
+}
+player.on('ended', function(event) {
+if (ad == 'true'){
+ad = 'false';
+player.source = {type: 'video',
+sources: [
+{{ cont|safe }}
+],
+};
+$('video').bind('timeupdate', myfunction);
+document.getElementsByTagName("video")[0].currentTime = 121;
+player.play();
+}
+else {
+player.stop();
+}
+});
+function playAd(){
+ad = 'true';
+player.source = {type: 'video',
+sources: [
+{
+src: 'http://gateway.ipfs.io/ipfs/Qmf2ncTDg7XjszqGVALN6n7qp69cqnYku7hsohidVugr7j',
+type: 'video/mp4',
+size: 360,
+},
+],
+};
+$('video').bind('timeupdate', myfunction);
+player.play();
+}
+ 
+</script>
+ 
 {% endblock plyrScript %}

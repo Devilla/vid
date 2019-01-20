@@ -1,11 +1,7 @@
-{% extends 'single_channel/base.html' %}
+{% extends 'core/base.html' %}
 
 {% load staticfiles %}
 
-{% block navigation %}
-        {% include "core/navbar.html" %}
-
-{% endblock navigation %}
 
 {% block extra %}
 
@@ -34,6 +30,7 @@
 
 {% block content %}
 
+
 <div class="col-lg-12">
 
 <div class="channel-details">
@@ -48,24 +45,24 @@
                                 </div>
                                 <div class="c-nav">
                                         <ul class="list-inline">
-                                            <li><a href="#" class="active">Videos</a></li>
-                                            <li><a href="#">Playlist</a></li>
-                                            <li class="#"><a href="#">About</a></li>
-                                           {% if request.user.is_authenticated %}{% if own_channel %} <li class="#"><a href="/channel/myprofile/{{ request.user.id}}/">Settings</a></li>{%endif%}{%endif%}
+                                        <li><a href="#" class="active">Videos</a></li>
+                                        <li><a href="#">Playlist</a></li>
+                                        <li class="#"><a href="#">About</a></li>
+                                        {% if request.user.is_authenticated %}{% if own_channel %} <li class="#"><a href="/channel/myprofile/{{ request.user.id}}/">Settings</a></li>{%endif%}{%endif%}
                                         </ul>
                                         <div class="btn-group dropup pull-right">
-                                            <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 Discussion <span class="caret"></span>
-                                            </button>
-                                            <ul class="dropdown-menu">
+                                        </button>
+                                        <ul class="dropdown-menu">
                                                 <li><a href="#"><i class="cv cvicon-cv-relevant"></i> Relevant</a></li>
                                                 <li><a href="#"><i class="cv cvicon-cv-calender"></i> Recent</a></li>
                                                 <li><a href="#"><i class="cv cvicon-cv-view-stats"></i> Viewed</a></li>
                                                 <li><a href="#"><i class="cv cvicon-cv-star"></i> Top Rated</a></li>
                                                 <li><a href="#"><i class="cv cvicon-cv-watch-later"></i> Longest</a></li>
-                                            </ul>
+                                        </ul>
                                         </div>
-                                    </div>
+                                </div>
                                 <div class="c-sub pull-right hidden-xs">
                                         <div class="c-sub-wrap">
                                                 <form method="POST">

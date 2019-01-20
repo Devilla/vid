@@ -30,7 +30,165 @@
 
 <body class="channel dark">
 
-{% block navigation %} {% endblock navigation %}
+        <div class="container-fluid">
+                <div class="row">
+                    <div class="navbar-container">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-xs-3 visible-xs">
+                                    <a href="#" class="btn-menu-toggle"><i class="cv cvicon-cv-menu"></i></a>
+                                </div>
+
+                                <div class="col-lg-1 col-sm-2 col-xs-6">
+                                        <a class="navbar-brand" href="{% url 'core:index' %}">
+                                                <img src="{% static "images/logo.png" %}" alt="Vid Social logo" class="logo" />
+                                                <span>Vid Social</span>
+                                            </a>
+                                </div>
+                                <div class="col-lg-6 col-sm-8 col-xs-3">
+                                        <form action="search.html" method="post">
+                                            <div class="topsearch">
+                                                <i class="cv cvicon-cv-cancel topsearch-close"></i>
+                                                <div class="input-group">
+                                                    <span class="input-group-addon" id="sizing-addon2"><i class="fa fa-search"></i></span>
+                                                    <input type="text" class="form-control" placeholder="Search" aria-describedby="sizing-addon2">
+                                                    <div class="input-group-btn">
+                                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="cv cvicon-cv-video-file"></i>&nbsp;&nbsp;&nbsp;<span class="caret"></span></button>/
+                                                        <ul class="dropdown-menu">
+                                                            <li><a href="#"><i class="cv cvicon-cv-relevant"></i> Relevant</a></li>
+                                                            <li><a href="#"><i class="cv cvicon-cv-calender"></i> Recent</a></li>
+                                                            <li><a href="#"><i class="cv cvicon-cv-view-stats"></i> Viewed</a></li>
+                                                            <li><a href="#"><i class="cv cvicon-cv-star"></i> Top Rated</a></li>
+                                                            <li><a href="#"><i class="cv cvicon-cv-watch-later"></i> Longest</a></li>
+                                                        </ul>
+                                                    </div><!-- /btn-group -->
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                <div class="col-lg-1 col-sm-10 hidden-xs">
+            
+                                    </div>
+                                <div class="col-lg-4 col-sm-4 hidden-xs">
+                                    {% if request.user.is_authenticated %}
+                                    <div class="avatar pull-left">
+                                        <img src='https://gateway.ipfs.io/ipfs/{{ request.user.profile_picture }}' alt="avatar" style="width:5rem; height:5rem; border-radius:50%">
+                                        <span class="status"></span>
+                                    </div>
+                                    <div class="selectuser pull-left">
+                                        <div class="btn-group pull-right dropdown">
+                                            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1"
+                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                                {{ request.user.first_name }} {{ request.user.last_name }}
+                                                <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li>
+                                                        <form id="changeNSFWSTATUS" method="POST">{% csrf_token %}
+                                                                {% if request.session.display_nsfw is True %}
+                                            
+                                                                    <input type="checkbox" name="nsfw" value="False" id="nsfwstat" onchange = "changeNSFW()" checked> <span> NSFW</span>  
+                                                                    
+                                                                {% elif request.session.display_nsfw is False %}
+                                                                <input type="checkbox" name="nsfw" value="True" id="nsfwstat" onchange = "changeNSFW()"><span> NSFW</span>    
+                                                                {% endif %}
+                                                            </form>
+            
+                                                </li>
+                                                <li><a href="{% url 'single_channel:mychannel' request.user.id  %}">My Channel</a></li>
+                                                <!-- <li><a href="/channel/myprofile/{{ request.user.id }}/">My Settings</a></li> -->
+                                                <li><a href="{% url 'logout:logout' %}">Logout</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    {% else %}
+                                    <div class="loginsignup pull-left">
+                                        <a href="{% url 'login:login' %}">Login</a> . <a href="{% url 'register:register' %}">Signup</a>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+            
+            
+                            <div class="hidden-xs">
+                                <a href="{% url 'upload:index' %}">
+                                    <div class="upload-button" style="height:45px !important; width:45px !important; right:1px !important;">
+                                        <i class="cv cvicon-cv-upload-video" style="font-size:15px;"></i>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% if request.user.is_authenticated %}
+            <div class="mobile-menu">
+                    <div class="mobile-menu-head">
+                        <a href="#" class="mobile-menu-close"></a>
+                        <a class="navbar-brand" href="{% url 'core:index' %}">
+                                <img src="{% static "images/logo.png" %}" alt="Vid Social logo" class="logo" />
+                                <span>Vid Social</span>
+                            </a>
+                        <div class="mobile-menu-btn-color">
+                            <img src="images/icon_bulb_light.png" alt="">
+                        </div>
+                    </div>
+                    <div class="mobile-menu-content">
+                        <div class="mobile-menu-user">
+                            <div class="mobile-menu-user-img">
+                                    <img src='https://gateway.ipfs.io/ipfs/{{ request.user.profile_picture }}' alt="avatar" style="width:5rem; height:5rem; border-radius:50%">
+                            </div>
+                            <p>{{ request.user.first_name }} {{ request.user.last_name }} </p>
+                            <span class="caret"></span>
+                        </div>
+                        <a href="{% url 'upload:index' %}" class="btn mobile-menu-upload">
+                                <i class="cv cvicon-cv-upload-video"></i>
+                            <span>Upload Video</span>
+                            </a>
+                        <div class="mobile-menu-list">
+                            <ul>
+                                <li>
+                                    <a href="{% url 'single_channel:mychannel' request.user.id  %}">
+                                        <i class="cv cvicon-cv-play-circle"></i>
+                                        <p>My Channel</p>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <i class="cv cvicon-cv-playlist"></i>
+                                        <p>Browse Categories</p>
+                                        <span class="caret"></span>
+                                    </a>
+                                    <ul class="mobile-menu-categories">
+                                        <li class="color-active">
+                                            <a href="#">Pages <span class="caret"></span></a>
+                                            <ul>
+                                                <li><a href="index.html">Home Page</a></li>
+                                            </ul>
+                                        </li>
+                                        <li><a href="categories.html">Categories</a></li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <i class="cv cvicon-cv-liked"></i>
+                                        <p>Liked Videos</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <a href="{% url 'logout:logout' %}" class="btn mobile-menu-logout">Log out</a>
+                    </div>
+                </div>
+                {% else %}
+                <div class="loginsignup pull-left">
+                    <a href="{% url 'login:login' %}" class="btn mobile-menu-logout">Login</a> . <a href="{% url 'register:register' %}" class="btn mobile-menu-logout">Signup</a>
+                </div>
+                {% endif %}
+
+
+
 
 {% block extra %} {% endblock extra %}
 
