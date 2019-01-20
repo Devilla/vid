@@ -75,8 +75,6 @@ def update_prices():
     '''
     Gets the price for steem, smoke and whaleshares
     '''
-
-    print("Updating price")
     steem_price = 0
     smoke_price = 0
     whaleshare_price = 0
@@ -85,6 +83,7 @@ def update_prices():
     steem_price = latest_price.steem_price
     smoke_price = latest_price.smoke_price
     whaleshare_price = latest_price.whaleshare_price
+    print(steem_price, smoke_price, whaleshare_price)
 
     try:
         r=requests.get("https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=STEEM,USD", headers={"X-CMC_PRO_API_KEY":"030f8706-dc8a-442b-82bb-8824eecf4e6e"}, timeout=1)
@@ -115,7 +114,10 @@ def update_prices():
             whaleshare_price = p
     except:
         pass
-
+    
+    AssetPrice.objects.all().delete()
+    
+    print("Updating price to {} {} {}".format(steem_price, smoke_price, whaleshare_price))
     a = AssetPrice(steem_price=steem_price, smoke_price=smoke_price, whaleshare_price=whaleshare_price)
     a.save()
 
