@@ -32,5 +32,4 @@ urlpatterns = [
     path('channel/', include('single_channel.urls')),
     path('like_dislike/', include('like_dislike.urls')),
     path('stream/', include('livestream.urls')),
-    url(r'^comments/', include('django_comments_xtd.urls')),
 ]
