@@ -69,6 +69,7 @@ def ajax_upload(request):
             vid.release()
 
             if height > width:
+                print("Greater here so perform")
                 newOutput = outputName.replace(".mp4", "_edit.mp4")
                 command = "ffmpeg -i {} -vf scale=iw:480 {}".format(outputName, newOutput)
                 subprocess.check_call(command.split(" "))
