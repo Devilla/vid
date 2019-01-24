@@ -24,6 +24,7 @@ from steem import Steem as SteemOriginal
 
 from .models import File
 from .forms import FileUploadModelForm
+from shutil import move
 
 
 def get_unique_permlink(title):
@@ -72,10 +73,11 @@ def ajax_upload(request):
                 print("Greater here so perform")
                 newOutput = outputName.replace(".mp4", "_edit.mp4")
                 command = "ffmpeg -i {} -vf scale=iw:480 {}".format(outputName, newOutput)
+                print(command)
                 subprocess.check_call(command.split(" "))
 
-                os.remove(outputName)
-                os.rename(newOutput, outputName)
+                move(newOutput, outputName)
+                print("Renamed")
 
             runCommand = 'ffmpeg -ss 00:0:01 -i '+ outputName +' -frames:v 1 '+ thumbnail_path
             subprocess.check_call(runCommand.split(" "))
@@ -106,7 +108,7 @@ def ajax_upload(request):
             # Generate multiple video quality to upload to the server
 
             newHash = api.add(outputName)
-            os.remove(outputName)
+            # os.remove(outputName)
 
             hash = hash + "\"" + str(720) + "\": \"" + newHash['Hash'] + "\"}"
 
