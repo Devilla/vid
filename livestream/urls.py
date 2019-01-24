@@ -1,8 +1,9 @@
 from django.urls import path, re_path
-from livestream.views import livefe
+from livestream.views import upload, play
 
 app_name = 'livestream'
 
 urlpatterns = [
-    path('', livefe, name="index"),
+    path('', upload, name="index"),
+    path('play/', play, name="index"),
 ]
