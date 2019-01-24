@@ -53,7 +53,6 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'threadedcomments',
     'django_comments',
-    'django.contrib.sites',
 ]
 
 COMMENTS_APP = "threadedcomments"
