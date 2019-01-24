@@ -49,17 +49,14 @@ INSTALLED_APPS = [
     'like_dislike',
     'advertisement',
     'single_channel',
-    'widget_tweaks',
-    'django_comments_xtd',
-    'django_comments',
     'livestream',
+    'widget_tweaks',
+    'threadedcomments',
+    'django_comments',
+    'django.contrib.sites',
 ]
 
-COMMENTS_APP = "django_comments_xtd"
-
-SITE_ID=1
-
-COMMENTS_XTD_MAX_THREAD_LEVEL = 10
+COMMENTS_APP = "threadedcomments"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
