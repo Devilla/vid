@@ -54,10 +54,10 @@ def steem_blockchain(request):
                 print('The submitted form is not valid')
             
         
-            return render(request, "register/steem_blockchain.html", {'form':formb})
+            return render(request, "register/steem_block.html", {'form':formb})
         else:
             formBl = SteemBlockChainForm()          
-            return render(request, "register/steem_blockchain.html", {'form':formBl})
+            return render(request, "register/steem_block.html", {'form':formBl})
 
     else:
         form = UserRegistrationForm()
@@ -82,10 +82,10 @@ def smoke_blockchain(request):
             else:
                 print('The submitted form is not valid')
             
-            return render(request, "register/smoke_blockchain.html", {'form':formb})
+            return render(request, "register/smoke_block.html", {'form':formb})
         else:
             formBl = SmokeBlockChainForm()          
-            return render(request, "register/smoke_blockchain.html", {'form':formBl})
+            return render(request, "register/smoke_block.html", {'form':formBl})
     else:
         form = UserRegistrationForm()
         return render(request, "register/signup.html", {'form': form})
@@ -109,10 +109,10 @@ def whale_blockchain(request):
             else:
                 print('The submitted form is not valid')
         
-            return render(request, "register/whale_blockchain.html", {'form':formb})
+            return render(request, "register/whale_block.html", {'form':formb})
         else:
             formBl = WhaleBlockChainForm()          
-            return render(request, "register/whale_blockchain.html", {'form':formBl})
+            return render(request, "register/whale_block.html", {'form':formBl})
     else:
         form = UserRegistrationForm()
         return render(request, "register/signup.html", {'form': form})
@@ -146,8 +146,8 @@ def update(request):
                 print("The submitted form is not valid")
 
         formd = UserRegistrationCompletionForm()            
-        return render(request, "register/signup_process.html", {'form':formd})
+        return render(request, "register/signup_info.html", {'form':formd})
 
     else:
         form = UserRegistrationForm()
-        return render(request, "register/signup.html", {'form': form})
+        return render(request, "register/info.html", {'form': form})

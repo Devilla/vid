@@ -24,16 +24,6 @@
     <link rel="stylesheet" href="https://cdn.plyr.io/3.4.7/plyr.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
     
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-131940060-1"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-
-        gtag('config', 'UA-‎131940060-1');
-    </script>
-
     <!-- font-family: 'Hind', sans-serif; -->
     <link href='https://fonts.googleapis.com/css?family=Hind:400,300,500,600,700|Hind+Guntur:300,400,500,700' rel='stylesheet'
         type='text/css'>
@@ -181,7 +171,7 @@
                     </script>
 </head>
 
-<body class="channel single-video dark">
+<body class="dark">
 
         <div class="container-fluid">
                 <div class="row">
@@ -383,7 +373,11 @@
     </div>
 
     {% include "core/footer.html" %}
-
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('.file-upload').file_upload();
+        });
+    </script>
 
 <!-- Bootstrap core JavaScript
 ================================================== -->
