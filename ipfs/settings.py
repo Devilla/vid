@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
+    'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
@@ -48,10 +49,17 @@ INSTALLED_APPS = [
     'like_dislike',
     'advertisement',
     'single_channel',
-    'channel',
-    'comments',
     'widget_tweaks',
+    'django_comments_xtd',
+    'django_comments',
+    'livestream',
 ]
+
+COMMENTS_APP = "django_comments_xtd"
+
+SITE_ID=1
+
+COMMENTS_XTD_MAX_THREAD_LEVEL = 10
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf.urls import url
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,5 +31,6 @@ urlpatterns = [
     path('adadmin/', include('advertisement.urls')),
     path('channel/', include('single_channel.urls')),
     path('like_dislike/', include('like_dislike.urls')),
-    path('comments/', include('comments.urls')),
+    path('stream/', include('livestream.urls')),
+    url(r'^comments/', include('django_comments_xtd.urls')),
 ]

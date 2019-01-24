@@ -1,12 +1,11 @@
 from django.shortcuts import render, HttpResponse
 from upload.models import Video, SteemVideo, WhaleShareVideo, SmokeVideo
-from comments.forms import commentForm
 from register.models import User
 import demjson
 from like_dislike.models import Activity
-from comments.models import commentsModel, CommentReplies
 from single_channel.models import followersModel
 import json
+
 # Create your views here.
 
 def get_post_details(vid_id):
@@ -112,10 +111,8 @@ def index(request, video_hash, video_id):
             chkLike = False
             chkDislike = False
 
-        cmntForm = commentForm()
-        all_comments = commentsModel.objects.filter(video = video_id)
-
         is_following = followersModel.objects.filter(user = request.user.id, following=current.user.id).exists()
+                
 
         try:
             followerscount = followersModel.objects.get(following=current.user.id).total_followers
@@ -129,10 +126,11 @@ def index(request, video_hash, video_id):
         else:
                 own_channel = False
 
+
         return render(request, "watch/base.html", {'video_hash': hash, 'cont': video_content,
         'latest': featured, 'recommended': recommend, 'current': current, 'is_following':is_following,'followerscount':followerscount,'own_channel':own_channel,
         'user': user, 'count': count, 'steem_url': steem_url, 'smoke_url': smoke_url, 'whale_url': whale_url, 'chkLike': chkLike, 'chkDislike':chkDislike,
-        'total_likes': total_likes, 'total_dislikes': total_dislikes, 'total_earning': total_earning, 'cmntForm':cmntForm, 'all_comments':all_comments})
+        'total_likes': total_likes, 'total_dislikes': total_dislikes, 'total_earning': total_earning})
     
 
 def likedordisliked (request, user_id, video_id):

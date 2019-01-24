@@ -40,7 +40,7 @@ def ajax_upload(request):
 
         if form.is_valid():
             file = request.FILES['file'].read()
-            current_name = ''.join(random.choice('0123456789ABCDEF') for i in range(16)) + "." + str(request.FILES['file']).split('.')[-1]
+            current_name = ''.join(random.choice('0123456789ABCDEF') for i in range(16)) + ".mp4"
             videos_directory = os.path.join(os.path.join(settings.BASE_DIR, "static"), 'videos')
 
 
@@ -60,16 +60,27 @@ def ajax_upload(request):
             thumbnail_name = '%s%s' % (''.join(random.choice('0123456789ABCDEF') for i in range(16)) +'video_Pranish', 'thumb.jpg')
             thumbnail_path = os.path.join(path, thumbnail_name)
             
+            outputName = os.path.join(videos_directory, current_name)
 
-            # Generate the thumnail of the video using ffmpeg tool
-            runCommand = 'ffmpeg -ss 00:0:01 -i '+ os.path.join(videos_directory, current_name) +' -frames:v 1 '+ thumbnail_path
-            # ffMpegPAth = "C:\\ffmpeg\\bin"
-            # runCommand = ffMpegPAth + "\\" + runCommand
-            subprocess.check_call(runCommand.split(" ")) #we have a command line injection vulnerability here
+            # Find the resolution of the uploaded video
+            vid = cv2.VideoCapture(os.path.join(videos_directory, current_name))
+            height = int(vid.get(cv2.CAP_PROP_FRAME_HEIGHT))
+            width = vid.get(cv2.CAP_PROP_FRAME_WIDTH)
+            vid.release()
 
-            durationCommand = 'ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 ' + os.path.join(videos_directory, current_name)
+            if height > width:
+                newOutput = outputName.replace(".mp4", "_edit.mp4")
+                command = "ffmpeg -i {} -vf scale=iw:480 {}".format(outputName, newOutput)
+                subprocess.check_call(command.split(" "))
 
-            # durationCommand = ffMpegPAth + "\\" + durationCommand
+                os.remove(outputName)
+                os.rename(newOutput, outputName)
+
+            runCommand = 'ffmpeg -ss 00:0:01 -i '+ outputName +' -frames:v 1 '+ thumbnail_path
+            subprocess.check_call(runCommand.split(" "))
+
+            durationCommand = 'ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 ' + outputName
+
             time = ''
             duration = subprocess.check_output(durationCommand.split(' '))
             floatDuration = float(duration)/60
@@ -84,11 +95,7 @@ def ajax_upload(request):
                 time = str(int(floatDuration)) + ':' + str(seconds).zfill(2)
 
 
-            # Find the resolution of the uploaded video
-            vid = cv2.VideoCapture(os.path.join(videos_directory, current_name))
-            height = int(vid.get(cv2.CAP_PROP_FRAME_HEIGHT))
-            width = vid.get(cv2.CAP_PROP_FRAME_WIDTH)
-            vid.release()
+            
 
             hash = "{\"" + str(height) + "\": \"" + fileHash + "\", \n"
 
@@ -97,15 +104,19 @@ def ajax_upload(request):
 
             # Generate multiple video quality to upload to the server
 
-            newHash = api.add(os.path.join(videos_directory, current_name))
+            newHash = api.add(outputName)
+            os.remove(outputName)
+
             hash = hash + "\"" + str(720) + "\": \"" + newHash['Hash'] + "\"}"
 
             thumbnailHash = api.add(thumbnail_path)
+            os.remove(thumbnail_path)
+            
             request.session['thumbnailHash'] = thumbnailHash['Hash']
             request.session['hash'] = hash
             request.session['video_only'] = newHash['Hash']
             request.session['time'] = time
-            request.session['videopath'] = os.path.join(videos_directory, current_name)
+            request.session['videopath'] = outputName
             request.session['thumbnail_path'] = thumbnail_path
             
             data = []
