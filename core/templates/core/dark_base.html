@@ -171,7 +171,7 @@
                     </script>
 </head>
 
-<body class="channel single-video dark">
+<body class="dark">
 
         <div class="container-fluid">
                 <div class="row">
@@ -373,7 +373,11 @@
     </div>
 
     {% include "core/footer.html" %}
-
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('.file-upload').file_upload();
+        });
+    </script>
 
 <!-- Bootstrap core JavaScript
 ================================================== -->

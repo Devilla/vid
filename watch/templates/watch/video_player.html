@@ -1,5 +1,33 @@
 {% load staticfiles %}
 {% load widget_tweaks %}
+<script>
+        function followUnfollow(){
+           $.ajax({
+                           method:"POST",
+                           url:"/followUnfollow/",
+                           data: {
+                                   'followUnfollowID': "{{ user.id }}",
+                                   'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+                                   },
+                           success: function(data){
+                                   // location.reload();
+                                   if (data.status == '1'){
+                                           document.getElementById('funf').innerHTML = 'Unfollow';
+                                           document.getElementById('followerCount').innerHTML = data.totalFollower;
+                                   }
+                                   else if(data.status == '0'){
+                                           document.getElementById('funf').innerHTML = 'Follow';
+                                           document.getElementById('followerCount').innerHTML = data.totalFollower;
+                                            
+                                   }
+                           }
+                           });
+                           return true; //<---- move it here
+
+           }
+   
+   </script>
+
 <div class="sv-video" >
     <video id="player" controls data-setup='{{ current.id }}'  poster='{% static "images/single-video.png" %}'>
         
@@ -15,68 +43,43 @@
 
 <h1><a href="#">{{ current.name }}</a></h1>
 
-<div class="acide-panel acide-panel-top">
-    <a href="#"><i class="cv cvicon-cv-watch-later" data-toggle="tooltip" data-placement="top" title="Watch Later"></i></a>
-    <a href="#"><i class="cv cvicon-cv-liked" data-toggle="tooltip" data-placement="top" title="Liked"></i></a>
-    <a href="#"><i class="cv cvicon-cv-flag" data-toggle="tooltip" data-placement="top" title="Flag"></i></a>
-</div>
 <div class="author">
     <div class="author-head">
         <a href="/channel/{{ user.id }}/"><img src='{% static "images/channel-user.png" %}' alt="" class="sv-avatar"></a>
         <div class="sv-name">
-            <div><a href="/channel/{{ user.id }}/">{{ user.channel_name }}</a> . {{ count }} Videos</div>
+            <div><a href="/channel/{{ user.id }}/">{{ user.channel_name }}</a>  {{ count }} Videos</div>
             <div class="c-sub">
-                    <form method="POST">
-                            {% csrf_token %}
+                    
                             {% if request.user.is_authenticated %}
                                     {% if own_channel %}
                                     <div class="c-f">Followers</div>
                                     {% else %}
+                                    
                                             {% if is_following %} 
+                                            <form method="POST">
+                                                    {% csrf_token %}
                                                     <button class="c-f" onclick="followUnfollow();return false;" id="funf">Unfollow</button>
+                                            </form>
                                             {% else %}
+                                            <form method="POST">
+                                                    {% csrf_token %}
                                                     <button class="c-f" onclick="followUnfollow();return false;" id="funf">Follow</button>
+                                            </form>
                                             {% endif %}
                                     {% endif %}
                             {% else %}
                             <a href ="/login" class="c-f">Follow</a>
                             {% endif %}
-                    </form>
+                    
                             
                     <div class="c-s" id="followerCount">
                             {{ followerscount }}
                     </div>
-                    <script>
-                            function followUnfollow(){
-                               $.ajax({
-                                               method:"POST",
-                                               url:"/followUnfollow/",
-                                               data: {
-                                                       'followUnfollowID': "{{ user.id }}",
-                                                       'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
-                                                       },
-                                               success: function(data){
-                                                       // location.reload();
-                                                       if (data.status == '1'){
-                                                               document.getElementById('funf').innerHTML = 'Unfollow';
-                                                               document.getElementById('followerCount').innerHTML = data.totalFollower;
-                                                       }
-                                                       else if(data.status == '0'){
-                                                               document.getElementById('funf').innerHTML = 'Follow';
-                                                               document.getElementById('followerCount').innerHTML = data.totalFollower;
-                                                                
-                                                       }
-                                               }
-                                               });
-                                               return true; //<---- move it here
-                    
-                               }
-                       
-                       </script>
+                   
                     <div class="clearfix"></div>
-            </div>  
+            </div> 
+        
         </div>
-        <a href="#" class="author-btn-add"><i class="cv cvicon-cv-plus"></i></a>
     </div>
     <div class="author-border"></div>
     <div class="sv-views">
@@ -265,4 +268,4 @@
                 </div>
             </div>
             <!-- END comments -->
-        </div>
+       
