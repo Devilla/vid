@@ -184,10 +184,6 @@
 	
 		var websocketURL = "ws://54.39.185.209:5080/WebRTCApp/websocket";
 		
-		if (location.protocol.startsWith("https")) {
-			websocketURL = "wss://54.39.185.209:5443/WebRTCApp/websocket";
-		}
-		
 		
 		var webRTCAdaptor = new WebRTCAdaptor({
 			websocket_url : websocketURL,
