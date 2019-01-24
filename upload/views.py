@@ -105,12 +105,12 @@ def ajax_upload(request):
             # Generate multiple video quality to upload to the server
 
             newHash = api.add(outputName)
-            # os.remove(outputName)
+            os.remove(outputName)
 
             hash = hash + "\"" + str(720) + "\": \"" + newHash['Hash'] + "\"}"
 
             thumbnailHash = api.add(thumbnail_path)
-            # os.remove(thumbnail_path)
+            os.remove(thumbnail_path)
 
             request.session['thumbnailHash'] = thumbnailHash['Hash']
             request.session['hash'] = hash
