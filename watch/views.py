@@ -5,9 +5,15 @@ import demjson
 from like_dislike.models import Activity
 from single_channel.models import followersModel
 import json
+from datetime import datetime, timedelta
+
+def GetTime(seconds):
+    sec = timedelta(seconds=seconds)
+    d = datetime(1,1,1) + sec
+
+    return d.day-1, d.hour, d.minute, d.second
 
 # Create your views here.
-
 def get_post_details(vid_id):
 
     steem_url = ""
@@ -126,13 +132,25 @@ def index(request, video_hash, video_id):
         else:
                 own_channel = False
 
+        time_difference = int((datetime.utcnow() - datetime(1970, 1, 1)).total_seconds()) - int(current.uploaded_at.strftime("%s"))
+        day, hour, minute, second = GetTime(time_difference)
 
+        if day >= 30:
+            uploaded_time = "{} month ago".format(int(day/30))
+        elif day >= 1:
+            uploaded_time = "{} day ago".format(day)
+        elif hour >= 1:
+            uploaded_time = "{} hour ago".format(hour)
+        elif minute >= 1:
+            uploaded_time = "{} minute ago".format(minute)
+        else:
+            uploaded_time = "{} second ago".format(second)
         
 
         return render(request, "watch/base.html", {'video_hash': hash, 'cont': video_content,
         'latest': featured, 'recommended': recommend, 'current': current, 'is_following':is_following,'followerscount':followerscount,'own_channel':own_channel,
         'user': user, 'count': count, 'steem_url': steem_url, 'smoke_url': smoke_url, 'whale_url': whale_url, 'chkLike': chkLike, 'chkDislike':chkDislike,
-        'total_likes': total_likes, 'total_dislikes': total_dislikes, 'total_earning': total_earning})
+        'total_likes': total_likes, 'total_dislikes': total_dislikes, 'total_earning': total_earning, 'uploaded_time': uploaded_time})
     
 
 def likedordisliked (request, user_id, video_id):
