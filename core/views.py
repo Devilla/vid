@@ -406,7 +406,7 @@ def followChannel(request):
                         return JsonResponse(data)
                 elif checkFollowing == True:
                         removeFollow = followersModel()
-                        removeFollow.objects.filter(user=request.user.id, following = followingID).delete()
+                        removeFollow.objects.filter(user=request.user, following = User.objects.get(id=followingID)).delete()
                         countFollowing = addFollow.total_followers - len(account_details)
 
                         if countFollowing < 0:
