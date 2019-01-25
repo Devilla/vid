@@ -185,6 +185,9 @@
 
         <div class="container-fluid">
                 <div class="row">
+                    <div class="btn-color-toggle">
+                            <img src="{% static 'images/icon_bulb_light.png' %}" alt="">
+                    </div>
                     <div class="navbar-container">
                         <div class="container">
                             <div class="row">
@@ -198,7 +201,7 @@
                                                 <span>Vid Social</span>
                                             </a>
                                 </div>
-                                <div class="col-lg-6 col-sm-8 col-xs-3">
+                                <div class="col-lg-5 col-sm-8 col-xs-3">
                                         <form action="search.html" method="post">
                                             <div class="topsearch">
                                                 <i class="cv cvicon-cv-cancel topsearch-close"></i>
@@ -219,10 +222,22 @@
                                             </div>
                                         </form>
                                     </div>
-                                <div class="col-lg-1 col-sm-10 hidden-xs">
-            
+                                    <div class="col-lg-2 col-sm-4 hidden-xs">
+                                            <div onclick = "changeNSFW()" style="cursor: pointer" class="avatar pull-left hidden-xs">
+                                                    <form id="changeNSFWSTATUS" method="POST">{% csrf_token %}
+                                                            {% if request.session.display_nsfw is True %}
+                                                                <i class="cv fas fa-toggle-on" style="font-size: 22px; color: #28b47e;"></i>
+                                                                <input type="hidden" name="nsfw" class="grey" value="False" id="nsfwstat" >&nbsp;<span style="color:#7e7e7e !important;">NSFW</span>
+                                                            {% elif request.session.display_nsfw is False %}
+                                                                <i class="cv fas fa-toggle-off" style="font-size: 22px;"></i>
+                                                                <input type="hidden" name="nsfw" value="True" class="grey" id="nsfwstat"> &nbsp;<span style="color:#7e7e7e !important;">NSFW</span>    
+                                                            {% endif %}
+                                                    </form>
+                                                </div>
                                     </div>
                                 <div class="col-lg-4 col-sm-4 hidden-xs">
+                                       
+
                                     {% if request.user.is_authenticated %}
                                     <div class="avatar pull-left">
                                         <img src='https://gateway.ipfs.io/ipfs/{{ request.user.profile_picture }}' alt="avatar" style="width:5rem; height:5rem; border-radius:50%">
@@ -237,16 +252,15 @@
                                             </button>
                                             <ul class="dropdown-menu">
                                                 <li>
-                                                        <form id="changeNSFWSTATUS" method="POST">{% csrf_token %}
-                                                                {% if request.session.display_nsfw is True %}
-                                            
-                                                                    <input type="checkbox" name="nsfw" value="False" id="nsfwstat" onchange = "changeNSFW()" checked> <span> NSFW</span>  
-                                                                    
-                                                                {% elif request.session.display_nsfw is False %}
+                                                    <form id="changeNSFWSTATUS" method="POST">{% csrf_token %}
+                                                            {% if request.session.display_nsfw is True %}
+                                        
+                                                                <input type="checkbox" name="nsfw" value="False" id="nsfwstat" onchange = "changeNSFW()" checked> <span> NSFW</span>  
+                                                                
+                                                            {% elif request.session.display_nsfw is False %}
                                                                 <input type="checkbox" name="nsfw" value="True" id="nsfwstat" onchange = "changeNSFW()"><span> NSFW</span>    
-                                                                {% endif %}
-                                                            </form>
-            
+                                                            {% endif %}
+                                                    </form>
                                                 </li>
                                                 <li><a href="{% url 'single_channel:mychannel' request.user.id  %}">My Channel</a></li>
                                                 <!-- <li><a href="/channel/myprofile/{{ request.user.id }}/">My Settings</a></li> -->
@@ -259,6 +273,7 @@
                                         <a href="{% url 'login:login' %}">Login</a> . <a href="{% url 'register:register' %}">Signup</a>
                                     </div>
                                     {% endif %}
+                                    
                                 </div>
                             </div>
                             
@@ -306,6 +321,17 @@
                                         <i class="cv cvicon-cv-play-circle"></i>
                                         <p>My Channel</p>
                                     </a>
+                                </li>
+                                <li onclick = "changeNSFW()" style="cursor: pointer">
+                                        <form id="changeNSFWSTATUS" method="POST">{% csrf_token %}
+                                                {% if request.session.display_nsfw is True %}
+                                                    <i class="cv fas fa-toggle-on" style="font-size: 22px;"></i>
+                                                    <input type="hidden" name="nsfw" class="grey" value="False" id="nsfwstat" >&nbsp;<span style="color:#7e7e7e !important;"> NSFW ON</span>
+                                                {% elif request.session.display_nsfw is False %}
+                                                    <i class="cv fas fa-toggle-off" style="font-size: 22px;"></i>
+                                                    <input type="hidden" name="nsfw" value="True" class="grey" id="nsfwstat"> &nbsp;<span style="color:#7e7e7e !important;"> NSFW OFF</span>    
+                                                {% endif %}
+                                        </form>
                                 </li>
                                 <li>
                                     <a href="#">
