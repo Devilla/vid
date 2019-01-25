@@ -405,16 +405,27 @@ def followChannel(request):
                         data = {'response': 'Successfully Followed', 'status':'1', 'totalFollower':countFollowing}
                         return JsonResponse(data)
                 elif checkFollowing == True:
-                        removeFollow = followersModel()
-                        removeFollow.objects.filter(user=request.user, following = User.objects.get(id=followingID)).delete()
-                        countFollowing = addFollow.total_followers - len(account_details)
-
-                        if countFollowing < 0:
-                            countFollowing = 0
-                            
-                        removeFollow.total_followers = countFollowing
-                        removeFollow.save()
+                        followersModel.objects.filter(user=request.user, following = User.objects.get(id=followingID)).delete()
+                        removeFollow = followersModel.objects.filter(following = User.objects.get(id=followingID))
                         
+                        try:
+                            for single_object in removeFollow:
+                                countFollowing = single_object.total_followers - len(account_details)
+
+                                if countFollowing < 0:
+                                    countFollowing = 0
+
+                                single_object.total_followers = countFollowing
+                                single_object.save()
+                        except:
+                            countFollowing = removeFollow.total_followers - len(account_details)
+
+                            if countFollowing < 0:
+                                countFollowing = 0
+
+                            removeFollow.total_followers = countFollowing
+                            removeFollow.save()
+
                         data = {'response': 'Successfully Unfollowed', 'status':'0','totalFollower':countFollowing, 'totalFollower':countFollowing}
                         return JsonResponse(data)
         else:
