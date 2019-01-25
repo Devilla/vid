@@ -61,6 +61,7 @@ class User(AbstractBaseUser):
     smoke = models.CharField(max_length=1024, default='false', blank=True)
     whaleshare_name = models.CharField(max_length=256, default='false', blank=True)
     whaleshare = models.CharField(max_length=1024, default='false', blank=True)
+    bitshare = models.CharField(max_length=1024, default='', blank=True)
 
     objects = UserManager()
 

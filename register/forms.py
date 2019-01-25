@@ -163,6 +163,12 @@ class UserRegistrationCompletionForm(forms.Form):
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last Name'})
     )
 
+    bitshares = forms.CharField(
+        label="Bitshares Address",
+        required=True,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Optionally enter your bitshares address to get free stuffs'})
+    )
+
     channel_name = forms.CharField(
         label="Channel Name",
         required=True,
@@ -190,7 +196,7 @@ class UserRegistrationCompletionForm(forms.Form):
 
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'channel_name', 'channel_cover', 'profile_picture', 'smoke', 'steem', 'whaleshare', 'smoke_name', 'steem_name', 'whaleshare_name')
+        fields = ('first_name', 'last_name', 'bitshares','channel_name', 'channel_cover', 'profile_picture', 'smoke', 'steem', 'whaleshare', 'smoke_name', 'steem_name', 'whaleshare_name')
 
     def clean_first(self):
         first_name = self.cleaned_data['first_name']
@@ -204,15 +210,20 @@ class UserRegistrationCompletionForm(forms.Form):
         channel_name = self.cleaned_data['channel_name']
         return channel_name
 
+    def clean_bitshares(self):
+        bitshares = self.cleaned_data['bitshares']
+        return bitshares
+
 
     def save(self, data, id):
         print(id)
         u = User.objects.get(id = id)
         u.first_name = data['first_name']
         u.last_name = data['last_name']
+        u.last_name = data['last_name']
         u.channel_name = data['channel_name']
         u.channel_cover = data['channel_cover']
-        u.profile_picture = data['profile_picture']
+        u.bitshares = data['bitshares']
     
         u.save()
         return True

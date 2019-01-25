@@ -63,6 +63,7 @@ def update(request):
                                 data = {}
                                 data['first_name'] = forma.cleaned_data['first_name']
                                 data['last_name'] = forma.cleaned_data['last_name']
+                                data['bitshares'] = forma.cleaned_data['bitshares']
                                 data['channel_name'] = forma.cleaned_data['channel_name']
                                 data['channel_cover'] = channel_cover
                                 data['profile_picture'] = profile_picture
