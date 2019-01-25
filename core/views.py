@@ -88,7 +88,7 @@ def perform_follow_unfollow(account_details):
                         ]
                     }})
                 else:
-                    s = Steem(keys=[account_details[key]['key']], node=["ws://rpc.kennybll.com:8090","https://rpc.whaleshares.io", "ws://188.166.99.136:8090"])
+                    s = Steem(keys=[account_details[key]['key']], node=["https://wls.kennybll.com","https://rpc.whaleshares.io", "ws://188.166.99.136:8090"])
 
 
                 print(account_details[key])
