@@ -368,7 +368,7 @@ def followChannel(request):
                     if len(followers_details.steem) >=6 and len(following_details.steem) >=6:
                         account_details['steem'] = {}
                         account_details['steem']['key'] = followers_details.steem
-                        account_details['steem']['author'] = following_details.author
+                        account_details['steem']['author'] = following_details.steem_name
                         account_details['steem']['username'] = followers_details.steem_name
                 except:
                     pass
@@ -377,7 +377,7 @@ def followChannel(request):
                     if len(followers_details.smoke) >=6 and len(following_details.smoke) >=6:
                         account_details['smoke'] = {}
                         account_details['smoke']['key'] = followers_details.smoke
-                        account_details['smoke']['author'] = following_details.author
+                        account_details['smoke']['author'] = following_details.smoke_name
                         account_details['smoke']['username'] = followers_details.smoke_name
                 except:
                     pass
@@ -386,7 +386,7 @@ def followChannel(request):
                     if len(followers_details.whaleshare) >=6 and len(following_details.whaleshare) >=6:
                         account_details['whaleshare'] = {}
                         account_details['whaleshare']['key'] = followers_details.whaleshare
-                        account_details['whaleshare']['author'] = following_details.author
+                        account_details['whaleshare']['author'] = following_details.whaleshare_name
                         account_details['whaleshare']['username'] = followers_details.whaleshare_name
                 except:
                     pass
