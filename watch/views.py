@@ -127,6 +127,8 @@ def index(request, video_hash, video_id):
                 own_channel = False
 
 
+        
+
         return render(request, "watch/base.html", {'video_hash': hash, 'cont': video_content,
         'latest': featured, 'recommended': recommend, 'current': current, 'is_following':is_following,'followerscount':followerscount,'own_channel':own_channel,
         'user': user, 'count': count, 'steem_url': steem_url, 'smoke_url': smoke_url, 'whale_url': whale_url, 'chkLike': chkLike, 'chkDislike':chkDislike,

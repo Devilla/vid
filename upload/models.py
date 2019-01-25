@@ -17,6 +17,7 @@ class File(models.Model):
 
 class Video(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='videos')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
     views = models.IntegerField(default=0)
     old_views = models.IntegerField(default=0)
     old_views_time = models.DateTimeField(default=now)
