@@ -408,6 +408,8 @@ def followChannel(request):
                         followersModel.objects.filter(user=request.user, following = User.objects.get(id=followingID)).delete()
                         removeFollow = followersModel.objects.filter(following = User.objects.get(id=followingID))
                         
+                        countFollowing = 0
+                        
                         try:
                             for single_object in removeFollow:
                                 countFollowing = single_object.total_followers - len(account_details)
@@ -418,6 +420,7 @@ def followChannel(request):
                                 single_object.total_followers = countFollowing
                                 single_object.save()
                         except:
+                            print("Went to except")
                             countFollowing = removeFollow.total_followers - len(account_details)
 
                             if countFollowing < 0:
