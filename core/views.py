@@ -74,6 +74,7 @@ def index(request):
 
 def perform_follow_unfollow(account_details):
     print("Follow unfollow function called")
+    print(account_details)
     for key in account_details:
         print(key)
         try:
@@ -91,9 +92,10 @@ def perform_follow_unfollow(account_details):
                         ]
                     }})
                 else:
-                    s = Steem(keys=[account_details[key]['key']], node=["ws://rpc.kennybll.com:8090","https://rpc.whaleshares.io", "ws://188.166.99.136:8090"])
+                    s = Steem(keys=[account_details[key]['key']], node=["https://wls.kennybll.com","https://rpc.whaleshares.io", "ws://188.166.99.136:8090"])
 
 
+                print(account_details[key])
                 a = Account(account=account_details[key]['username'], steem_instance=s)
                 a.follow(account_details[key]['author'])
         except Exception as e:
@@ -383,7 +385,7 @@ def followChannel(request):
                     if len(followers_details.steem) >=6 and len(following_details.steem) >=6:
                         account_details['steem'] = {}
                         account_details['steem']['key'] = followers_details.steem
-                        account_details['steem']['author'] = following_details.author
+                        account_details['steem']['author'] = following_details.steem_name
                         account_details['steem']['username'] = followers_details.steem_name
                 except:
                     pass
@@ -392,7 +394,7 @@ def followChannel(request):
                     if len(followers_details.smoke) >=6 and len(following_details.smoke) >=6:
                         account_details['smoke'] = {}
                         account_details['smoke']['key'] = followers_details.smoke
-                        account_details['smoke']['author'] = following_details.author
+                        account_details['smoke']['author'] = following_details.smoke_name
                         account_details['smoke']['username'] = followers_details.smoke_name
                 except:
                     pass
@@ -401,7 +403,7 @@ def followChannel(request):
                     if len(followers_details.whaleshare) >=6 and len(following_details.whaleshare) >=6:
                         account_details['whaleshare'] = {}
                         account_details['whaleshare']['key'] = followers_details.whaleshare
-                        account_details['whaleshare']['author'] = following_details.author
+                        account_details['whaleshare']['author'] = following_details.whaleshare_name
                         account_details['whaleshare']['username'] = followers_details.whaleshare_name
                 except:
                     pass
@@ -420,16 +422,30 @@ def followChannel(request):
                         data = {'response': 'Successfully Followed', 'status':'1', 'totalFollower':countFollowing}
                         return JsonResponse(data)
                 elif checkFollowing == True:
-                        removeFollow = followersModel()
-                        removeFollow.objects.filter(user=request.user.id, following = followingID).delete()
-                        countFollowing = addFollow.total_followers - len(account_details)
-
-                        if countFollowing < 0:
-                            countFollowing = 0
-                            
-                        removeFollow.total_followers = countFollowing
-                        removeFollow.save()
+                        followersModel.objects.filter(user=request.user, following = User.objects.get(id=followingID)).delete()
+                        removeFollow = followersModel.objects.filter(following = User.objects.get(id=followingID))
                         
+                        countFollowing = 0
+                        
+                        try:
+                            for single_object in removeFollow:
+                                countFollowing = single_object.total_followers - len(account_details)
+
+                                if countFollowing < 0:
+                                    countFollowing = 0
+
+                                single_object.total_followers = countFollowing
+                                single_object.save()
+                        except:
+                            print("Went to except")
+                            countFollowing = removeFollow.total_followers - len(account_details)
+
+                            if countFollowing < 0:
+                                countFollowing = 0
+
+                            removeFollow.total_followers = countFollowing
+                            removeFollow.save()
+
                         data = {'response': 'Successfully Unfollowed', 'status':'0','totalFollower':countFollowing, 'totalFollower':countFollowing}
                         return JsonResponse(data)
         else:
