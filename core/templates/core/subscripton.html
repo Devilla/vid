@@ -36,7 +36,7 @@
                             {% if i.profile_picture != "" %}
                                 <img src='https://gateway.ipfs.io/ipfs/{{ i.profile_picture }}' style="height:7rem; width:7rem" alt="{{ i.channel_name }}" title="hover Hello">
                             {% else %}
-                                <img src='{% static "images/ava4.png" %}' style="height:7rem; width:7rem" alt="{{ i.channel_name }}" title="hover Hello">
+                                <img src='{% static "images/logo.png" %}' style="height:7rem; width:7rem" alt="{{ i.channel_name }}" title="hover Hello">
                             {% endif %}
 
                                 <div class="note">{{ i.count }}</div>
