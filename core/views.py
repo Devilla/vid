@@ -28,6 +28,10 @@ def downvote(s, post_author, permlink, voter):
 
 # Create your views here
 def index(request):
+
+    if 'light_on' not in request.session:
+        request.session['light_on'] = False
+
     if 'display_nsfw' not in request.session:
         request.session['display_nsfw'] = False
 
@@ -140,6 +144,19 @@ def nsfw_status(request):
             request.session['display_nsfw'] = False
             
         data = {'nsfw_status': request.session['display_nsfw']}
+        return JsonResponse(data)
+
+def light(request):
+    if request.method == "POST":
+        light_stat = request.POST.get("light")
+        if 'light_on' not in request.session:
+            request.session['light_on'] = False
+        elif light_stat == "True":
+            request.session['light_on'] = True
+        elif light_stat == "False":
+            request.session['light_on'] = False
+            
+        data = {'light_on': request.session['light_on']}
         return JsonResponse(data)
 
 def videoLike(request):

@@ -61,6 +61,22 @@
                                 return false; //<---- move it here
                 
                 }
+
+                function changeLight(){
+                    $.ajax({
+                                     method:"POST",
+                                     url:"/light/",
+                                     data: {
+                                            'light': $('#id_light').val(),
+                                            'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+                                            },
+                                     success: function(data){
+                                        location.reload();
+                                     }
+                                });
+                                return false; //<---- move it here
+                
+                }
                 
                 
                     $(document).ready(function() {
@@ -181,12 +197,19 @@
                     </script>
 </head>
 
-<body class="channel single-video dark">
+<body class="channel single-video {% if request.session.light_on is True %} light {% elif request.session.light_on is False %} dark {% endif %}">
 
         <div class="container-fluid">
                 <div class="row">
                     <div class="btn-color-toggle">
-                            <img src="{% static 'images/icon_bulb_light.png' %}" alt="">
+                            <form  method="POST">{% csrf_token %}
+                                    {% if request.session.light_on is True %}
+                                        <input type="hidden" name="light" class="grey" value="False" id="id_light" >&nbsp; <img src="{% static 'images/icon_bulb_light.png' %}" style="cursor: pointer" onclick = "changeLight()" alt="">
+                                    {% elif request.session.light_on is False %}
+                                        <input type="hidden" name="light" value="True" class="grey" id="id_light"> &nbsp; <img src="{% static 'images/icon_bulb_dark.png' %}" style="cursor: pointer" onclick = "changeLight()" alt="">    
+                                    {% endif %}
+                            </form>
+                           
                     </div>
                     <div class="navbar-container">
                         <div class="container">
@@ -298,9 +321,6 @@
                                 <img src="{% static "images/logo.png" %}" alt="Vid Social logo" class="logo" />
                                 <span>Vid Social</span>
                             </a>
-                        <div class="mobile-menu-btn-color">
-                            <img src="images/icon_bulb_light.png" alt="">
-                        </div>
                     </div>
                     <div class="mobile-menu-content">
                         <div class="mobile-menu-user">
@@ -333,28 +353,16 @@
                                                 {% endif %}
                                         </form>
                                 </li>
-                                <li>
-                                    <a href="#">
-                                        <i class="cv cvicon-cv-playlist"></i>
-                                        <p>Browse Categories</p>
-                                        <span class="caret"></span>
-                                    </a>
-                                    <ul class="mobile-menu-categories">
-                                        <li class="color-active">
-                                            <a href="#">Pages <span class="caret"></span></a>
-                                            <ul>
-                                                <li><a href="index.html">Home Page</a></li>
-                                            </ul>
-                                        </li>
-                                        <li><a href="categories.html">Categories</a></li>
-                                    </ul>
+                                <li onclick = "changeLight()" style="cursor: pointer" >
+                                        <form  method="POST">{% csrf_token %}
+                                            {% if request.session.light_on is True %}
+                                                <input type="hidden" name="light" class="grey" value="False" id="id_light" ><img src="{% static 'images/icon_bulb_light.png' %}" style="cursor: pointer"  alt=""> &nbsp; <span style="color:#7e7e7e !important;"> LIGHT ON</span>
+                                            {% elif request.session.light_on is False %}
+                                                <input type="hidden" name="light" value="True" class="grey" id="id_light"><img src="{% static 'images/icon_bulb_dark.png' %}" style="cursor: pointer"  alt="">&nbsp; <span style="color:#7e7e7e !important;">LIGHT OFF</span>
+                                            {% endif %}
+                                        </form>
                                 </li>
-                                <li>
-                                    <a href="#">
-                                        <i class="cv cvicon-cv-liked"></i>
-                                        <p>Liked Videos</p>
-                                    </a>
-                                </li>
+
                             </ul>
                         </div>
                         <a href="{% url 'logout:logout' %}" class="btn mobile-menu-logout">Log out</a>

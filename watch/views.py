@@ -56,6 +56,9 @@ def index(request, video_hash, video_id):
     if 'display_nsfw' not in request.session:
         request.session['display_nsfw'] = False
 
+    if 'light_on' not in request.session:
+        request.session['light_on'] = False
+
     current = Video.objects.get(id=video_id)
     steem_url, smoke_url, whale_url, total_likes, total_dislikes, total_earning = get_post_details(current.id)
 
