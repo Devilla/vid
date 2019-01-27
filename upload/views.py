@@ -287,6 +287,11 @@ def index(request):
         else:
             key['whalechk'] = True
 
+        if user.steem == 'false' and user.smoke == 'false' and user.whaleshare == 'false':
+            key['allcheck'] = False
+        else:
+            key['allcheck'] = True
+
         return render(request, 'upload/upload.html', {'form': form, 'postOptionsForm': postOptionsForm, 'keychk':key})
 
     else:
