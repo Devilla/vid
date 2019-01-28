@@ -5,11 +5,23 @@
 
     <!-- up next -->
     <div class="caption">
-        <div class="left">
+        <div class="left" style="padding-top:10px !important;">
             <a href="#">Up Next</a>
         </div>
         <div class="right">
-            <a href="#">Autoplay <i class="cv cvicon-cv-btn-off"></i></a>
+            <table> <tr>
+                <td><p style="color:#7e7e7e !important; padding-top:10px !important;">Autoplay &nbsp;&nbsp; </p></td>
+                <td><form id="changeNSFWSTATUS" method="POST" style="display:inline-block;">{% csrf_token %}
+                        {% if request.session.autoplay is True %}
+                            <i class="cv fas fa-toggle-on" style="font-size: 22px; color: #28b47e;" onclick = "changeAutoplay()"></i>
+                            <input type="hidden" name="autoplay" class="grey" value="False" id="autoplaystat" >
+                        {% elif request.session.autoplay is False %}
+                            <i class="cv fas fa-toggle-off" style="font-size: 22px;" onclick = "changeAutoplay()"></i>
+                            <input type="hidden" name="autoplay" value="True" class="grey" id="autoplaystat">   
+                        {% endif %}
+                    </form>
+                </td>
+            </tr></table>
         </div>
         <div class="clearfix"></div>
     </div>
@@ -17,13 +29,15 @@
     
         {% for i in latest %}
         {% if forloop.counter == 1%}
-        <script>
-            var vid = document.getElementById("player");
-            vid.onended = function() {
-                window.location.href = "https://vidsocial.org/watch/{{i.featured}}/{{i.id}}/";
-            };
-        </script>
-        {%endif%}
+            {% if request.session.autoplay is True %}
+            <script>
+                var vid = document.getElementById("player");
+                vid.onended = function() {
+                    window.location.href = "https://vidsocial.org/watch/{{i.featured}}/{{i.id}}/";
+                };
+            </script>
+            {%endif%}
+        {% endif %}
         <div class="h-video row">
             <div class="col-lg-6 col-sm-6">
                 <div class="v-img">
@@ -53,9 +67,7 @@
         <div class="left">
             <a href="#">Recomended Videos</a>
         </div>
-        <div class="right">
-            <a href="#">Autoplay <i class="cv cvicon-cv-btn-off"></i></a>
-        </div>
+
         <div class="clearfix"></div>
     </div>
     <div class="list">

@@ -35,6 +35,9 @@ def index(request):
     if 'display_nsfw' not in request.session:
         request.session['display_nsfw'] = False
 
+    if 'autoplay' not in request.session:
+        request.session['autoplay'] = False
+
     if (len(AssetPrice.objects.all())) == 0:
         AssetPrice().save()
 
@@ -134,6 +137,19 @@ def perform_likes_dislike(account_details, type=1):
                     downvote(s, account_details[key]['author'], account_details[key]['permlink'], account_details[key]['username'])
         except Exception as e:
             print("Error while like/dislike: {}".format(str(e)))
+
+def changeAutoplay(request):
+    if request.method == "POST":
+        autoplay_stat = request.POST.get("stat")
+        if 'autoplay' not in request.session:
+            request.session['autoplay'] = False
+        elif autoplay_stat == "True":
+            request.session['autoplay'] = True
+        elif autoplay_stat == "False":
+            request.session['autoplay'] = False
+            
+        data = {'nsfw_status': request.session['display_nsfw']}
+        return JsonResponse(data)
 
 def nsfw_status(request):
     if request.method == "POST":
