@@ -58,6 +58,9 @@ def index(request, video_hash, video_id):
 
     if 'light_on' not in request.session:
         request.session['light_on'] = False
+        
+    if 'autoplay' not in request.session:
+        request.session['autoplay'] = False
 
     current = Video.objects.get(id=video_id)
     steem_url, smoke_url, whale_url, total_likes, total_dislikes, total_earning = get_post_details(current.id)

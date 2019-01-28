@@ -68,7 +68,23 @@
     }
         </style>
    
-        <script>    
+        <script>   
+                function changeAutoplay(){
+                    $.ajax({
+                                     method:"POST",
+                                     url:"/autoplay/",
+                                     data: {
+                                            'stat': $('#autoplaystat').val(),
+                                            'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+                                            },
+                                     success: function(data){
+                                        location.reload();
+                                     }
+                                });
+                                return false; //<---- move it here
+                
+                }
+
                 function changeNSFW(){
                     $.ajax({
                                      method:"POST",
