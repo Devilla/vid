@@ -2,6 +2,7 @@
 {% load i18n %}
 
 
+
     <!-- up next -->
     <div class="caption">
         <div class="left">
@@ -15,6 +16,14 @@
     <div class="list">
     
         {% for i in latest %}
+        {% if forloop.counter == 1%}
+        <script>
+            var vid = document.getElementById("player");
+            vid.onended = function() {
+                window.location.href = "http://127.0.0.1:8000/watch/{{i.featured}}/{{i.id}}/";
+            };
+        </script>
+        {%endif%}
         <div class="h-video row">
             <div class="col-lg-6 col-sm-6">
                 <div class="v-img">
