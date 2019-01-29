@@ -165,7 +165,7 @@ class UserRegistrationCompletionForm(forms.Form):
 
     bitshares = forms.CharField(
         label="Bitshares Address",
-        required=True,
+        required=False,
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Optionally enter your bitshares address to get free stuffs'})
     )
 
@@ -211,7 +211,11 @@ class UserRegistrationCompletionForm(forms.Form):
         return channel_name
 
     def clean_bitshares(self):
-        bitshares = self.cleaned_data['bitshares']
+        try:
+            bitshares = self.cleaned_data['bitshares']
+        except:
+            bitshares = ""
+            
         return bitshares
 
 

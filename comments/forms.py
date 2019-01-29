@@ -1,4 +1,5 @@
 from threadedcomments.forms import ThreadedCommentForm
+from .models import CustomThreadedComment
 
 class CustomCommentForm(ThreadedCommentForm):
     pass
@@ -24,3 +25,6 @@ class CustomCommentForm(ThreadedCommentForm):
         self.cleaned_data['title'] = "a" #username here
         
         return self.cleaned_data
+    
+    def get_comment_model(self):
+        return CustomThreadedComment

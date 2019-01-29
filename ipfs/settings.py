@@ -21,6 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'o4r4r^vsn06yop!46h_2w!kvos8uhi+=jck28iz%y#cjiql^=0'
+SITE_ID = 1
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -53,9 +54,10 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'threadedcomments',
     'django_comments',
+    'comments',
 ]
 
-COMMENTS_APP = "threadedcomments"
+COMMENTS_APP = "comments"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
