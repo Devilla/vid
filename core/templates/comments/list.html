@@ -1,0 +1,141 @@
+<style type="text/css">
+    BODY {
+
+    }
+
+    .message {
+        width: 300px;
+        background-color: #faf0e6;
+        border-radius: 10px;
+    }
+
+    .message * {
+        padding: 10px;
+    }
+
+    .title {
+        font-weight: bold;
+    }
+
+    /* BEGIN COMMENTS */
+
+    .comment {
+        padding: 10px;
+        margin: 10px;
+        position: relative;
+    }
+
+    .comment_li {
+        list-style: none;
+
+    }
+
+    .comment_last {
+        padding: 10px;
+        margin: 10px;
+    }
+
+    .comment_info {
+        line-height: 24px;
+        position: relative;
+    }
+
+    .comment_user {
+        text-decoration: underline;
+        margin-right: 10px;
+        font-weight: bold;
+        color: #666;
+        font-size: .99em;
+        cursor: pointer;
+        float: left;
+    }
+
+    .comment_data {
+        font-size: 11px;
+        color: #666;
+        margin-top: 10px;
+    }
+
+    .comment_text {
+        margin-top: 10px;
+        float: inherit;
+        font-size: 1.08em;
+        color: black;
+    }
+
+    .comment_reply_link {
+        color: #004276;
+        outline: none;
+        text-decoration: none;
+        vertical-align: baseline;
+    }
+
+    .comments_length {
+        padding-left: 15px;
+        font-weight: bold;
+    }
+
+    #form-comment {
+        padding: 15px;
+        margin: 15px;
+        background-color: #faf0e6;
+        width: 500px;
+    }
+
+    form label {
+        float: left;
+        width: 130px;
+    }
+
+    label[for=id_honeypot],
+    #id_honeypot {
+      display: none;
+    }
+
+    #cancel_reply {
+        display: none;
+    }
+
+    .comments #cancel_reply {
+      display: inline;
+    }
+
+    /* END COMMENTS */
+
+</style>
+
+{% load threadedcomments_tags %}
+
+<div class="comments_length">
+    <p>{{ comment_list|length }} Comments</p>
+</div>
+
+<div class="comments">
+    {% for comment in comment_list|fill_tree|annotate_tree %}
+        {% if comment.open %}
+            <ul>
+        {% else %}
+            </li>
+        {% endif %}
+        <li class="comment_li" id="c{{ comment.id }}">{# c## is used by the absolute URL of the Comment model, so keep that as it is. #}
+            <div class="comment">
+                <div class="comment_info">
+                    <div class="comment_user">{{ comment.name }}</div>
+                    <div class="comment_data">
+                        {{ comment.submit_date|date:"d M Y, H:i" }}
+                        | Total Likes: {{ comment.likes }} | Total Dislikes: {{ comment.dislikes }}
+                        | <a href="#c{{ comment.id }}" data-comment-id="{{ comment.id }}" class="comment_reply_link">Reply</a>
+                    </div>
+                </div>
+                <div class="comment_text">
+                    {{ comment.comment }}
+                </div>
+                <a href="/comment_like?id={{ comment.id }}" class="comment_reply_link">Like</a>
+                |
+                <a href="/comment_dislike?id={{ comment.id }}" class="comment_reply_link">Dislike</a>
+            </div>
+            {% for close in comment.close %}</li></ul>{% endfor %}
+
+    {% endfor %}
+</div>
+
