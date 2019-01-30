@@ -22,7 +22,9 @@ import numpy as np
 from datetime import datetime
 import requests
 import json
-
+from comments.models import CustomThreadedComment
+from steem import Steem as SteemOriginal
+import threading
 
 try:
     s_no_auth = Steem(nodes=["http://seed1.blockbrothers.io:2001", "http://seed.liondani.com:2016", "https://api.steemit.com", "https://rpc.buildteam.io"])
@@ -46,6 +48,80 @@ try:
                 }})
 except:
     pass
+
+def push_comments():
+    for comment in CustomThreadedComment.objects.all():
+        reply = comment.comment
+        
+        if comment.steem_id == "" and comment.user.steem != "":
+            try:
+                steem_username = comment.user.steem_name
+                steem_key = comment.user.steem
+
+                if comment.parent_id == None:
+                    st_obj = SteemVideo.objects.get(video_id=comment.content_object.id)
+                    parent = "@{}/{}".format(st_obj.author, st_obj.permlink)
+                else:
+                    cs_object = CustomThreadedComment.objects.get(id=comment.parent_id)
+                    parent = cs_object.steem_id
+                
+                if len(parent) > 3:
+                    s = SteemOriginal(keys=[steem_key])
+                    data = s.commit.post(title="", body=reply, reply_identifier=parent, author=steem_username)
+                    comment.steem_id = "@{}/{}".format(data['operations'][0][1]['author'], data['operations'][0][1]['permlink'])
+                    comment.save()
+            except Exception as e:
+                print("Error in steem: {}".format(str(e)))
+                
+        if comment.smoke_id == "" and comment.user.smoke != "":
+            try:
+                smoke_username = comment.user.smoke_name
+                smoke_key = comment.user.smoke
+
+                if comment.parent_id == None:
+                    st_obj = SmokeVideo.objects.get(video_id=comment.content_object.id)
+                    parent = "@{}/{}".format(st_obj.author, st_obj.permlink)
+                else:
+                    cs_object = CustomThreadedComment.objects.get(id=comment.parent_id)
+                    parent = cs_object.smoke_id
+                
+                if len(parent) > 3:
+                    s = Steem(node=['https://rpc.smoke.io/'], keys=[smoke_key], custom_chains={"SMOKE": {
+                        "chain_id": "1ce08345e61cd3bf91673a47fc507e7ed01550dab841fd9cdb0ab66ef576aaf0",
+                        "min_version": "0.0.0",
+                        "prefix": "SMK",
+                        "chain_assets": [
+                            {"asset": "STEEM", "symbol": "SMOKE", "precision": 3, "id": 1},
+                            {"asset": "VESTS", "symbol": "VESTS", "precision": 6, "id": 2}
+                        ]
+                    }})
+
+                    data = s.post(title="", body=reply, reply_identifier=parent, author=smoke_username)
+                    comment.smoke_id = "@{}/{}".format(data['operations'][0][1]['author'], data['operations'][0][1]['permlink'])
+                    comment.save()
+            except Exception as e:
+                print("Error in smoke: {}".format(str(e)))
+            
+        if comment.whaleshare_id == "" and comment.user.whaleshare != "":
+            try:
+                whaleshare_username = comment.user.whaleshare_name
+                whaleshare_key = comment.user.whaleshare
+
+                if comment.parent_id == None:
+                    st_obj = WhaleShareVideo.objects.get(video_id=comment.content_object.id)
+                    parent = "@{}/{}".format(st_obj.author, st_obj.permlink)
+                else:
+                    cs_object = CustomThreadedComment.objects.get(id=comment.parent_id)
+                    parent = cs_object.whaleshare_id
+                
+                if len(parent) > 3:
+                    s = Steem(node=["https://wls.kennybll.com", "https://rpc.whaleshares.io", "ws://188.166.99.136:8090"], keys=[whaleshare_key])
+
+                    data = s.post(title="", body=reply, reply_identifier=parent, author=whaleshare_username)
+                    comment.smoke_id = "@{}/{}".format(data['operations'][0][1]['author'], data['operations'][0][1]['permlink'])
+                    comment.save()
+            except Exception as e:
+                print("Error in whaleshare: {}".format(str(e)))
 
 def get_votes(s, author, permlink):
     acc = Comment("@{}/{}".format(author, permlink), steem_instance=s)
@@ -291,8 +367,13 @@ def update_hot_trending():
 
 subprocess.Popen(["python3.5","manage.py", "runserver"])
 time.sleep(5)
-        
+
+t1 = threading.Thread(target=push_comments, args=[])
+
 while True:
+    if not t1.isAlive():
+        t1.start()
+
     ipfs_check()
     update_hot_trending()
     get_videos = Video.objects.all()
