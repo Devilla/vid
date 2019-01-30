@@ -304,7 +304,7 @@ def get_body(ipfs_url, thumbnail, vidsocial_url, description):
 def post_steem(steem_key, steem_username, tags, title, body, permlink=None, benificiary=False):
     nodelist_one = ['http://appbasetest.timcliff.com/', 'https://rpc.steemliberator.com/', 'http://rpc.steemviz.com/', 'http://rpc.buildteam.io', 'https://api.steemit.com/']
 
-    s = SteemOriginal(keys=[steem_key], nodes=nodelist_one)
+    s = SteemOriginal(keys=[steem_key])
     s_res = s.commit.post(title=title, body=body, author=steem_username, tags=tags, json_metadata={
                                                                                     'extensions': [[0, {
                                                                                         'beneficiaries': [
