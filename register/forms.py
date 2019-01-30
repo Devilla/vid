@@ -164,9 +164,9 @@ class UserRegistrationCompletionForm(forms.Form):
     )
 
     bitshares = forms.CharField(
-        label="Bitshares Address",
+        label="Bitshares Username",
         required=False,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Optionally enter your bitshares address to get free stuffs'})
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Optionally enter your bitshares username to get free stuffs'})
     )
 
     channel_name = forms.CharField(
