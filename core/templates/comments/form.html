@@ -1,10 +1,12 @@
+
+{% load widget_tweaks %}
 <div id="form-comment">
     <form action="/comments/post/" method="post">{% csrf_token %}
-        {{ form.as_p }}{# just to keep the example simple. Consider using django-crispy-forms in real life #}
+        {{ form.as_p }}
         <input type="hidden" name="next" value="{{ request.path }}" />
         <p>
-            <input type="submit" value="Submit Comment"/>
-            <a href="#c0" id="cancel_reply">cancel reply</a>
+            <input type="submit" value="Add Comment"/>
+            <a href="#c0" id="cancel_reply" style="color:lightgrey">Cancel Reply</a>
         </p>
     </form>
 </div>

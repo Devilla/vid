@@ -75,16 +75,19 @@
         font-weight: bold;
     }
 
+    #id_comment{
+        height:100px;
+    }
     #form-comment {
-        padding: 15px;
-        margin: 15px;
-        background-color: #faf0e6;
+        padding: 5px;
+        margin: 5px;
+        background-color: #424242;
+        border-radius:5px;
         width: 500px;
     }
 
     form label {
-        float: left;
-        width: 130px;
+        display:none;
     }
 
     label[for=id_honeypot],
@@ -109,7 +112,9 @@
 <div class="comments_length">
     <p>{{ comment_list|length }} Comments</p>
 </div>
-
+<form>
+    {% csrf_token %}
+</form>
 <div class="comments">
     {% for comment in comment_list|fill_tree|annotate_tree %}
         {% if comment.open %}
@@ -120,22 +125,73 @@
         <li class="comment_li" id="c{{ comment.id }}">{# c## is used by the absolute URL of the Comment model, so keep that as it is. #}
             <div class="comment">
                 <div class="comment_info">
-                    <div class="comment_user">{{ comment.name }}</div>
+                    <div class="comment_user" style="color: #ea2c5a !important; text-decoration:none;">{{ comment.name }}</div>
                     <div class="comment_data">
                         {{ comment.submit_date|date:"d M Y, H:i" }}
-                        | Total Likes: {{ comment.likes }} | Total Dislikes: {{ comment.dislikes }}
-                        | <a href="#c{{ comment.id }}" data-comment-id="{{ comment.id }}" class="comment_reply_link">Reply</a>
+                        
                     </div>
                 </div>
-                <div class="comment_text">
+                <div class="comment_text" style="color:lightgrey;">
                     {{ comment.comment }}
                 </div>
-                <a href="/comment_like?id={{ comment.id }}" class="comment_reply_link">Like</a>
-                |
-                <a href="/comment_dislike?id={{ comment.id }}" class="comment_reply_link">Dislike</a>
+                <span style="color:lightgrey; font-size:13px; cursor:pointer;" onclick ="commentLike({{ comment.id }})"><i class="fas fa-thumbs-up" id="like_{{ comment.id }}"></i>&nbsp;<span id="totalLikes_{{ comment.id }}">{{ comment.likes }}</span></span>
+                &nbsp; &nbsp; 
+                <span style="color:lightgrey; font-size:13px; cursor:pointer;" onclick ="commentDislike({{ comment.id }})"><i class="fas fa-thumbs-down" id="dislike_{{ comment.id }}"></i>&nbsp;<span id="totalDislikes_{{ comment.id }}">{{ comment.dislikes }}</span></span>
+                &nbsp; &nbsp; 
+                <a href="#c{{ comment.id }}" data-comment-id="{{ comment.id }}" class="comment_reply_link" style="color: #ea2c5a !important;">Reply</a>
             </div>
             {% for close in comment.close %}</li></ul>{% endfor %}
 
     {% endfor %}
 </div>
 
+<script>
+function commentLike(comment_id){
+                
+        $.ajax({
+                            method:"POST",
+                            url:"/commentLike/",
+                            data: {'comment_id': comment_id,
+                                    'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+    
+                            },
+                            success: function(data){
+                                if (data.status == '1'){
+                                    document.getElementById('totalDislikes_'+comment_id).innerHTML = data.totalDislike;
+                                    document.getElementById('totalLikes_'+comment_id).innerHTML = data.totalLike;
+                                    
+                                }
+                                else{
+                                    alert('already liked');
+                                }
+    
+                            }
+                        });
+                        return false; //<---- move it here
+      }
+
+      function commentDislike(comment_id){
+                
+                $.ajax({
+                                    method:"POST",
+                                    url:"/commentDislike/",
+                                    data: {'comment_id': comment_id,
+                                            'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+            
+                                    },
+                                    success: function(data){
+                                        if (data.status == '1'){
+                                            document.getElementById('totalDislikes_'+comment_id).innerHTML = data.totalDislike;
+                                            document.getElementById('totalLikes_'+comment_id).innerHTML = data.totalLike;
+                                            
+                                        }
+                                        else{
+                                            alert('already disliked');
+                                        }
+            
+                                    }
+                                });
+                                return false; //<---- move it here
+              }
+      
+      </script>

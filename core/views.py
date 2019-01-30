@@ -7,7 +7,7 @@ from django.http import HttpResponse
 from threading import Thread
 from single_channel.models import followersModel
 from beem.account import Account
-
+from comments.models import CustomThreadedComment, commentLDinfo
 import json
 import demjson
 from core.models import AssetPrice
@@ -17,6 +17,91 @@ import json
 from django.core import serializers
 from beem import Steem
 from beem.comment import Comment
+
+
+def commentLike(request):
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            totalLike =0
+            totalDislike =0
+            comment_id = request.POST.get("comment_id")
+            comment = CustomThreadedComment.objects.get(id=comment_id)
+            check_LD = commentLDinfo.objects.filter(LDuser =request.user, LDcomment = comment_id).exists()
+            if check_LD == True:
+                LDactivity = commentLDinfo.objects.get(LDuser =request.user, LDcomment = comment_id)
+                if LDactivity.like == False and LDactivity.dislike == True:
+                    LDactivity.like = True
+                    LDactivity.dislike = False
+                    comment.likes = comment.likes+1
+                    totalLike = comment.likes
+                    if comment.dislikes > 0:
+                        comment.dislikes = comment.dislikes- 1
+                    totalDislike = comment.dislikes
+                    comment.save()
+                    LDactivity.save()
+                    data = {'response': 'Successfully Liked', 'status':'1','totalLike':totalLike,'totalDislike':totalDislike}
+                    return JsonResponse(data)
+                else:
+                    data = {'response': 'Already Liked', 'status':'0','totalLike':totalLike,'totalDislike':totalDislike}
+                    return JsonResponse(data)
+            else:
+                LD =commentLDinfo()
+                LD.LDcomment = comment
+                LD.LDuser = request.user
+                LD.like = True
+                LD.dislike = False
+                LD.save()
+                comment.likes = comment.likes+1
+                totalLike = comment.likes
+                if comment.dislikes > 0:
+                    comment.dislikes = comment.dislikes- 1
+                totalDislike = comment.dislikes
+                comment.save()
+                data = {'response': 'Successfully Liked', 'status':'1','totalLike':totalLike,'totalDislike':totalDislike}
+                return JsonResponse(data)
+
+
+def commentDisLike(request):
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            totalLike =0
+            totalDislike =0
+            comment_id = request.POST.get("comment_id")
+            comment = CustomThreadedComment.objects.get(id=comment_id)
+            check_LD = commentLDinfo.objects.filter(LDuser =request.user, LDcomment = comment_id).exists()
+            if check_LD == True:
+                LDactivity = commentLDinfo.objects.get(LDuser =request.user, LDcomment = comment_id)
+                if LDactivity.like == True and LDactivity.dislike == False:
+                    LDactivity.like = False
+                    LDactivity.dislike = True
+                    comment.dislikes = comment.dislikes+1
+                    totalDislike = comment.dislikes
+                    if comment.likes > 0:
+                        comment.likes = comment.likes- 1
+                    totalLike = comment.likes
+                    comment.save()
+                    LDactivity.save()
+                    data = {'response': 'Successfully Disliked', 'status':'1','totalLike':totalLike,'totalDislike':totalDislike}
+                    return JsonResponse(data)
+                else:
+                    data = {'response': 'Already Disliked', 'status':'0','totalLike':totalLike,'totalDislike':totalDislike}
+                    return JsonResponse(data)
+            else:
+                LD =commentLDinfo()
+                LD.LDcomment = comment
+                LD.LDuser = request.user
+                LD.like = False
+                LD.dislike = True
+                LD.save()
+                comment.dislikes = comment.dislikes+1
+                totalDislike = comment.dislikes
+                if comment.likes > 0:
+                    comment.likes = comment.likes- 1
+                totalLike = comment.likes
+                comment.save()
+                data = {'response': 'Successfully Disliked', 'status':'1','totalLike':totalLike,'totalDislike':totalDislike}
+                return JsonResponse(data)
+
 
 def upvote(s, post_author, permlink, voter):
     acc = Comment("@{}/{}".format(post_author, permlink), steem_instance=s)
