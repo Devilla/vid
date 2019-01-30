@@ -353,7 +353,7 @@ def save_data(data, platform, id, tags):
     author = data['operations'][0][1]['author']
     tag = data['operations'][0][1]['parent_permlink']
     print(tag)
-    
+
     if platform == 'smoke':
         post_url = "https://smoke.io/@{}/{}".format(author, permlink)
         print(id)
@@ -364,7 +364,6 @@ def save_data(data, platform, id, tags):
         post_url = "https://whaleshares.io/{}/@{}/{}".format(tag, author, permlink)
         whale = WhaleShareVideo(video_id=int(id), permlink=permlink, author=author, tags=tags, post_url=post_url)
         whale.save()
-        
 
     if platform == 'steem':
         post_url = "https://steemit.com/{}/@{}/{}".format(tag, author, permlink)
