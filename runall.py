@@ -372,7 +372,10 @@ t1 = threading.Thread(target=push_comments, args=[])
 
 while True:
     if not t1.isAlive():
-        t1.start()
+        try:
+            t1.start()
+        except:
+            pass
 
     ipfs_check()
     update_hot_trending()
