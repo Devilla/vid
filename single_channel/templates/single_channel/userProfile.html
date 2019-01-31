@@ -4,6 +4,8 @@
 
 {% block extra %}
 
+{% load widget_tweaks %}
+
 <!-- channel -->
 <div class="container-fluid">
         <div class="row">
@@ -144,15 +146,19 @@ function Smoke(){
                                         </div>
                                         <div>
                                                 {{ userdetails.first_name}} 
+                                                <script>document.getElementById('id_first_name').value ='{{request.user.first_name}}';</script>
                                         </div>
                                         <div>
                                                 {{ userdetails.last_name}}
+                                                <script>document.getElementById('id_last_name').value ='{{request.user.last_name}}';</script>
                                         </div>
                                         <div>
                                                 {{ userdetails.bitshares}}
+                                                <script>document.getElementById('id_bitshares').value ='{{request.user.bitshares}}';</script>
                                         </div>
                                         <div>
                                                 {{ userdetails.channel_name}}
+                                                <script>document.getElementById('id_channel_name').value ='{{request.user.channel_name}}';</script>
                                         </div>
                                         <div>
                                                         <span class='text-white' >Change channel cover pic:</span>{{ userdetails.channel_cover}}
@@ -175,9 +181,12 @@ function Smoke(){
                                 </div>
                                 <div>
                                         {{ steemForm.steem_name}} 
+                                        <script>document.getElementById('id_steem_name').value ='{{request.user.steem_name}}';</script>
                                 </div>
                                 <div>
                                         {{ steemForm.steem}}
+                                        <script>document.getElementById('id_steem').value ='{{request.user.steem}}';</script>
+
                                 </div>
                                 <div>
                                         <button type="submit" class="btn btn-cv1">Update</button>
@@ -194,9 +203,11 @@ function Smoke(){
                                                 </div>
                                     <div>
                                             {{ smokeForm.smoke_name}} 
+                                            <script>document.getElementById('id_smoke_name').value ='{{request.user.smoke_name}}';</script>
                                     </div>
                                     <div>
                                             {{ smokeForm.smoke}}
+                                            <script>document.getElementById('id_smoke').value ='{{request.user.smoke}}';</script>
                                     </div>
                                     <div>
                                             <button type="submit" class="btn btn-cv1">Update</button>
@@ -213,9 +224,11 @@ function Smoke(){
                                                 </div>
                                         <div>
                                                 {{ whaleForm.whaleshare_name}} 
+                                                <script>document.getElementById('id_whaleshare_name').value ='{{request.user.whaleshare_name}}';</script>
                                         </div>
                                         <div>
                                                 {{ whaleForm.whaleshare}}
+                                                <script>document.getElementById('id_whaleshare').value ='{{request.user.whaleshare}}';</script>
                                         </div>
                                         <div>
                                                 <button type="submit" class="btn btn-cv1">Update</button>
