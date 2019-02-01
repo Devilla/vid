@@ -22,7 +22,7 @@ import numpy as np
 from datetime import datetime
 import requests
 import json
-from comments.models import CustomThreadedComment
+from comments.models import CustomThreadedComment, commentLDinfo
 from steem import Steem as SteemOriginal
 import threading
 
@@ -48,6 +48,90 @@ try:
                 }})
 except:
     pass
+
+def upvote(s, permlink, voter):
+    acc = Comment(permlink, steem_instance=s)
+    votes = acc.upvote(voter=voter)
+
+def downvote(s, permlink, voter):
+    acc = Comment(permlink, steem_instance=s)
+    votes = acc.downvote(voter=voter)
+
+def like_comments():
+    for likeinfo in commentLDinfo.objects.all():
+        if likeinfo.LDcomment.steem_id != "" and likeinfo.steem_like == False:
+            s = Steem(nodes=["http://seed1.blockbrothers.io:2001", "http://seed.liondani.com:2016", "https://api.steemit.com", "https://rpc.buildteam.io"], keys=[likeinfo.LDuser.steem])
+            
+            if likeinfo.like == True and likeinfo.steem_like == False:
+                try:
+                    upvote(s, likeinfo.LDcomment.steem_id, likeinfo.LDuser.steem_name)
+                    likeinfo.steem_like = True
+                    likeinfo.steem_dislike = False
+                    likeinfo.save()
+                    
+                except Exception as e:
+                    print("Error liking: {}".format(str(e)))
+            elif likeinfo.dislike == True and likeinfo.steem_dislike == False:
+                try:
+                    downvote(s, likeinfo.LDcomment.steem_id, likeinfo.LDuser.steem_name)
+                    likeinfo.steem_dislike = True
+                    likeinfo.steem_like = False
+                    likeinfo.save()
+                    
+                except Exception as e:
+                    print("Error disliking: {}".format(str(e)))
+                    
+        if likeinfo.LDcomment.smoke_id != "" and likeinfo.smoke_like == False:
+            s = Steem(node=['https://rpc.smoke.io/'], keys=[likeinfo.LDuser.smoke], custom_chains={"SMOKE": {
+                            "chain_id": "1ce08345e61cd3bf91673a47fc507e7ed01550dab841fd9cdb0ab66ef576aaf0",
+                            "min_version": "0.0.0",
+                            "prefix": "SMK",
+                            "chain_assets": [
+                                {"asset": "STEEM", "symbol": "SMOKE", "precision": 3, "id": 1},
+                                {"asset": "VESTS", "symbol": "VESTS", "precision": 6, "id": 2}
+                            ]
+                        }})
+            
+            if likeinfo.like == True and likeinfo.smoke_like == False:
+                try:
+                    upvote(s, likeinfo.LDcomment.smoke_id, likeinfo.LDuser.smoke_name)
+                    likeinfo.smoke_like = True
+                    likeinfo.smoke_dislike = False
+                    likeinfo.save()
+                    
+                except Exception as e:
+                    print("Error liking: {}".format(str(e)))
+            elif likeinfo.dislike == True and likeinfo.smoke_dislike == False:
+                try:
+                    downvote(s, likeinfo.LDcomment.smoke_id, likeinfo.LDuser.smoke_name)
+                    likeinfo.smoke_dislike = True
+                    likeinfo.smoke_like = False
+                    likeinfo.save()
+                    
+                except Exception as e:
+                    print("Error disliking: {}".format(str(e)))
+                    
+        if likeinfo.LDcomment.whaleshare_id != "" and likeinfo.whaleshare_like == False:
+            s = Steem(node=["https://wls.kennybll.com", "https://rpc.whaleshares.io", "ws://188.166.99.136:8090"], keys=[likeinfo.LDuser.whaleshare])
+            
+            if likeinfo.like == True and likeinfo.whaleshare_like == False:
+                try:
+                    upvote(s, likeinfo.LDcomment.whaleshare_id, likeinfo.LDuser.whaleshare_name)
+                    likeinfo.whaleshare_like = True
+                    likeinfo.whaleshare_dislike = False
+                    likeinfo.save()
+                    
+                except Exception as e:
+                    print("Error liking: {}".format(str(e)))
+            elif likeinfo.dislike == True and likeinfo.whaleshare_dislike == False:
+                try:
+                    downvote(s, likeinfo.LDcomment.whaleshare_id, likeinfo.LDuser.whaleshare_name)
+                    likeinfo.whaleshare_dislike = True
+                    likeinfo.whaleshare_like = False
+                    likeinfo.save()
+                    
+                except Exception as e:
+                    print("Error disliking: {}".format(str(e)))
 
 def push_comments():
     for comment in CustomThreadedComment.objects.all():
@@ -126,6 +210,8 @@ def push_comments():
                         comment.save()
             except Exception as e:
                 print("Error in whaleshare: {}".format(str(e)))
+    
+    like_comments()
 
 def get_votes(s, author, permlink):
     acc = Comment("@{}/{}".format(author, permlink), steem_instance=s)

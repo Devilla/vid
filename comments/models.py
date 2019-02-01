@@ -11,6 +11,13 @@ class CustomThreadedComment(ThreadedComment):
 
 class commentLDinfo(models.Model):
     LDuser = models.ForeignKey(User, on_delete=models.CASCADE, related_name='activity_user')
-    LDcomment = models.ForeignKey(ThreadedComment, on_delete=models.CASCADE, related_name='main_comment')
+    LDcomment = models.ForeignKey(CustomThreadedComment, on_delete=models.CASCADE, related_name='main_comment')
     like = models.BooleanField(default=False)
+    steem_like = models.BooleanField(default=False)
+    smoke_like = models.BooleanField(default=False)
+    whaleshare_like = models.BooleanField(default=False)
+
     dislike = models.BooleanField(default=False)
+    steem_dislike = models.BooleanField(default=False)
+    smoke_dislike = models.BooleanField(default=False)
+    whaleshare_dislike = models.BooleanField(default=False)
