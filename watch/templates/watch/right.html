@@ -27,7 +27,7 @@
     </div>
     <div class="list">
     
-        {% for i in latest %}
+        {% for i in up_next %}
         {% if forloop.counter == 1%}
             {% if request.session.autoplay is True %}
             <script>
@@ -41,13 +41,13 @@
         <div class="h-video row">
             <div class="col-lg-6 col-sm-6">
                 <div class="v-img">
-                    <a href="{% url 'watch:index'  i.featured   i.id  %}"><img src='https://gateway.ipfs.io/ipfs/{{ i.thumbNail }}' alt="" style="width:17rem; height:9.4rem;"></a>
+                    <a href=""><img src='https://gateway.ipfs.io/ipfs/{{ i.thumbNail }}' alt="" style="width:17rem; height:9.4rem;"></a>
                     <div class="time">{{i.duration}}</div>
                 </div>
             </div>
             <div class="col-lg-6 col-sm-6">
                 <div class="v-desc">
-                    <a href="{% url 'watch:index'  i.featured   i.id  %}">{{i.name}}</a>
+                    <a href="{{i.url}}">{{i.name}}</a>
                 </div>
                 <div class="v-views">
                     {{i.views}} views
@@ -76,13 +76,13 @@
         <div class="h-video row">
             <div class="col-lg-6 col-sm-6">
                 <div class="v-img">
-                    <a href="{% url 'watch:index'  i.recommend   i.id  %}"><img src='https://gateway.ipfs.io/ipfs/{{ i.thumbNail }}' alt="" height="100%" width="100%"></a>
+                    <a href="{{i.url}}"><img src='https://gateway.ipfs.io/ipfs/{{ i.thumbNail }}' alt="" height="100%" width="100%"></a>
                     <div class="time">{{i.duration}}</div>
                 </div>
             </div>
             <div class="col-lg-6 col-sm-6">
                 <div class="v-desc">
-                    <a href="{% url 'watch:index'  i.recommend   i.id  %}">{{i.name}}</a>
+                    <a href="{{i.url}}">{{i.name}}</a>
                 </div>
                 <div class="v-views">
                    {{i.views}} views

@@ -33,7 +33,9 @@ class postOptionsForm(forms.Form):
 
     def clean_video_tags(self):
         raw_tags = self.cleaned_data['video_tags']
-        splitted_tags = raw_tags.split(',')
+        raw_tags = raw_tags.replace(' ',',').split(',')
+                    
+        splitted_tags = [x.strip() for x in raw_tags if x.strip()!= ""]
 
         if len(splitted_tags) > 4:
             print("Validation error")

@@ -6,6 +6,40 @@ from like_dislike.models import Activity
 from single_channel.models import followersModel
 import json
 from datetime import datetime, timedelta
+from django_pandas.io import read_frame
+
+
+def get_similarity_percentage(x, parent_tags):
+    same_items = len(set(x) & set(parent_tags))
+    total_items = len(x)
+
+    similarity_percentage = 0
+
+    try:
+        similarity_percentage = same_items/total_items
+    except:
+        pass
+
+    return similarity_percentage
+
+def get_recommended_videos(all_vids, parent_tags):
+    df = read_frame(all_vids).reset_index(drop=True)
+
+    df['similarity'] = df['tags'].astype(list).apply(get_similarity_percentage, args=(parent_tags, ))
+    df = df.sort_values('similarity', ascending=False)
+    
+    df = df.drop('similarity', axis=1)
+
+    recommended_videos=[]
+
+    for idx, row in df.iterrows():
+        curr_object = Video.objects.get(id=row['id'])
+
+        hashes = json.loads(curr_object.video)
+        curr_object.url = "/watch/{}/{}/".format(list(hashes.values())[0], curr_object.id)
+        recommended_videos.append(curr_object)
+
+    return recommended_videos[:10]
 
 def GetTime(seconds):
     sec = timedelta(seconds=seconds)
@@ -84,33 +118,19 @@ def index(request, video_hash, video_id):
 
         if request.session['display_nsfw'] == False:
             featured = Video.objects.filter(nsfw=False).order_by('-id')[:1]
-            recommend = Video.objects.filter(nsfw=False).order_by('-views')[:1]
+            all_vids = Video.objects.filter(nsfw=False)
         else:
             featured = Video.objects.all().order_by('-id')[:2]
-            recommend = Video.objects.all().order_by('-views')[:2]
+            all_vids = Video.objects.all()
+
+
+
+        recommend = get_recommended_videos(all_vids, list(current.tags))
+        up_next = recommend[:1]
+        recommend = recommend[1:]
 
         user = User.objects.get(id=current.user_id)
         count = Video.objects.filter(user_id=current.user_id).count()
-
-        bestHash_Featured = []
-        bestHash_Recomended = []
-
-        for each_video in featured:
-            for each_res in resolution:
-                if str(each_res) in each_video.video:
-                    hash1 = demjson.decode(each_video.video)
-                    each_video.featured = hash1[str(each_res)]
-                    break   
-
-        for each_video in recommend:
-            for each_res in resolution:
-                if str(each_res) in each_video.video:
-                    hash1 = demjson.decode(each_video.video)
-                    each_video.recommend = hash1[str(each_res)]
-                    break   
-
-        
-        dump = json.dumps(hash)
         
         video_content = ''
 
@@ -154,7 +174,7 @@ def index(request, video_hash, video_id):
         
 
         return render(request, "watch/base.html", {'video_hash': hash, 'cont': video_content,
-        'latest': featured, 'recommended': recommend, 'current': current, 'is_following':is_following,'followerscount':followerscount,'own_channel':own_channel,
+        'latest': featured, 'recommended': recommend, 'up_next':up_next, 'current': current, 'is_following':is_following,'followerscount':followerscount,'own_channel':own_channel,
         'user': user, 'count': count, 'steem_url': steem_url, 'smoke_url': smoke_url, 'whale_url': whale_url, 'chkLike': chkLike, 'chkDislike':chkDislike,
         'total_likes': total_likes, 'total_dislikes': total_dislikes, 'total_earning': total_earning, 'uploaded_time': uploaded_time})
     

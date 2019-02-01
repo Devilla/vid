@@ -187,7 +187,7 @@ def index(request):
             
                 raw_tags = form.cleaned_data['video_tags'].replace(' ',',').split(',')
                     
-                splitted_tags = [x.strip() for x in raw_tags if x.strip()!= " "]
+                splitted_tags = [x.strip() for x in raw_tags if x.strip()!= ""]
 
                 tags = ['vidsocial'] + splitted_tags
 
