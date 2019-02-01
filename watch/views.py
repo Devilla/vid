@@ -25,7 +25,7 @@ def get_similarity_percentage(x, parent_tags):
 def get_recommended_videos(all_vids, parent_tags):
     df = read_frame(all_vids).reset_index(drop=True)
 
-    df['similarity'] = df['tags'].astype(list).apply(get_similarity_percentage, args=(parent_tags, ))
+    df['similarity'] = df['tags'].apply(get_similarity_percentage, args=(parent_tags, ))
     df = df.sort_values('similarity', ascending=False)
     
     df = df.drop('similarity', axis=1)
