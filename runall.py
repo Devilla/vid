@@ -66,10 +66,12 @@ def push_comments():
                     parent = cs_object.steem_id
                 
                 if len(parent) > 3:
-                    s = SteemOriginal(keys=[steem_key])
-                    data = s.commit.post(title="", body=reply, reply_identifier=parent, author=steem_username)
-                    comment.steem_id = "@{}/{}".format(data['operations'][0][1]['author'], data['operations'][0][1]['permlink'])
-                    comment.save()
+                    
+                    if comment.steem_id == "":
+                        s = SteemOriginal(keys=[steem_key])
+                        data = s.commit.post(title="", body=reply, reply_identifier=parent, author=steem_username)
+                        comment.steem_id = "@{}/{}".format(data['operations'][0][1]['author'], data['operations'][0][1]['permlink'])
+                        comment.save()
             except Exception as e:
                 print("Error in steem: {}".format(str(e)))
                 
@@ -86,19 +88,20 @@ def push_comments():
                     parent = cs_object.smoke_id
                 
                 if len(parent) > 3:
-                    s = Steem(node=['https://rpc.smoke.io/'], keys=[smoke_key], custom_chains={"SMOKE": {
-                        "chain_id": "1ce08345e61cd3bf91673a47fc507e7ed01550dab841fd9cdb0ab66ef576aaf0",
-                        "min_version": "0.0.0",
-                        "prefix": "SMK",
-                        "chain_assets": [
-                            {"asset": "STEEM", "symbol": "SMOKE", "precision": 3, "id": 1},
-                            {"asset": "VESTS", "symbol": "VESTS", "precision": 6, "id": 2}
-                        ]
-                    }})
+                    if comment.smoke_id == "":
+                        s = Steem(node=['https://rpc.smoke.io/'], keys=[smoke_key], custom_chains={"SMOKE": {
+                            "chain_id": "1ce08345e61cd3bf91673a47fc507e7ed01550dab841fd9cdb0ab66ef576aaf0",
+                            "min_version": "0.0.0",
+                            "prefix": "SMK",
+                            "chain_assets": [
+                                {"asset": "STEEM", "symbol": "SMOKE", "precision": 3, "id": 1},
+                                {"asset": "VESTS", "symbol": "VESTS", "precision": 6, "id": 2}
+                            ]
+                        }})
 
-                    data = s.post(title="", body=reply, reply_identifier=parent, author=smoke_username)
-                    comment.smoke_id = "@{}/{}".format(data['operations'][0][1]['author'], data['operations'][0][1]['permlink'])
-                    comment.save()
+                        data = s.post(title="", body=reply, reply_identifier=parent, author=smoke_username)
+                        comment.smoke_id = "@{}/{}".format(data['operations'][0][1]['author'], data['operations'][0][1]['permlink'])
+                        comment.save()
             except Exception as e:
                 print("Error in smoke: {}".format(str(e)))
             
@@ -115,11 +118,12 @@ def push_comments():
                     parent = cs_object.whaleshare_id
                 
                 if len(parent) > 3:
-                    s = Steem(node=["https://wls.kennybll.com", "https://rpc.whaleshares.io", "ws://188.166.99.136:8090"], keys=[whaleshare_key])
+                    if comment.whaleshare_id == "":
+                        s = Steem(node=["https://wls.kennybll.com", "https://rpc.whaleshares.io", "ws://188.166.99.136:8090"], keys=[whaleshare_key])
 
-                    data = s.post(title="", body=reply, reply_identifier=parent, author=whaleshare_username)
-                    comment.smoke_id = "@{}/{}".format(data['operations'][0][1]['author'], data['operations'][0][1]['permlink'])
-                    comment.save()
+                        data = s.post(title="", body=reply, reply_identifier=parent, author=whaleshare_username)
+                        comment.whaleshare_id = "@{}/{}".format(data['operations'][0][1]['author'], data['operations'][0][1]['permlink'])
+                        comment.save()
             except Exception as e:
                 print("Error in whaleshare: {}".format(str(e)))
 

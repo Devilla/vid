@@ -1,1 +1,0 @@
-@reboot python3 /home/warproxxx/IPFS/runall.py > logs.txt
