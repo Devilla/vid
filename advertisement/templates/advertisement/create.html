@@ -1,0 +1,138 @@
+{% extends 'core/base.html' %}
+
+{% load staticfiles %}
+
+{% block extra %}
+
+{% load widget_tweaks %}
+
+
+{% endblock extra %}
+
+{% block content %}
+<script>
+
+function Create(){
+    $("#adcreatetab").show();
+    $("#activeadstab").hide();
+    $("#inactiveadstab").hide();
+    
+    
+}
+
+function Active(){
+    $("#activeadstab").show();
+    $("#inactiveadstab").hide();
+    $("#adcreatetab").hide();
+}
+
+function Inactive(){
+    $("#inactiveadstab").show();
+    $("#activeadstab").hide();
+    $("#adcreatetab").hide();
+}
+
+// {% if success == 'true' %}
+//     alert('Successfully updated.')
+// {% elif success == 'false'%}
+//     alert('The given data is invalid.')
+// {% endif %}
+
+</script>
+
+<div class="col-md-12" style="padding-top:5%; padding-bottom:5%;">
+
+    <div class="col-md-3">
+        <div class="tab-4">
+                <div class="block-list">
+                    <div onclick="Create()">
+                        <span class="name text-white">Create new ads</span>
+                    </div>
+                    <div onclick="Active()">
+                        <span class="name text-white">My Active Ads</span>
+                    </div>
+                    <div onclick="Inactive()">
+                        <span class="name text-white">My Inactive ads</span>
+                    </div>
+                </div>
+        </div>
+        <br/>
+        <br/>
+        <br/>
+        <div class="tab-4">
+                <div class="block-list">
+                        <div onclick="Create()">
+                        <span class="name text-white">Create new ads</span>
+                        </div>
+                        <div onclick="Active()">
+                        <span class="name text-white">My Active Ads</span>
+                        </div>
+                        <div onclick="Inactive()">
+                        <span class="name text-white">My Inactive ads</span>
+                        </div>
+                </div>
+         </div>
+    </div>
+    
+    <div class="col-md-1">
+    </div>
+
+    <div class="col-md-6">
+                <div class="tab-4" id="adcreatetab">
+                        <form action="/advertise/create" method="POST" enctype='multipart/form-data'>{% csrf_token %}
+                                <div class="block-list">
+                                        <div>
+                                               <h3 class="text-white"> Create new advertisement</h3>
+                                        </div>
+                                        <div>
+                                                <span class='text-white' >Advertisement Title:</span>
+                                                {{ af.ad_title}} 
+                                        </div>
+                                        <div>
+                                                <span class='text-white' >Total Plays: (The price is 100 token for 1000 plays)</span>
+                                                {{ af.total_plays}}
+                                        </div>
+                                        <div>
+                                                <span class='text-white' >Enter the tags you want to target (The available tags are):
+                                                        {{ available_tags }}
+                                                </span>
+                                                {{ af.targeted_tags}}
+                                        </div>
+                                        <div>
+                                                <span class='text-white' >Upload your banner:</span>{{ af.ad_banner }}
+                                        </div>
+                                        <div>
+                                                <button type="submit" class="btn btn-cv1">Update</button>
+                                        </div>
+                                
+                                </div>
+                        </form>
+                        </div>
+            <div class="tab-4" id="activeadstab" style="display:none">
+                        <div class="block-list">
+                                <div>
+                                        <h3 class="text-white"> My Active Advertisements </h3>
+                                </div>
+                                <div>
+                                        <!-- Add ads here -->
+                                </div>
+                            
+                        </div>
+                </div>
+                <div class="tab-4" id="inactiveadstab" style="display:none">
+                            <div class="block-list">
+                                        <div>
+                                                        <h3 class="text-white"> My Inactive Advertisements </h3>
+                                                </div>
+                                    <div>
+                                            <!-- Add inactive ads here -->
+                                    </div>
+                                
+                            </div>
+                    </div>
+                <!-- END tab-4 -->
+        </div>
+</div>    
+{% endblock content %}
+
+{% block title %} {{ channel }} {% endblock title %}

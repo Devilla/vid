@@ -29,7 +29,7 @@ urlpatterns = [
     path('watch/', include('watch.urls')),
     path('logout/', include('logout.urls')),
     path('activity/', include('like_dislike.urls')),
-    path('adadmin/', include('advertisement.urls')),
+    path('advertise/', include('advertisement.urls')),
     path('channel/', include('single_channel.urls')),
     path('like_dislike/', include('like_dislike.urls')),
     path('stream/', include('livestream.urls')),
