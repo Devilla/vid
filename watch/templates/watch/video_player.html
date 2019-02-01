@@ -27,16 +27,62 @@
            }
    
    </script>
+ <script>
+     function closeAd(){
+        $('#cc').fadeOut();
+     }
 
-<div class="sv-video" >
+     var vid = document.getElementById("player");
+    var interval = setInterval(function() { 
+    if (vid.currentTime >= 10) { 
+        $('#cc').show();
+        clearInterval(interval);
+    }
+    }, 1000);
+    
+    </script>
+    
+    <style>
+    .close-icon {
+      cursor: pointer;
+      }
+
+    #vv{
+    float:left;
+}
+    #cc {
+    position:absolute;
+    float:left;
+    z-index:300000;
+    padding-left:30px;
+    padding-right:30px;
+    padding-top:10px;
+    }
+    .card-block{
+        background-color: white;
+    }
+    </style>
+
+<div class="sv-video" id="vv">
+    <div class="card card-outline-danger text-center" id="cc" style="display:none;">
+        <span class="pull-right clickable close-icon" data-effect="fadeOut" style="padding:5px;" onclick="closeAd()"><i class="fa fa-times"></i></span>
+        <div class="card-block">
+            <blockquote class="card-blockquote">
+            <p class="grey">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
+            <footer>Someone famous in <cite title="Source Title">Source Title</cite></footer>
+            </blockquote>
+        </div>
+    </div>
+
     <video id="player" controls data-setup='{{ current.id }}'  poster='{% static "images/single-video.png" %}'>
-        
         {% for quality, hash in video_hash.items %}
             <source src='http://gateway.ipfs.io/ipfs/{{ hash }}' type='video/mp4' size='{{ quality }}' />
         {% endfor %}
 
     </video>
 </div>
+
+
 
 
 
