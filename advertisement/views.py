@@ -25,6 +25,21 @@ def index(request):
         flat_list = list(set(list(filter(None, flat_list)))) 
 
         af = advertisementForm()
+        activeAds = []
+        inactiveAds = []
+        for ad in advertisement.objects.all():
+            if ad.user == request.user:
+                if ad.paid == True:
+                    if ad.active == True:
+                        activeAds.append(ad)
+                    else:
+                        inactiveAds.append(ad)
+
+        print(activeAds)
+        print(inactiveAds)
+
+        
+
         if request.method == 'POST':
             af = advertisementForm(request.POST, request.FILES)
 
@@ -44,14 +59,10 @@ def index(request):
                 col.save()
 
                 request.session['current_payment_info'] = col.id
-
-                
-
                 return redirect("pay.html")
-                # return render(request, 'advertisement/create.html', context={'af': af, 'available_tags': flat_list, 'show': 'my_ads'})
         else:
             
-            return render(request, "advertisement/create.html", context={'af': af, 'available_tags': flat_list, 'show': 'homepage'})
+            return render(request, "advertisement/create.html", context={'af': af, 'available_tags': flat_list, 'show': 'homepage', 'active_ads': activeAds, 'inactive_ads': inactiveAds})
     else:
         return redirect('/login')
 
@@ -79,7 +90,8 @@ def verify_transaction(acc, m, to_send_text, to_send_amount, payment_id, loop_ti
     starting_time = time.time()
 
     while True:
-        if (time.time() - starting_time) > loop_time:
+        started_time = time.time() - starting_time
+        if started_time > loop_time:
             break
 
         ad_object = advertisement.objects.get(id=payment_id)
@@ -97,6 +109,9 @@ def verify_transaction(acc, m, to_send_text, to_send_amount, payment_id, loop_ti
                         ad_object.paid = True
                         ad_object.save()
                         break
+
+        time.sleep(2)
+        print("Not found yet")
 
 def pay(request):
     global acc
@@ -126,8 +141,11 @@ def pay(request):
         tasks[str(request.user.id)].start()
     
     if remaining_time <= 0:
-        ad_object.expired = True
+        ad_object.active = True
         ad_object.save()
         return redirect("create.html")
     else:
-        return render(request, "advertisement/pay.html", context={'amount': amount,'memo': memo, 'payment_status': payment_status, 'remaining_time': remaining_time})
+        if payment_status == "PAID":
+            return redirect("/advertisement")
+        else:
+            return render(request, "advertisement/pay.html", context={'amount': amount,'memo': memo, 'payment_status': payment_status, 'remaining_time': remaining_time})
