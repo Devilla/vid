@@ -16,12 +16,12 @@ class advertisementForm(forms.Form):
 
     targeted_tags = forms.CharField(label="Targeted tags",
         required=True,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Seperated by comma'}))
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Example: gaming,fun'}))
 
     ad_banner = forms.FileField(
         label="Advertisement Banner",
         required=True,
-        widget=forms.TextInput(attrs={'id': 'c-cover', 'placeholder': 'Enter the banner. Recommended with is 480'})
+        widget=forms.FileInput(attrs={'id': 'c-cover', 'placeholder': 'Enter the banner. Recommended with is 480'})
     )
 
     class Meta:

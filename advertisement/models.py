@@ -7,7 +7,7 @@ from django.contrib.postgres.fields import ArrayField
 class advertisement(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='advertisement')
     ad_title = models.CharField(max_length=255)
-    ad_banner = models.CharField(max_length=255)
+    ad_banner = models.CharField(max_length=255, default="")
     active = models.BooleanField(default=False)
     currently_played = models.IntegerField(default=0)
     total_plays = models.IntegerField(default=0)

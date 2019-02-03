@@ -61,14 +61,15 @@ function Inactive(){
         <br/>
         <div class="tab-4">
                 <div class="block-list">
-                        <div onclick="Create()">
-                        <span class="name text-white">Create new ads</span>
+                        <div>
+                        <h3 class="text-white">Available Tags</span>
                         </div>
-                        <div onclick="Active()">
-                        <span class="name text-white">My Active Ads</span>
-                        </div>
-                        <div onclick="Inactive()">
-                        <span class="name text-white">My Inactive ads</span>
+                        <div>
+                        <span class="name text-white">
+                                {% for i in available_tags %}
+                                        {{ i }}<br/>
+                                {% endfor %}
+                        </span>
                         </div>
                 </div>
          </div>
@@ -79,7 +80,7 @@ function Inactive(){
 
     <div class="col-md-6">
                 <div class="tab-4" id="adcreatetab">
-                        <form action="/advertise/create" method="POST" enctype='multipart/form-data'>{% csrf_token %}
+                        <form action="/advertise/" method="POST" enctype='multipart/form-data'>{% csrf_token %}
                                 <div class="block-list">
                                         <div>
                                                <h3 class="text-white"> Create new advertisement</h3>
@@ -93,16 +94,17 @@ function Inactive(){
                                                 {{ af.total_plays}}
                                         </div>
                                         <div>
-                                                <span class='text-white' >Enter the tags you want to target (The available tags are):
-                                                        {{ available_tags }}
+                                                <span class='text-white' >Enter the tags you want to target (The available tags are in the sidebar):
+                                                        
                                                 </span>
                                                 {{ af.targeted_tags}}
                                         </div>
                                         <div>
-                                                <span class='text-white' >Upload your banner:</span>{{ af.ad_banner }}
+                                                <span class='text-white' >Upload your banner:</span>
+                                                {{ af.ad_banner }}
                                         </div>
                                         <div>
-                                                <button type="submit" class="btn btn-cv1">Update</button>
+                                                <button type="submit" class="btn btn-cv1">Pay and Create</button>
                                         </div>
                                 
                                 </div>
