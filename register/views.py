@@ -3,9 +3,11 @@ from register.forms import UserRegistrationForm, UserRegistrationCompletionForm,
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic import TemplateView
 from register.models import User
+from django.utils.crypto import get_random_string
+import hashlib
+
 import ipfsapi
 
-# Create your views here.
 def index(request):
 
     if request.method == 'POST':
@@ -28,9 +30,22 @@ def index(request):
 
     if request.user.is_authenticated:
         return redirect('/')
-    else:
-        form = UserRegistrationForm()
-        return render(request, "register/signup.html", {'form': form})
+    if request.method == 'GET':
+        
+        if request.GET.get("referredBy") != '':
+            referral_code = request.GET.get("referredBy")
+            check_referral = User.objects.filter(referral_code = referral_code).exists()
+            referral_msg=''
+            if check_referral == False:
+                request.session['referral_code'] = referral_code #this is the referral code
+                referral_msg = 'Invalid Referral Code.'
+                form = UserRegistrationForm()
+                return render(request, "register/signup.html", {'form': form, 'referral_msg':referral_msg})
+            form = UserRegistrationForm()
+            return render(request, "register/signup.html", {'form': form})
+        else:
+            form = UserRegistrationForm()
+            return render(request, "register/signup.html", {'form': form})
 
 def steem_blockchain(request):
     
@@ -117,6 +132,11 @@ def whale_blockchain(request):
         form = UserRegistrationForm()
         return render(request, "register/signup.html", {'form': form})
 
+def generate_referral_code():
+    chars = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'
+    secret_key = get_random_string(16, chars)
+    return hashlib.sha256((secret_key + 'Referral').encode('utf-8')).hexdigest()
+
 def update(request):
     if request.user.is_authenticated == True:
         current = User.objects.get(id=request.user.id)
@@ -137,6 +157,7 @@ def update(request):
                 data['channel_name'] = forma.cleaned_data['channel_name']
                 data['channel_cover'] = channel_cover
                 data['profile_picture'] = profile_picture
+                data['referral_code']=generate_referral_code()
 
                 if forma.save(data, current.id):
                     return redirect('register:steem_blockchain')
