@@ -75,13 +75,20 @@
 {% block content %}
 <script>
 
+function Referral(){
+    $("#userdetailtab").hide();
+    $("#steemtab").hide();
+    $("#whaletab").hide();
+    $("#smoketab").hide();
+    $("#referral").show();
+
+}
+
 function User(){
     $("#userdetailtab").show();
     $("#steemtab").hide();
     $("#whaletab").hide();
-    $("#smoketab").hide();
-    
-    
+    $("#smoketab").hide();   
 }
 
 function Steem(){
@@ -130,6 +137,9 @@ function Smoke(){
                     <div onclick="Whale()">
                         <span class="name text-white">Change Whale Share Key</span>
                     </div>
+                    <div onclick="Referral()">
+                        <span class="name text-white">Generate Referral Link</span>
+                    </div>
                 </div>
             </div>
             <!-- END tab-4 -->
@@ -166,7 +176,26 @@ function Smoke(){
                                 
                                 </div>
                         </form>
-                        </div>
+                </div>
+                <div class="tab-4" id="referral" style="display:none">
+                        <form action="/channel/steemUpdate/" method="POST" enctype='multipart/form-data'>{% csrf_token %}
+                                <div class="block-list">
+                                        <div>
+                                                <h3 class="text-white"> Your Referral Like</h3>
+                                        </div>
+                                        <div>
+                                                {{ steemForm.steem_name}} 
+                                        </div>
+                                        <div>
+                                                {{ steemForm.steem}}
+                                        </div>
+                                        <div>
+                                                <button type="submit" class="btn btn-cv1">Update</button>
+                                        </div>
+                                
+                                </div>
+                        </form>
+                </div>
             <div class="tab-4" id="steemtab" style="display:none">
                     <form action="/channel/steemUpdate/" method="POST" enctype='multipart/form-data'>{% csrf_token %}
                         <div class="block-list">

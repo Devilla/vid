@@ -347,19 +347,23 @@
                                         <a href="{% url 'login:login' %}">Login</a> . <a href="{% url 'register:register' %}">Signup</a>
                                     </div>
                                     {% endif %}
+
+                                    <div class="hidden-xs pull-right dropdown">
+                                            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1"
+                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                            <i class="cv cvicon-cv-upload-video" style="font-size:15px;"></i>
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="{% url 'upload:index' %}">Upload Video</a></li>
+                                            <!-- <li><a href="/channel/myprofile/{{ request.user.id }}/">My Settings</a></li> -->
+                                            <li><a href="/stream/">Live Stream</a></li>
+                                        </ul>
+                                    </div>
                                     
                                 </div>
                             </div>
-                            
-            
-            
-                            <div class="hidden-xs">
-                                <a href="{% url 'upload:index' %}">
-                                    <div class="upload-button" style="height:45px !important; width:45px !important; right:1px !important;">
-                                        <i class="cv cvicon-cv-upload-video" style="font-size:15px;"></i>
-                                    </div>
-                                </a>
-                            </div>
+                        
                         </div>
                     </div>
                 </div>
@@ -413,6 +417,8 @@
                                             {% endif %}
                                         </form>
                                 </li>
+                                <li><a href="{% url 'upload:index' %}"><i class="cv cvicon-cv-upload-video"></i><p>Upload Video</p></a></li>
+                                <li><a href="/stream/"><i class="fas fa-video cv"></i><p>Live Stream</p></a></li>
 
                             </ul>
                         </div>
@@ -436,10 +442,14 @@
                         <a href="{% url 'login:login' %}" class="btn mobile-menu-upload">
                                 <i class="cv cvicon-cv-upload-video"></i>
                             <span>Upload Video</span>
-                            </a>
+                        </a>
+                        <a href="{% url 'login:login' %}" class="btn mobile-menu-upload">
+                                <i class="fas fa-video cv"></i><span>Live Stream</p></span>
+                        </a>
                         <div class="mobile-menu-list">
                             <ul>
-  
+                                
+
                                 
                             </ul>
                         </div>
