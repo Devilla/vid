@@ -64,7 +64,7 @@ var totalVid = Object.keys(hotVideos).length;
 var totalPagignation = totalVid/4;
 var count = 0;
 
-function display(page){
+function HotDisplay(page){
     $('#hotVideosContainer').html('');
     var displayUpto = 4 * page;
 
@@ -110,35 +110,35 @@ function display(page){
     $('#hotPagignation').html('');
 
     if(page>1){
-        var paginate =   "<li><button style='padding:5px;' onclick='display("+(page-1)+")'><i class='fas fa-arrow-left'></i></button></li>";
+        var paginate =   "<li><button style='padding:5px;' onclick='HotDisplay("+(page-1)+")'><i class='fas fa-arrow-left'></i></button></li>";
             $('#hotPagignation').append(paginate);
     }
     else{
-        var paginate =   "<li><button disabled style='padding:5px; /' onclick='display("+(page-1)+")'><span><b><i class='fas fa-arrow-left'></i></b></span></button></li>";
+        var paginate =   "<li><button disabled style='padding:5px; /' onclick='HotDisplay("+(page-1)+")'><span><b><i class='fas fa-arrow-left'></i></b></span></button></li>";
         $('#hotPagignation').append(paginate);
     }
 
     for(var i=0; i< totalPagignation; i++){
         if (i==page-1){
-        var paginate =   "<li><button disabled style='padding:5px;' onclick='display("+(i+1)+")'><span style='color:#ea2c5a !important;'><b>"+(i+1)+"</b></span></button></li>";
+        var paginate =   "<li><button disabled style='padding:5px;' onclick='HotDisplay("+(i+1)+")'><span style='color:#ea2c5a !important;'><b>"+(i+1)+"</b></span></button></li>";
         $('#hotPagignation').append(paginate);
         }
         else{
-            var paginate =   "<li><button style='padding:5px;' onclick='display("+(i+1)+")'>"+(i+1)+"</button></li>";
+            var paginate =   "<li><button style='padding:5px;' onclick='HotDisplay("+(i+1)+")'>"+(i+1)+"</button></li>";
             $('#hotPagignation').append(paginate);
         }
     }
 
     if(page<totalPagignation){
-                var paginate =   "<li><button style='padding:5px;' onclick='display("+(page+1)+")'><i class='fas fa-arrow-right'></i></button></li>";
+                var paginate =   "<li><button style='padding:5px;' onclick='HotDisplay("+(page+1)+")'><i class='fas fa-arrow-right'></i></button></li>";
                     $('#hotPagignation').append(paginate);
             }
             else{
-                var paginate =   "<li><button disabled style='padding:5px; /' display='newdisplay("+(page+1)+")'><span><b><i class='fas fa-arrow-right'></i></b></span></button></li>";
+                var paginate =   "<li><button disabled style='padding:5px; /' display='HotDisplay("+(page+1)+")'><span><b><i class='fas fa-arrow-right'></i></b></span></button></li>";
                 $('#hotPagignation').append(paginate);
             }
 }
-display(1);
+HotDisplay(1);
 
 
 </script>

@@ -41,9 +41,21 @@
         .thumbnailImage{
             height:200px !important;
         }
+
+        .light.light-text{
+            color:grey;
+        }
+
+        {% if request.session.light_on is True %}
+        .text-white{
+            color:grey !important;
+        } 
+        {% elif request.session.light_on is False %}
         .text-white{
             color:white !important;
-        }
+        }  
+        {% endif %}
+        
         .t-img {
         
         border-radius: 2px;
