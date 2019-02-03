@@ -124,9 +124,9 @@ document.addEventListener("DOMContentLoaded", function() {
                                 <div>
                                         <h3 class="text-white"> My Active Advertisements </h3>
                                         {% for i in active_ads %}
-                                                {% i.ad_title %}
-                                                <img src="{% i.banner %}"">
-                                                Total Hits: {% i.currently_played %} / {% i.total_plays %}
+                                                {{ i.ad_title }}
+                                                <img src="{{ i.banner }}"">
+                                                Total Hits: {{ i.currently_played }} / {{ i.total_plays }}
                                         {% endfor %}
                                 </div>
                                 <div>
