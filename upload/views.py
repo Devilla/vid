@@ -51,9 +51,7 @@ def ajax_upload(request):
             open(os.path.join(videos_directory, current_name), 'wb').write(file)
             
             # Connect to the ipfs through ipfsapi and add the uploaded file to the ipfs
-            api = ipfsapi.connect('127.0.0.1', 5001)
-            fileHash = api.add_bytes(file)
-            
+            api = ipfsapi.connect('127.0.0.1', 5001)            
 
             # Define the path to save the thumbnail of the uploaded video
             path = os.path.join(os.path.join(settings.BASE_DIR, "static"), 'images') 
@@ -97,23 +95,10 @@ def ajax_upload(request):
             else:
                 time = str(int(floatDuration)) + ':' + str(seconds).zfill(2)
 
-
-            
-
-            hash = "{\"" + str(height) + "\": \"" + fileHash + "\", \n"
-
-            # Declare the supported resolution 
-            resolution = [2160, 1440, 1080, 720, 480, 360, 240  , 144]
-
-            # Generate multiple video quality to upload to the server
-
             newHash = api.add(outputName)
-            # os.remove(outputName)
-
-            hash = hash + "\"" + str(720) + "\": \"" + newHash['Hash'] + "\"}"
+            hash = "{\"" + str(height) + "\": \"" + newHash['Hash'] + "\"}"
 
             thumbnailHash = api.add(thumbnail_path)
-            os.remove(thumbnail_path)
 
             request.session['thumbnailHash'] = thumbnailHash['Hash']
             request.session['hash'] = hash
@@ -142,13 +127,6 @@ def index(request):
                 video.save()
 
                 print("Saved above this")
-                
-                try:
-                    os.remove(request.session['thumbnail_path'])
-                    os.remove(request.session['videopath'])
-                except:
-                        
-                    print('Delete Error')
 
                 # request.session['video_id'] = video.id
                 # request.session['hash'] = fileHash
