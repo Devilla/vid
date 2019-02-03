@@ -12,3 +12,8 @@ class advertisement(models.Model):
     currently_played = models.IntegerField(default=0)
     total_plays = models.IntegerField(default=0)
     targeted_tags = ArrayField(models.CharField(max_length=200), blank=True, null=True)
+    memo = models.CharField(max_length=255)
+    amount = models.IntegerField()
+    paid = models.BooleanField(default=False)
+    expired = models.BooleanField(default=False)
+    curr_time = models.DateTimeField(auto_now_add=True)

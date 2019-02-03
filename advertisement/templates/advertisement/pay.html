@@ -1,0 +1,58 @@
+{% extends 'core/base.html' %}
+
+{% load staticfiles %}
+
+{% block extra %}
+
+{% load widget_tweaks %}
+
+
+{% endblock extra %}
+
+{% block content %}
+
+
+<div class="col-md-12" style="padding-top:5%; padding-bottom:5%;">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+                <div class="tab-4 grey" style="color:lightgrey" id="adcreatetab" >
+                        Please pay {{ amount }} VIDSOCIAL to the following address (Do NOT forget to include the MEMO or the transaction will be invalid):
+                        <br/><br/>
+                        <b>ACCOUNT ID:</b> vidsocial-13<br/>
+                        <b>MEMO:</b> {{ memo }}<br/>
+
+                        <b>PAYMENT STATUS:</b> {{ payment_status }}
+                        <br/><br/>
+                        <center>THIS PAGE WILL REFRESH AUTOMATICALLY</center>
+                        <br/>
+                        <center>THIS WILL EXPIRE IN: <p id="demo"></p></center>
+                </div>
+     </div>
+     <div class="col-md-3"></div>
+</div>    
+
+<script>
+        var countDownDate = new Date(new Date().getTime() + ({{remaining_time}}* 1000));
+
+        var x = setInterval(function() {
+                var now = new Date().getTime();
+                var distance = countDownDate - now;
+                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                document.getElementById("demo").innerHTML = hours + "h " + minutes + "m " + seconds + "s ";
+
+                if (distance < 0) {
+                        clearInterval(x);
+                        document.getElementById("demo").innerHTML = "EXPIRED";
+                }
+        }, 1000);
+
+
+
+</script>
+
+{% endblock content %}
+
+{% block title %} {{ channel }} {% endblock title %}
+

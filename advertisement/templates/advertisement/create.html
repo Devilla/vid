@@ -16,8 +16,6 @@ function Create(){
     $("#adcreatetab").show();
     $("#activeadstab").hide();
     $("#inactiveadstab").hide();
-    
-    
 }
 
 function Active(){
@@ -39,6 +37,17 @@ function Inactive(){
 // {% endif %}
 
 </script>
+
+{% if show == "my_ads" %}
+<script>
+
+document.addEventListener("DOMContentLoaded", function() {
+        Active();
+});
+
+</script>
+
+{% endif %}
 
 <div class="col-md-12" style="padding-top:5%; padding-bottom:5%;">
 
@@ -138,3 +147,4 @@ function Inactive(){
 {% endblock content %}
 
 {% block title %} {{ channel }} {% endblock title %}
+
