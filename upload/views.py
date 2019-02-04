@@ -46,7 +46,9 @@ def ajax_upload(request):
 
         form = FileUploadModelForm(data=request.POST, files=request.FILES)
 
+        print("Called AJAX")
         if form.is_valid():
+            print("Is valid")
             file = request.FILES['file'].read()
             current_name = ''.join(random.choice('0123456789ABCDEF') for i in range(16)) + ".mp4"
             videos_directory = os.path.join(os.path.join(settings.BASE_DIR, "static"), 'videos')
@@ -64,6 +66,7 @@ def ajax_upload(request):
             thumbnail_path = os.path.join(path, thumbnail_name)
             
             outputName = os.path.join(videos_directory, current_name)
+            print(outputName)
 
             # Find the resolution of the uploaded video
             vid = cv2.VideoCapture(os.path.join(videos_directory, current_name))
@@ -81,6 +84,7 @@ def ajax_upload(request):
                 move(newOutput, outputName)
                 print("Renamed")
 
+            print(runCommand)
             runCommand = 'ffmpeg -ss 00:0:01 -i '+ outputName +' -frames:v 1 '+ thumbnail_path
             subprocess.check_call(runCommand.split(" "))
 
@@ -99,8 +103,10 @@ def ajax_upload(request):
             else:
                 time = str(int(floatDuration)) + ':' + str(seconds).zfill(2)
 
+            print("Connecting to ipfs")
             api = ipfsapi.connect('127.0.0.1', 5001)   
             newHash = api.add(outputName)            
+            print(newHash)
 
             hash = {}
             hash[str(height)] = newHash['Hash']
