@@ -67,7 +67,6 @@
     
 
         function updateView(){
-            alert('sending');
               $.ajax({
                 method:"POST",
                 url:"/watch/adView/",
@@ -109,7 +108,7 @@
     {% if video_type == "live"  %}
         <iframe width="770" height="485" src="{{ cont }}" frameborder="0" allowfullscreen></iframe>
     {% else %}
-         <video id="player" controls data-setup='{{ current.id }}'  poster='{% static "images/single-video.png" %}'>    
+         <video id="player" controls autoplay data-setup='{{ current.id }}'  poster='{% static "images/single-video.png" %}'>    
         {% for quality, hash in video_hash.items %}
             <source src='http://gateway.ipfs.io/ipfs/{{ hash }}' type='video/mp4' size='{{ quality }}' />
         {% endfor %}
