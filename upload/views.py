@@ -37,9 +37,18 @@ def get_unique_permlink(title):
 
 def ajax_upload(request):
     if request.method == "POST":
+        request.session['thumbnailHash'] = ""
+        request.session['hash'] = ""
+        request.session['video_only'] = ""
+        request.session['time'] = ""
+        request.session['videopath'] = ""
+        request.session['thumbnail_path'] = ""
+
         form = FileUploadModelForm(data=request.POST, files=request.FILES)
 
+        print("Called AJAX")
         if form.is_valid():
+            print("Is valid")
             file = request.FILES['file'].read()
             current_name = ''.join(random.choice('0123456789ABCDEF') for i in range(16)) + ".mp4"
             videos_directory = os.path.join(os.path.join(settings.BASE_DIR, "static"), 'videos')
@@ -48,10 +57,7 @@ def ajax_upload(request):
             if not(os.path.isdir(videos_directory)):
                 os.makedirs(videos_directory)
 
-            open(os.path.join(videos_directory, current_name), 'wb').write(file)
-            
-            # Connect to the ipfs through ipfsapi and add the uploaded file to the ipfs
-            api = ipfsapi.connect('127.0.0.1', 5001)            
+            open(os.path.join(videos_directory, current_name), 'wb').write(file)         
 
             # Define the path to save the thumbnail of the uploaded video
             path = os.path.join(os.path.join(settings.BASE_DIR, "static"), 'images') 
@@ -60,6 +66,7 @@ def ajax_upload(request):
             thumbnail_path = os.path.join(path, thumbnail_name)
             
             outputName = os.path.join(videos_directory, current_name)
+            print(outputName)
 
             # Find the resolution of the uploaded video
             vid = cv2.VideoCapture(os.path.join(videos_directory, current_name))
@@ -73,11 +80,13 @@ def ajax_upload(request):
                 command = "ffmpeg -i {} -vf scale=iw:480 {}".format(outputName, newOutput)
                 print(command)
                 subprocess.check_call(command.split(" "))
-
+                height = width
                 move(newOutput, outputName)
                 print("Renamed")
 
+            
             runCommand = 'ffmpeg -ss 00:0:01 -i '+ outputName +' -frames:v 1 '+ thumbnail_path
+            print(runCommand)
             subprocess.check_call(runCommand.split(" "))
 
             durationCommand = 'ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 ' + outputName
@@ -95,13 +104,18 @@ def ajax_upload(request):
             else:
                 time = str(int(floatDuration)) + ':' + str(seconds).zfill(2)
 
-            newHash = api.add(outputName)
-            hash = "{\"" + str(height) + "\": \"" + newHash['Hash'] + "\"}"
+            print("Connecting to ipfs")
+            api = ipfsapi.connect('127.0.0.1', 5001)   
+            newHash = api.add(outputName)            
+            print(newHash)
+
+            hash = {}
+            hash[str(height)] = newHash['Hash']
 
             thumbnailHash = api.add(thumbnail_path)
 
             request.session['thumbnailHash'] = thumbnailHash['Hash']
-            request.session['hash'] = hash
+            request.session['hash'] = json.dumps(hash)
             request.session['video_only'] = newHash['Hash']
             request.session['time'] = time
             request.session['videopath'] = outputName

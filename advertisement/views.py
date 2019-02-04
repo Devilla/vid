@@ -62,7 +62,7 @@ def index(request):
                 col.save()
 
                 request.session['current_payment_info'] = col.id
-                return redirect("pay")
+                return redirect("/advertise/pay")
         else:
             
             return render(request, "advertisement/create.html", context={'af': af, 'available_tags': flat_list, 'show': 'homepage', 'active_ads': activeAds, 'inactive_ads': inactiveAds})
@@ -150,6 +150,6 @@ def pay(request):
         return redirect("create.html")
     else:
         if payment_status == "PAID":
-            return redirect("/advertisement")
+            return redirect("/advertise/")
         else:
             return render(request, "advertisement/pay.html", context={'amount': amount,'memo': memo, 'payment_status': payment_status, 'remaining_time': remaining_time})
