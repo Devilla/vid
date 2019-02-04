@@ -1,5 +1,34 @@
 {% load staticfiles %}
 {% load widget_tweaks %}
+<style>
+        .close-icon {
+          cursor: pointer;
+          }
+    
+        #vv{
+        float:left;
+        }
+        #cc {
+        position:absolute;
+        float:left;
+        z-index:300000;
+        padding-left:0px;
+        padding-right:0px;
+        padding-top:0px;
+        height:100%;
+        width:100%;
+        }
+        .close {
+        position:absolute;
+        float:right !important;
+        z-index:300000;
+        padding:5px;
+        height:100 %;
+        }
+        .card-block{
+            background-color: white;
+        }
+        </style>
 
 <script>
         function followUnfollow(){
@@ -29,20 +58,16 @@
    
    </script>
  <script>
+     
+
      function closeAd(){
         $('#cc').fadeOut();
+        main_video.play();
      }
-
-     setTimeout(function(){
-        $('#cc').fadeIn();
-
-        updateView();
-
-        }, 2000);   
+    
 
         function updateView(){
-            alert('sending request');
-            
+            alert('sending');
               $.ajax({
                 method:"POST",
                 url:"/watch/adView/",
@@ -60,47 +85,66 @@
 
 </script>
     
-    <style>
-    .close-icon {
-      cursor: pointer;
-      }
-
-    #vv{
-    float:left;
-}
-    #cc {
-    position:absolute;
-    float:left;
-    z-index:300000;
-    padding-left:30px;
-    padding-right:30px;
-    padding-top:10px;
-    }
-    .card-block{
-        background-color: white;
-    }
-    </style>
+   
     
 <div class="sv-video" id="vv">
     <div class="card card-outline-danger text-center" id="cc" style="display:none;">
-        <span class="pull-right clickable close-icon" data-effect="fadeOut" style="padding:5px;" onclick="closeAd()"><i class="fa fa-times"></i></span>
-        <div class="card-block"><img src="{% static 'ads/aa.png' %}">
-            {% csrf_token %}
-            <input type="hidden" value="{{ad.id}}" id="ad_id"> 
-            <blockquote class="card-blockquote">
-            {{ad.ad_title}}
-            </blockquote>
-        </div>
+            <div class='col-sm-10 col-md-10'>
+            </div>
+
+            <div class='col-sm-2 col-md-2'>
+                    <span id="" class="close pull-right clickable close-icon" data-effect="fadeOut" style=" border:1px solid grey; width:50%; background-color: lightgrey;" >Ad</span>
+            </div>
+        
+            <div class="card-block">
+                    <video id="adplayer">
+                            <source src="http://gateway.ipfs.io/ipfs/QmRD1ydVobSUD9YQ9Xpef7gVXu5ZycDvS9f2vYEssYJh1b" type='video/mp4' />
+                    </video>
+                
+            </div>
     </div>
+    {% csrf_token %}
+    <input type="hidden" value="{{ad.id}}" id="ad_id"> 
 
 
-    <video id="player" controls data-setup='{{ current.id }}'  poster='{% static "images/single-video.png" %}'>
+    <video id="player"  data-setup='{{ current.id }}' autoplay  poster='{% static "images/single-video.png" %}'>
         {% for quality, hash in video_hash.items %}
             <source src='http://gateway.ipfs.io/ipfs/{{ hash }}' type='video/mp4' size='{{ quality }}' />
         {% endfor %}
 
     </video>
+    <script>
+        var main_video = document.getElementById("player");
+        var ad_video =document.getElementById('adplayer');
+        var displayed =false;
+        
+        main_video.ontimeupdate = function() {
+            if(main_video.currentTime >= 2) {
+                if (displayed == false){
+                    if(main_video.currentTime > (main_video.duration/2)){
+                        $('#cc').fadeIn();
+                        main_video.pause();
+                        ad_video.play();
+                        displayed = true;
+                        updateView();
+                        
+                    }
+                }
+            }
+        };
+
+        ad_video.ontimeupdate = function() {
+            if(ad_video.ended == true) {
+                $('#cc').fadeOut();
+                main_video.play();
+            }
+        };  
+
+    </script>
+   
+    
 </div>
+
 
 
 
