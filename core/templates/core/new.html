@@ -77,16 +77,15 @@
                     if(counter < displayUpto && counter >= (displayUpto-4)){
                         var all_hash =element.fields.video;
                         var hash = JSON.parse(all_hash); 
-                        var vidHash ='';
-                        if(hash['720']){
-                            vidHash = hash['720'];
+                        console.log("Hashes are:");
+
+                        for(var i in hash){
+                            var key = i;
+                            var vidHash = hash[i];
+                            break;
                         }
-                        else if(hash['360']){
-                            vidHash = hash['360'];
-                        }
-                        else if(hash['240']){
-                            vidHash = hash['240'];
-                        }
+                        console.log(key);
+
                         var vid = "<div class='col-lg-3 col-sm-6 videoitem'><div class='b-video'><div class='t-img'>"+
                                         "<a href='/watch/"+vidHash+"/"+element.pk+"/'>"+
                                                 "<img src='https://gateway.ipfs.io/ipfs/"+element.fields.thumbNail+"' style='width:27.2rem; height:16rem;''></a>"+
