@@ -26,7 +26,6 @@ from .models import File
 from .forms import FileUploadModelForm
 from shutil import move
 
-
 def get_unique_permlink(title):
     title=title.lower()
     title = title.replace(" ", "-")

@@ -17,6 +17,7 @@ class File(models.Model):
 
 class Video(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='videos')
+    # video_type = models.CharField(max_length=10, default='uploaded')
     uploaded_at = models.DateTimeField(auto_now_add=True)
     views = models.IntegerField(default=0)
     old_views = models.IntegerField(default=0)
@@ -24,7 +25,7 @@ class Video(models.Model):
     thumbsUp = models.IntegerField(default=0)
     thumbsDown = models.IntegerField(default=0)
     thumbNail = models.CharField(max_length=512)
-    video = JSONField()
+    video = JSONField(blank=True)
     duration = models.CharField(max_length=10)
     description = models.TextField(blank=True)
     language_choices = [(1,'English'),(2,'Chinese'), (3,'Spanish'), (4,'German')]
