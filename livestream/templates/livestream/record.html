@@ -1,3 +1,4 @@
+{% extends 'core/base.html' %}
 {% load staticfiles %}
 <html>
 	<head>
@@ -87,7 +88,7 @@
 	</head>
 	<body>
 		<div class="container">
-	
+			<h1>{{stream_title}}</h1>
 			<div class="jumbotron">
 	
 				<p>
@@ -95,8 +96,6 @@
 				</p>
 	
 				<p>
-					<input type="text" class="form-control" value="stream1"
-						id="streamName" placeholder="Type stream name">
 					<div class="form-check">	
 						<input class="form-check-input" disabled onchange="enableDesktopCapture(event.target.checked)" type="checkbox" value="" 
 						id="screen_share_checkbox">
@@ -130,13 +129,10 @@
 		
 		var screen_share_checkbox = document.getElementById("screen_share_checkbox");
 		var install_extension_link = document.getElementById("install_chrome_extension_link");
-	
-		var streamNameBox = document.getElementById("streamName");
 		
-		var streamId;
+		var streamId = "{{ stream_id }}";
 	
 		function startPublishing() {
-			streamId = streamNameBox.value;
 			webRTCAdaptor.publish(streamId, token);
 		}
 	
@@ -250,4 +246,3 @@
 		});
 	</script>
 	</html>
-	

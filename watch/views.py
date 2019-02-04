@@ -89,6 +89,8 @@ def get_post_details(vid_id):
     return steem_url, smoke_url, whale_url, total_likes, total_dislikes, total_earning
 
 def index(request, video_hash, video_id):
+    print(video_hash)
+    print(video_id)
     if 'display_nsfw' not in request.session:
         request.session['display_nsfw'] = False
 
@@ -102,84 +104,80 @@ def index(request, video_hash, video_id):
     steem_url, smoke_url, whale_url, total_likes, total_dislikes, total_earning = get_post_details(current.id)
 
     current = Video.objects.get(id=video_id)
-    hash = json.loads(current.video)
-    resolution = [2160, 1440, 1080, 720, 480, 360, 240  , 144]
 
-    isVideo = False
+    views = current.views
+    current.views = views+1
+    current.save()
 
-    for each_res in resolution:
-        if str(each_res) in current.video:
-            if hash[str(each_res)] == video_hash:
-                isVideo = True
-                break  
+    if request.session['display_nsfw'] == False:
+        featured = Video.objects.filter(nsfw=False).order_by('-id')[:1]
+        all_vids = Video.objects.filter(nsfw=False)
+    else:
+        featured = Video.objects.all().order_by('-id')[:2]
+        all_vids = Video.objects.all()
+
+
+
+    recommend = get_recommended_videos(all_vids, list(current.tags))
+    up_next = recommend[:1]
+    recommend = recommend[1:]
+
+    user = User.objects.get(id=current.user_id)
+    count = Video.objects.filter(user_id=current.user_id).count()
+    
+    video_content = ''
+    hash = {}
+    video_type = current.type
+
+    if current.type != 'LIVE':
+        hash = json.loads(current.video)
         
-    if isVideo == True:
-        views = current.views
-        current.views = views+1
-        current.save()
-
-        if request.session['display_nsfw'] == False:
-            featured = Video.objects.filter(nsfw=False).order_by('-id')[:1]
-            all_vids = Video.objects.filter(nsfw=False)
-        else:
-            featured = Video.objects.all().order_by('-id')[:2]
-            all_vids = Video.objects.all()
-
-
-
-        recommend = get_recommended_videos(all_vids, list(current.tags))
-        up_next = recommend[:1]
-        recommend = recommend[1:]
-
-        user = User.objects.get(id=current.user_id)
-        count = Video.objects.filter(user_id=current.user_id).count()
-        
-        video_content = ''
-
         for quality, this_hash in hash.items():
             video_content = video_content + '{\n\t src: \'https://gateway.ipfs.io/ipfs/' + this_hash + '\',\n\t type: \'video/mp4\',\n\t size: ' + quality + ',\n},\n' 
-        
-        try:
-            chkLike, chkDislike = likedordisliked (request, request.user.id, video_id)
-        except:
-            chkLike = False
-            chkDislike = False
+    else:
+        video_content = "https://stream.vidsocial.org:5443/WebRTCApp/play.html?name=" +  current.video
 
-        is_following = followersModel.objects.filter(user = request.user.id, following=current.user.id).exists()
-                
+    try:
+        chkLike, chkDislike = likedordisliked (request, request.user.id, video_id)
+    except:
+        chkLike = False
+        chkDislike = False
 
-        try:
-            followerscount = followersModel.objects.get(following=current.user.id).total_followers
-        except:
-            followerscount = 0 
+    is_following = followersModel.objects.filter(user = request.user.id, following=current.user.id).exists()
+            
 
-        print("The followerscount is {}".format(followerscount))
+    try:
+        followerscount = followersModel.objects.get(following=current.user.id).total_followers
+    except:
+        followerscount = 0 
 
-        if request.user.is_authenticated and request.user.id == current.user.id:
-                own_channel = True
-        else:
-                own_channel = False
+    print("The followerscount is {}".format(followerscount))
 
-        time_difference = int((datetime.utcnow() - datetime(1970, 1, 1)).total_seconds()) - int(current.uploaded_at.strftime("%s"))
-        day, hour, minute, second = GetTime(time_difference)
+    if request.user.is_authenticated and request.user.id == current.user.id:
+        own_channel = True
+    else:
+        own_channel = False
 
-        if day >= 30:
-            uploaded_time = "{} month ago".format(int(day/30))
-        elif day >= 1:
-            uploaded_time = "{} day ago".format(day)
-        elif hour >= 1:
-            uploaded_time = "{} hour ago".format(hour)
-        elif minute >= 1:
-            uploaded_time = "{} minute ago".format(minute)
-        else:
-            uploaded_time = "{} second ago".format(second)
-        
-        getAd = advertisement.objects.get(id =1)
+    time_difference = int((datetime.utcnow() - datetime(1970, 1, 1)).total_seconds()) - int(current.uploaded_at.strftime("%s"))
+    day, hour, minute, second = GetTime(time_difference)
 
-        return render(request, "watch/base.html", {'video_hash': hash, 'cont': video_content,
-        'latest': featured, 'recommended': recommend, 'up_next':up_next, 'current': current, 'is_following':is_following,'followerscount':followerscount,'own_channel':own_channel,
-        'user': user, 'count': count, 'steem_url': steem_url, 'smoke_url': smoke_url, 'whale_url': whale_url, 'chkLike': chkLike, 'chkDislike':chkDislike,
-        'total_likes': total_likes, 'total_dislikes': total_dislikes, 'total_earning': total_earning, 'uploaded_time': uploaded_time, 'ad':getAd})
+    if day >= 30:
+        uploaded_time = "{} month ago".format(int(day/30))
+    elif day >= 1:
+        uploaded_time = "{} day ago".format(day)
+    elif hour >= 1:
+        uploaded_time = "{} hour ago".format(hour)
+    elif minute >= 1:
+        uploaded_time = "{} minute ago".format(minute)
+    else:
+        uploaded_time = "{} second ago".format(second)
+    
+    getAd = advertisement.objects.get(id =1)
+
+    return render(request, "watch/base.html", {'video_hash': hash, 'cont': video_content, 'video_type': video_type,
+    'latest': featured, 'recommended': recommend, 'up_next':up_next, 'current': current, 'is_following':is_following,'followerscount':followerscount,'own_channel':own_channel,
+    'user': user, 'count': count, 'steem_url': steem_url, 'smoke_url': smoke_url, 'whale_url': whale_url, 'chkLike': chkLike, 'chkDislike':chkDislike,
+    'total_likes': total_likes, 'total_dislikes': total_dislikes, 'total_earning': total_earning, 'uploaded_time': uploaded_time, 'ad':getAd})
     
 
 def likedordisliked (request, user_id, video_id):

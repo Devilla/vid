@@ -7,174 +7,158 @@
 {% endblock navigation %}
 
 {% block content %}
-avsdadasd
-
-<div class="content-wrapper upload-page edit-page" style="display:none">
-    <div class="container">
-        <div class="row">
-                <div class="col-lg-4 hidden-xs hidden-sm">
-                </div>
-            <div class="col-lg-8" style="padding:30px !important;">
-                    <form class="form-horizontal" enctype='multipart/form-data' method="POST">
-                            {% csrf_token %} 
-                <div class="u-form ">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <div class="form-group">
-                                <label for="e1">Video Title</label>
-                                {{ postOptionsForm.name|attr:"placeholder:Title for your video"}}
-                            </div>
-                        </div>
-                        <div class="col-lg-12">
-                                <div class="form-group">
-                                    <label for="e2">Description</label>
-                                    {{ postOptionsForm.description|attr:"Write some words about your video"}}                           
-                            </div>
-                        </div>
-                        <div class="col-lg-12">
-                                <div class="form-group">
-                                    <label for="e2">Tags (Maximum 5 Allowed)</label>
-                                    {{ postOptionsForm.video_tags|attr:"placeholder:Gaming, Funny, Prank"}}                           
-                            </div>
-                        </div>
-
-                        <div class="col-lg-5 col-sm-12 col-xs-12">
-                                <div class="form-group">
-                                    <label for="id_language">Language in Video (Optional)</label><br>
-                                    {{ postOptionsForm.language}}
-                                </div>
-                            </div>
-
-
-                            <div class="col-sm-12 col-xs-12 col-lg-12">
-                                    <div class="form-group">
-                                            <label > Choose where to post:</label>
-                                    </div> 
-                                
-                            </div> 
-
-                            <div class="col-sm-12 col-xs-12 col-lg-12">
-                                <div class="form-group">
-                                        {% if keychk.smokechk is True %}
-                                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 ">
-                                                <div class="checkbox">
-                                                        <label>
-                                                            <label class="checkbox">
-                                                                    {{ postOptionsForm.smoke}}
-                                                                <span class="arrow"></span>
-                                                            </label> Smoke
-                                                        </label>
-                                                    </div>
-                                        </div>
-                                            
-                                        
-                                        {% endif %}
-                                        {% if keychk.steemchk is True %}
-                                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 ">
-                                                <div class="checkbox">
-                                                        <label>
-                                                            <label class="checkbox">
-                                                                    {{ postOptionsForm.steem}}
-                                                                <span class="arrow"></span>
-                                                            </label> Steem
-                                                        </label>
-                                                    </div>
-                                            </div>
-                                        
-                                        {% endif %}
-                                        
-                                        {% if keychk.whalechk is True %}
-                                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
-                                                <div class="checkbox">
-                                                        <label>
-                                                            <label class="checkbox">
-                                                                    {{ postOptionsForm.whale}}
-                                                                <span class="arrow"></span>
-                                                            </label> Whale
-                                                        </label>
-                                                    </div>
-                                            </div>
-    
-                                        {% endif %}
-                                    </div> 
-                                
-                                </div> 
-
-                            <div class="col-lg-12 col-md-6 col-sm-12" >
-                                    <div class="form-group">
-                                        <div class="checkbox" >
-                                                <label>
-                                                    <label class="checkbox">
-                                                            {{ postOptionsForm.monetize}}
-                                                        <span class="arrow"></span>
-                                                    </label> 
-                                                   <b>Accept and monetize this video.</b> 
-                                                </label>
-                                        </div>
-                                        <div class="checkbox">
-                                                <label>
-                                                    <label class="checkbox">
-                                                            {{ postOptionsForm.nsfw}}
-                                                        <span class="arrow"></span>
-                                                    </label> 
-                                                    <b>NSFW (Not Safe for Work)</b>
-                                                </label>
-                                        </div>
-                                    </div>
-                            </div> 
-                                                 
-                        </div>                        
-                    </div>
-
-                    
-
-                <div class="u-area mt-small">
-                        <button type="submit" class="btn btn-cv1">Publish</button>
-                </div>
-                <div class="u-terms">
-                    <p>By submitting your videos to circle, you acknowledge that you agree to circle's <a href="#">Terms of Service</a> and <a href="#">Community Guidelines</a>.</p>
-                    <p class="hidden-xs">Please be sure not to violate others' copyright or privacy rights. Learn more</p>
-                </div>
-                </form>
-                
-            </div>
-        </div>
-    </div>
-</div>
-<script>
-    $('#id_smoke').click(function() {
-
-        if(this.checked){
-            document.getElementById('tt').innerHTML = ' Warning: Smoke is a cannabis first network and is not a regular DPOS blogging platform. You may get flagged for inappropriate contents.';
-            }
-        else{
-            document.getElementById('tt').innerHTML = '';
-        }
-        });
-</script>  
 
 <div class="col-lg-12 upload-page">
     {% if keychk.allcheck is True %}
-        <div class="u-area">
-            <form method="post" enctype='multipart/form-data' id="uploadForm">
-                {% csrf_token %}
+        <div class="content-wrapper upload-page edit-page">
+            <div class="container">
+                <div class="row">
+                        
+                        <div class="col-lg-2 hidden-xs hidden-sm">
+                        </div>
+
+                        
+                    <div class="col-lg-8" style="padding:30px !important;">
+                            <form class="form-horizontal" enctype='multipart/form-data' method="POST">
+                                    {% csrf_token %} 
+                        <div class="u-form ">
+                            
+                                <center><h2 class ="text-white">Create Live Stream</h2></center>
+
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label for="e1">Video Title</label>
+                                        {{ postOptionsForm.name|attr:"placeholder:Title for your video"}}
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <label for="e2">Description</label>
+                                            {{ postOptionsForm.description|attr:"Write some words about your video"}}                           
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <label for="e2">Tags (Maximum 5 Allowed)</label>
+                                            {{ postOptionsForm.video_tags|attr:"placeholder:Gaming, Funny, Prank"}}                           
+                                    </div>
+                                </div>
         
-                <label for="upload" style="cursor:pointer">
-                    <i class="cv cvicon-cv-upload-video"></i>
-                </label>
-
-
-                <p class="u-text1">Select Video files to upload</p>
-                {{ form.as_p }}
-
-            </form>
+                                <div class="col-lg-5 col-sm-12 col-xs-12">
+                                        <div class="form-group">
+                                            <label for="id_language">Language in Video (Optional)</label><br>
+                                            {{ postOptionsForm.language}}
+                                        </div>
+                                    </div>
+        
+        
+                                    <div class="col-sm-12 col-xs-12 col-lg-12">
+                                            <div class="form-group">
+                                                    <label > Choose where to post:</label>
+                                            </div> 
+                                        
+                                    </div> 
+        
+                                    <div class="col-sm-12 col-xs-12 col-lg-12">
+                                        <div class="form-group">
+                                                {% if keychk.smokechk is True %}
+                                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 ">
+                                                        <div class="checkbox">
+                                                                <label>
+                                                                    <label class="checkbox">
+                                                                            {{ postOptionsForm.smoke}}
+                                                                        <span class="arrow"></span>
+                                                                    </label> Smoke
+                                                                </label>
+                                                            </div>
+                                                </div>
+                                                    
+                                                
+                                                {% endif %}
+                                                {% if keychk.steemchk is True %}
+                                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 ">
+                                                        <div class="checkbox">
+                                                                <label>
+                                                                    <label class="checkbox">
+                                                                            {{ postOptionsForm.steem}}
+                                                                        <span class="arrow"></span>
+                                                                    </label> Steem
+                                                                </label>
+                                                            </div>
+                                                    </div>
+                                                
+                                                {% endif %}
+                                                
+                                                {% if keychk.whalechk is True %}
+                                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                                        <div class="checkbox">
+                                                                <label>
+                                                                    <label class="checkbox">
+                                                                            {{ postOptionsForm.whale}}
+                                                                        <span class="arrow"></span>
+                                                                    </label> Whale
+                                                                </label>
+                                                            </div>
+                                                    </div>
+            
+                                                {% endif %}
+                                            </div> 
+                                        
+                                        </div> 
+        
+                                    <div class="col-lg-12 col-md-6 col-sm-12" >
+                                            <div class="form-group">
+                                                <div class="checkbox" >
+                                                        <label>
+                                                            <label class="checkbox">
+                                                                    {{ postOptionsForm.monetize}}
+                                                                <span class="arrow"></span>
+                                                            </label> 
+                                                        <b>Accept and monetize this video.</b> 
+                                                        </label>
+                                                </div>
+                                                <div class="checkbox">
+                                                        <label>
+                                                            <label class="checkbox">
+                                                                    {{ postOptionsForm.nsfw}}
+                                                                <span class="arrow"></span>
+                                                            </label> 
+                                                            <b>NSFW (Not Safe for Work)</b>
+                                                        </label>
+                                                </div>
+                                            </div>
+                                    </div> 
+                                                        
+                                </div>                        
+                            </div>
+        
+                            
+        
+                        <div class="u-area mt-small">
+                                <button type="submit" class="btn btn-cv1">Start Live Stream</button>
+                        </div>
+                        <div class="u-terms">
+                            <p>By submitting your videos to circle, you acknowledge that you agree to circle's <a href="#">Terms of Service</a> and <a href="#">Community Guidelines</a>.</p>
+                            <p class="hidden-xs">Please be sure not to violate others' copyright or privacy rights. Learn more</p>
+                        </div>
+                        </form>
+                        
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <div class="u-terms">
-            <p>By submitting your videos to circle, you acknowledge that you agree to circle's <a href="#">Terms of Service</a>
-                and <a href="#">Community Guidelines</a>.</p>
-            <p class="hidden-xs">Please be sure not to violate others' copyright or privacy rights. Learn more</p>
-        </div>
+        <script>
+            $('#id_smoke').click(function() {
+        
+                if(this.checked){
+                    document.getElementById('tt').innerHTML = ' Warning: Smoke is a cannabis first network and is not a regular DPOS blogging platform. You may get flagged for inappropriate contents.';
+                    }
+                else{
+                    document.getElementById('tt').innerHTML = '';
+                }
+                });
+        </script>          
     {% else %}
         <div class="u-terms">
                 <p>You must enter at least one of whaleshare, steem or smoke posting key. You will now be redirected</p>
