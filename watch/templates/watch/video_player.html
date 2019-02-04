@@ -93,17 +93,17 @@
         </div>
     </div>
 
+    {% if video_type == "live"  %}
+        <iframe width="770" height="485" src="{{ cont }}" frameborder="0" allowfullscreen></iframe>
+    {% else %}
+         <video id="player" controls data-setup='{{ current.id }}'  poster='{% static "images/single-video.png" %}'>    
+        {% for quality, hash in video_hash.items %}
+            <source src='http://gateway.ipfs.io/ipfs/{{ hash }}' type='video/mp4' size='{{ quality }}' />
+        {% endfor %}
+        </video>
+    {% endif %}
 
-    <video id="player" controls data-setup='{{ current.id }}'  poster='{% static "images/single-video.png" %}'>
-        {% if video_content == "LIVE"  %}
-            <iframe width="770" height="485" src="{{video_content}}" frameborder="0" allowfullscreen></iframe>
-        {% else %}
-            {% for quality, hash in video_hash.items %}
-                <source src='http://gateway.ipfs.io/ipfs/{{ hash }}' type='video/mp4' size='{{ quality }}' />
-            {% endfor %}
-        {% endif %}
-
-    </video>
+    
 </div>
 
 

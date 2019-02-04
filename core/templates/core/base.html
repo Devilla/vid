@@ -247,6 +247,8 @@
                    
                 
                     </script>
+                    
+{% block headerScripts %} {% endblock headerScripts %}
 </head>
 
 <body class="channel single-video {% if request.session.light_on is True %} light {% elif request.session.light_on is False %} dark {% endif %}">

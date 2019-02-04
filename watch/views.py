@@ -129,13 +129,13 @@ def index(request, video_hash, video_id):
     hash = {}
     video_type = current.type
 
-    if current.type != 'LIVE':
+    if current.type != 'live':
         hash = json.loads(current.video)
         
         for quality, this_hash in hash.items():
             video_content = video_content + '{\n\t src: \'https://gateway.ipfs.io/ipfs/' + this_hash + '\',\n\t type: \'video/mp4\',\n\t size: ' + quality + ',\n},\n' 
     else:
-        video_content = "https://stream.vidsocial.org:5443/WebRTCApp/play.html?name=" +  current.video
+        video_content = "https://stream.vidsocial.org:5443/WebRTCApp/play.html?name=" +  json.loads(current.video)['identifier']
 
     try:
         chkLike, chkDislike = likedordisliked (request, request.user.id, video_id)
