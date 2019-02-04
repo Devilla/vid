@@ -37,6 +37,13 @@ def get_unique_permlink(title):
 
 def ajax_upload(request):
     if request.method == "POST":
+        request.session['thumbnailHash'] = ""
+        request.session['hash'] = ""
+        request.session['video_only'] = ""
+        request.session['time'] = ""
+        request.session['videopath'] = ""
+        request.session['thumbnail_path'] = ""
+
         form = FileUploadModelForm(data=request.POST, files=request.FILES)
 
         if form.is_valid():
@@ -48,10 +55,7 @@ def ajax_upload(request):
             if not(os.path.isdir(videos_directory)):
                 os.makedirs(videos_directory)
 
-            open(os.path.join(videos_directory, current_name), 'wb').write(file)
-            
-            # Connect to the ipfs through ipfsapi and add the uploaded file to the ipfs
-            api = ipfsapi.connect('127.0.0.1', 5001)            
+            open(os.path.join(videos_directory, current_name), 'wb').write(file)         
 
             # Define the path to save the thumbnail of the uploaded video
             path = os.path.join(os.path.join(settings.BASE_DIR, "static"), 'images') 
@@ -73,7 +77,7 @@ def ajax_upload(request):
                 command = "ffmpeg -i {} -vf scale=iw:480 {}".format(outputName, newOutput)
                 print(command)
                 subprocess.check_call(command.split(" "))
-
+                height = width
                 move(newOutput, outputName)
                 print("Renamed")
 
@@ -95,13 +99,16 @@ def ajax_upload(request):
             else:
                 time = str(int(floatDuration)) + ':' + str(seconds).zfill(2)
 
-            newHash = api.add(outputName)
-            hash = "{\"" + str(height) + "\": \"" + newHash['Hash'] + "\"}"
+            api = ipfsapi.connect('127.0.0.1', 5001)   
+            newHash = api.add(outputName)            
+
+            hash = {}
+            hash[str(height)] = newHash['Hash']
 
             thumbnailHash = api.add(thumbnail_path)
 
             request.session['thumbnailHash'] = thumbnailHash['Hash']
-            request.session['hash'] = hash
+            request.session['hash'] = json.dumps(hash)
             request.session['video_only'] = newHash['Hash']
             request.session['time'] = time
             request.session['videopath'] = outputName

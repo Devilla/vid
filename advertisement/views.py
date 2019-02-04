@@ -59,7 +59,7 @@ def index(request):
                 col.save()
 
                 request.session['current_payment_info'] = col.id
-                return redirect("pay.html")
+                return redirect("pay")
         else:
             
             return render(request, "advertisement/create.html", context={'af': af, 'available_tags': flat_list, 'show': 'homepage', 'active_ads': activeAds, 'inactive_ads': inactiveAds})
@@ -107,6 +107,7 @@ def verify_transaction(acc, m, to_send_text, to_send_amount, payment_id, loop_ti
                     
                     if int(to_send_amount) == int(amount) and to_send_text == memo:
                         ad_object.paid = True
+                        ad_object.active = True
                         ad_object.save()
                         break
 
