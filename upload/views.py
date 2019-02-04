@@ -84,8 +84,9 @@ def ajax_upload(request):
                 move(newOutput, outputName)
                 print("Renamed")
 
-            print(runCommand)
+            
             runCommand = 'ffmpeg -ss 00:0:01 -i '+ outputName +' -frames:v 1 '+ thumbnail_path
+            print(runCommand)
             subprocess.check_call(runCommand.split(" "))
 
             durationCommand = 'ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 ' + outputName
