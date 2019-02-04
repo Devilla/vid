@@ -106,42 +106,16 @@
     {% csrf_token %}
     <input type="hidden" value="{{ad.id}}" id="ad_id"> 
 
-
-    <video id="player"  data-setup='{{ current.id }}' autoplay  poster='{% static "images/single-video.png" %}'>
+    {% if video_type == "live"  %}
+        <iframe width="770" height="485" src="{{ cont }}" frameborder="0" allowfullscreen></iframe>
+    {% else %}
+         <video id="player" controls data-setup='{{ current.id }}'  poster='{% static "images/single-video.png" %}'>    
         {% for quality, hash in video_hash.items %}
             <source src='http://gateway.ipfs.io/ipfs/{{ hash }}' type='video/mp4' size='{{ quality }}' />
         {% endfor %}
+        </video>
+    {% endif %}
 
-    </video>
-    <script>
-        var main_video = document.getElementById("player");
-        var ad_video =document.getElementById('adplayer');
-        var displayed =false;
-        
-        main_video.ontimeupdate = function() {
-            if(main_video.currentTime >= 2) {
-                if (displayed == false){
-                    if(main_video.currentTime > (main_video.duration/2)){
-                        $('#cc').fadeIn();
-                        main_video.pause();
-                        ad_video.play();
-                        displayed = true;
-                        updateView();
-                        
-                    }
-                }
-            }
-        };
-
-        ad_video.ontimeupdate = function() {
-            if(ad_video.ended == true) {
-                $('#cc').fadeOut();
-                main_video.play();
-            }
-        };  
-
-    </script>
-   
     
 </div>
 

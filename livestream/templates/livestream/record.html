@@ -1,8 +1,8 @@
+{% extends 'core/base.html' %}
 {% load staticfiles %}
-<html>
-	<head>
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta charset="UTF-8">
+
+{% block headerScripts %}
+
 	<link rel="stylesheet"
 		href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
 		integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
@@ -19,47 +19,6 @@
 		width: 100%;
 		max-width: 640px;
 	}
-	/* Space out content a bit */
-	body {
-		padding-top: 20px;
-		padding-bottom: 20px;
-	}
-	
-	/* Everything but the jumbotron gets side spacing for mobile first views */
-	.header, .marketing, .footer {
-		padding-right: 15px;
-		padding-left: 15px;
-	}
-	
-	/* Custom page header */
-	.header {
-		padding-bottom: 20px;
-		border-bottom: 1px solid #e5e5e5;
-	}
-	/* Make the masthead heading the same height as the navigation */
-	.header h3 {
-		margin-top: 0;
-		margin-bottom: 0;
-		line-height: 40px;
-	}
-	
-	/* Custom page footer */
-	.footer {
-		padding-top: 19px;
-		color: #777;
-		border-top: 1px solid #e5e5e5;
-	}
-	
-	/* Customize container */
-	@media ( min-width : 768px) {
-		.container {
-			max-width: 730px;
-		}
-	}
-	
-	.container-narrow>hr {
-		margin: 30px 0;
-	}
 	
 	/* Main marketing message and sign up button */
 	.jumbotron {
@@ -69,25 +28,18 @@
 	
 	/* Responsive: Portrait tablets and up */
 	@media screen and (min-width: 768px) {
-		/* Remove the padding we set earlier */
-		.header, .marketing, .footer {
-			padding-right: 0;
-			padding-left: 0;
-		}
-		/* Space out the masthead */
-		.header {
-			margin-bottom: 30px;
-		}
+
 		/* Remove the bottom border on the jumbotron for visual effect */
 		.jumbotron {
 			border-bottom: 0;
 		}
 	}
 	</style>
-	</head>
-	<body>
+{% endblock headerScripts%}
+
+{% block content %}
 		<div class="container">
-	
+			<h3>{{stream_title}}</h1>
 			<div class="jumbotron">
 	
 				<p>
@@ -95,8 +47,6 @@
 				</p>
 	
 				<p>
-					<input type="text" class="form-control" value="stream1"
-						id="streamName" placeholder="Type stream name">
 					<div class="form-check">	
 						<input class="form-check-input" disabled onchange="enableDesktopCapture(event.target.checked)" type="checkbox" value="" 
 						id="screen_share_checkbox">
@@ -121,7 +71,7 @@
 			</div>
 	
 		</div>
-	</body>
+
 	<script>
 		var token = "null";
 	
@@ -130,13 +80,10 @@
 		
 		var screen_share_checkbox = document.getElementById("screen_share_checkbox");
 		var install_extension_link = document.getElementById("install_chrome_extension_link");
-	
-		var streamNameBox = document.getElementById("streamName");
 		
-		var streamId;
+		var streamId = "{{ stream_id }}";
 	
 		function startPublishing() {
-			streamId = streamNameBox.value;
 			webRTCAdaptor.publish(streamId, token);
 		}
 	
@@ -249,5 +196,4 @@
 			}
 		});
 	</script>
-	</html>
-	
+{% endblock content %}

@@ -109,7 +109,7 @@ def ajax_upload(request):
             print(newHash)
 
             hash = {}
-            hash[str(height)] = newHash['Hash']
+            hash['720'] = newHash['Hash']
 
             thumbnailHash = api.add(thumbnail_path)
 
@@ -193,7 +193,7 @@ def index(request):
                 arb_url = 'https://vidsocial.org/watch/'+ bestHash + '/'+ str(current.id) + '/'
                 thumbnail_url = 'https://gateway.ipfs.io/ipfs/' + current.thumbNail
                 ipfs_url = 'https://gateway.ipfs.io/ipfs/' + request.session['video_only']
-                body = get_body(ipfs_url, thumbnail_url, arb_url, current.description)
+                body = get_body(ipfs_url,thumbnail_url, arb_url, current.description)
                 name = current.name
                 print(name)
 

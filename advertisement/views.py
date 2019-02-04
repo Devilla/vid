@@ -19,6 +19,7 @@ from django.conf import settings
 import cv2
 import subprocess
 from shutil import move
+import ipfsapi
 
 
 from datetime import datetime
@@ -58,6 +59,8 @@ def index(request):
 
                 open(os.path.join(ads_directory, current_name), 'wb').write(myfile)  
 
+       
+
                 outputName = os.path.join(ads_directory, current_name)
                 # Find the resolution of the uploaded video
                 vid = cv2.VideoCapture(os.path.join(ads_directory, current_name))
@@ -75,13 +78,16 @@ def index(request):
                     move(newOutput, outputName)
                     print("Renamed")
 
+                api = ipfsapi.connect('127.0.0.1', 5001)   
+                newHash = api.add(outputName)   
+
                 raw_tags = af.cleaned_data['targeted_tags'].replace(' ',',').split(',')
                         
                 splitted_tags = [x.strip() for x in raw_tags if x.strip()!= ""]
                 
                 payment_amount = int(af.cleaned_data['total_plays']) / 10
 
-                col = advertisement(user=request.user, ad_title=af.cleaned_data['ad_title'], ad_banner=current_name, total_plays=af.cleaned_data['total_plays'], targeted_tags=splitted_tags, amount=payment_amount, memo=uuid.uuid4().hex[:16])
+                col = advertisement(user=request.user, ad_title=af.cleaned_data['ad_title'], ad_banner=newHash['Hash'], total_plays=af.cleaned_data['total_plays'], targeted_tags=splitted_tags, amount=payment_amount, memo=uuid.uuid4().hex[:16])
                 col.save()
 
                 request.session['current_payment_info'] = col.id
