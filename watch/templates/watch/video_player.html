@@ -114,6 +114,36 @@
             <source src='http://gateway.ipfs.io/ipfs/{{ hash }}' type='video/mp4' size='{{ quality }}' />
         {% endfor %}
         </video>
+
+        <script>
+        var main_video = document.getElementById("player");
+        var ad_video =document.getElementById('adplayer');
+        var displayed =false;
+        
+        main_video.ontimeupdate = function() {
+            if(main_video.currentTime >= 2) {
+                if (displayed == false){
+                    if(main_video.currentTime > (main_video.duration/2)){
+                        $('#cc').fadeIn();
+                        main_video.pause();
+                        ad_video.play();
+                        displayed = true;
+                        updateView();
+                        
+                    }
+                }
+            }
+        };
+
+        ad_video.ontimeupdate = function() {
+            if(ad_video.ended == true) {
+                $('#cc').fadeOut();
+                main_video.play();
+            }
+        };  
+
+    </script>
+    
     {% endif %}
 
     
