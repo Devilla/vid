@@ -21,7 +21,7 @@ class advertisementForm(forms.Form):
     ad_banner = forms.FileField(
         label="Advertisement Banner",
         required=True,
-        widget=forms.FileInput(attrs={'id': 'c-cover', 'placeholder': 'Enter the banner. Recommended with is 480'})
+        widget=forms.FileInput(attrs={'id': 'c-cover', 'placeholder': 'Upload your video'})
     )
 
     class Meta:

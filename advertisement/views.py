@@ -12,7 +12,14 @@ from bitshares.account import Account
 from bitshares.memo import Memo
 import threading
 import time
+import random
 import uuid
+from django.conf import settings
+
+import cv2
+import subprocess
+from shutil import move
+
 
 from datetime import datetime
 
@@ -41,16 +48,32 @@ def index(request):
         print(activeAds)
         print(inactiveAds)
 
-        
-
         if request.method == 'POST':
             af = advertisementForm(request.POST, request.FILES)
 
             if af.is_valid():
-                myfile = request.FILES['ad_banner']
-                fs = FileSystemStorage()
-                filename = fs.save(os.path.join("static/ads", myfile.name), myfile)
-                uploaded_file_url = fs.url(filename)
+                myfile = request.FILES['ad_banner'].read()
+                ads_directory = os.path.join(os.path.join(settings.BASE_DIR, "static"), 'ads')
+                current_name = ''.join(random.choice('0123456789ABCDEF') for i in range(16)) + ".mp4"
+
+                open(os.path.join(ads_directory, current_name), 'wb').write(myfile)  
+
+                outputName = os.path.join(ads_directory, current_name)
+                # Find the resolution of the uploaded video
+                vid = cv2.VideoCapture(os.path.join(ads_directory, current_name))
+                height = int(vid.get(cv2.CAP_PROP_FRAME_HEIGHT))
+                width = vid.get(cv2.CAP_PROP_FRAME_WIDTH)
+                vid.release()
+
+                if height > width:
+                    print("Greater here so perform")
+                    newOutput = outputName.replace(".mp4", "_edit.mp4")
+                    command = "ffmpeg -i {} -vf scale=iw:480 {}".format(outputName, newOutput)
+                    print(command)
+                    subprocess.check_call(command.split(" "))
+                    height = width
+                    move(newOutput, outputName)
+                    print("Renamed")
 
                 raw_tags = af.cleaned_data['targeted_tags'].replace(' ',',').split(',')
                         
@@ -58,7 +81,7 @@ def index(request):
                 
                 payment_amount = int(af.cleaned_data['total_plays']) / 10
 
-                col = advertisement(user=request.user, ad_title=af.cleaned_data['ad_title'], ad_banner=uploaded_file_url, total_plays=af.cleaned_data['total_plays'], targeted_tags=splitted_tags, amount=payment_amount, memo=uuid.uuid4().hex[:16])
+                col = advertisement(user=request.user, ad_title=af.cleaned_data['ad_title'], ad_banner=current_name, total_plays=af.cleaned_data['total_plays'], targeted_tags=splitted_tags, amount=payment_amount, memo=uuid.uuid4().hex[:16])
                 col.save()
 
                 request.session['current_payment_info'] = col.id
