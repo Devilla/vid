@@ -147,6 +147,6 @@ def pay(request):
         return redirect("create.html")
     else:
         if payment_status == "PAID":
-            return redirect("/advertisement")
+            return redirect("/advertise/")
         else:
             return render(request, "advertisement/pay.html", context={'amount': amount,'memo': memo, 'payment_status': payment_status, 'remaining_time': remaining_time})
