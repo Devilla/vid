@@ -109,7 +109,7 @@ def ajax_upload(request):
             print(newHash)
 
             hash = {}
-            hash[str(height)] = newHash['Hash']
+            hash['720'] = newHash['Hash']
 
             thumbnailHash = api.add(thumbnail_path)
 
