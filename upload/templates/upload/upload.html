@@ -269,8 +269,8 @@ $(document).ready(function(){
             var content= "Video uploaded and processed succesfully";
             $('.u-size').html(content);
             $('.progress-bar').attr('aria-valuenow', '100').css('width', "100%").text("100%");
-            var vid ="<video poster='http://gateway.ipfs.io/ipfs/{{ request.session.thumbnailHash }}'  controls='controls'>"+
-                                        "<source src='http://gateway.ipfs.io/ipfs/{{ request.session.video_only }}' type='video/mp4; codecs='avc1.42E01E, mp4a.40.2''>"+
+                var vid ="<video poster='http://gateway.ipfs.io/ipfs/'" + data['thumbnail'] + "  controls='controls'>"+
+                                        "<source src='http://gateway.ipfs.io/ipfs/" + data['hash'] + "' type='video/mp4; codecs='avc1.42E01E, mp4a.40.2''>"+
                                     "</video>";
             document.getElementById('vidcontainer').innerHTML=vid;
              }

@@ -121,7 +121,7 @@ def ajax_upload(request):
             request.session['videopath'] = outputName
             request.session['thumbnail_path'] = thumbnail_path
             
-            data = []
+            data = {'hash': newHash['Hash'], 'thumbnail': thumbnail_path}
             return JsonResponse(data, safe=False)
         else:
             data = {'error_msg': "Only jpg, pdf and xlsx files are allowed."}
