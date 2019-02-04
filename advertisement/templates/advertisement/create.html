@@ -13,21 +13,24 @@
 <script>
 
 function Create(){
-    $("#adcreatetab").show();
     $("#activeadstab").hide();
     $("#inactiveadstab").hide();
+    $('#adcreatetab').fadeIn();
+
 }
 
 function Active(){
-    $("#activeadstab").show();
     $("#inactiveadstab").hide();
     $("#adcreatetab").hide();
+    $("#activeadstab").fadeIn();
+
 }
 
 function Inactive(){
-    $("#inactiveadstab").show();
     $("#activeadstab").hide();
     $("#adcreatetab").hide();
+    $("#inactiveadstab").fadeIn();
+
 }
 
 // {% if success == 'true' %}
@@ -123,12 +126,33 @@ document.addEventListener("DOMContentLoaded", function() {
                         <div class="block-list">
                                 <div>
                                         <h3 class="text-white"> My Active Advertisements </h3>
-                                        {% for i in active_ads %}
-                                                {{ i.ad_title }}
-                                                <img src="{{ i.banner }}"">
-                                                Total Hits: {{ i.currently_played }} / {{ i.total_plays }}
-                                        {% endfor %}
                                 </div>
+                                <div>
+                                        <table class="table text-white">
+                                                <thead class="thead-dark">
+                                                        <tr>
+                                                        <th scope="col">Ad Title</th>
+                                                        <th scope="col">Total Hits</th>
+        
+                                                        </tr>
+                                                </thead>
+                                                
+                                                <tbody>
+                                                        {% for i in active_ads %}
+                                                        <tr>
+        
+                                                        <td>{{ i.ad_title }}</td>
+                                                        
+                                                        <td>{{ i.currently_played }} / {{ i.total_plays }}</td>
+                                                        </tr>
+                                                        {% endfor %}
+        
+                                                </tbody>
+                                        </table>
+
+                                </div>
+                               
+                                            
                                 <div>
                                         <!-- Add ads here -->
                                 </div>

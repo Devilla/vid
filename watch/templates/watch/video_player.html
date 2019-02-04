@@ -1,5 +1,6 @@
 {% load staticfiles %}
 {% load widget_tweaks %}
+
 <script>
         function followUnfollow(){
            $.ajax({
@@ -32,15 +33,32 @@
         $('#cc').fadeOut();
      }
 
-     var vid = document.getElementById("player");
-    var interval = setInterval(function() { 
-    if (vid.currentTime >= 10) { 
-        $('#cc').show();
-        clearInterval(interval);
-    }
-    }, 1000);
-    
-    </script>
+     setTimeout(function(){
+        $('#cc').fadeIn();
+
+        updateView();
+
+        }, 2000);   
+
+        function updateView(){
+            alert('sending request');
+            
+              $.ajax({
+                method:"POST",
+                url:"/watch/adView/",
+                data: {
+                    'ad_id': $('#ad_id').val(),
+                    'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+                    },
+                success: function(data){
+                console.log(data.response); 
+                }
+            });
+            return false; //<---- move it here
+        }
+
+
+</script>
     
     <style>
     .close-icon {
@@ -62,17 +80,19 @@
         background-color: white;
     }
     </style>
-
+    
 <div class="sv-video" id="vv">
     <div class="card card-outline-danger text-center" id="cc" style="display:none;">
         <span class="pull-right clickable close-icon" data-effect="fadeOut" style="padding:5px;" onclick="closeAd()"><i class="fa fa-times"></i></span>
-        <div class="card-block">
+        <div class="card-block"><img src="{% static 'ads/aa.png' %}">
+            {% csrf_token %}
+            <input type="hidden" value="{{ad.id}}" id="ad_id"> 
             <blockquote class="card-blockquote">
-            <p class="grey">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
-            <footer>Someone famous in <cite title="Source Title">Source Title</cite></footer>
+            {{ad.ad_title}}
             </blockquote>
         </div>
     </div>
+
 
     <video id="player" controls data-setup='{{ current.id }}'  poster='{% static "images/single-video.png" %}'>
         {% for quality, hash in video_hash.items %}

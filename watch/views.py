@@ -7,6 +7,8 @@ from single_channel.models import followersModel
 import json
 from datetime import datetime, timedelta
 from django_pandas.io import read_frame
+from advertisement.models import advertisement
+from django.http import JsonResponse
 
 
 def get_similarity_percentage(x, parent_tags):
@@ -172,11 +174,12 @@ def index(request, video_hash, video_id):
         else:
             uploaded_time = "{} second ago".format(second)
         
+        getAd = advertisement.objects.get(id =1)
 
         return render(request, "watch/base.html", {'video_hash': hash, 'cont': video_content,
         'latest': featured, 'recommended': recommend, 'up_next':up_next, 'current': current, 'is_following':is_following,'followerscount':followerscount,'own_channel':own_channel,
         'user': user, 'count': count, 'steem_url': steem_url, 'smoke_url': smoke_url, 'whale_url': whale_url, 'chkLike': chkLike, 'chkDislike':chkDislike,
-        'total_likes': total_likes, 'total_dislikes': total_dislikes, 'total_earning': total_earning, 'uploaded_time': uploaded_time})
+        'total_likes': total_likes, 'total_dislikes': total_dislikes, 'total_earning': total_earning, 'uploaded_time': uploaded_time, 'ad':getAd})
     
 
 def likedordisliked (request, user_id, video_id):
@@ -189,3 +192,13 @@ def likedordisliked (request, user_id, video_id):
                 return chkLike, chkDislike
             else:
                 return False ,False
+
+
+def adView(request):
+    if request.method == 'POST':
+        ad_id = request.POST.get("ad_id")
+        ad = advertisement.objects.get(id = ad_id)
+        ad.current_played += 1
+        ad.save()
+        data = {'response': '1'}
+        return JsonResponse(data)
