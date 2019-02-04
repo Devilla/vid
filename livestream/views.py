@@ -4,6 +4,7 @@ from register.models import User
 from upload.models import Video, SteemVideo, WhaleShareVideo, SmokeVideo
 from beem import Steem
 from beem.comment import Comment
+from steem import Steem as SteemOriginal
 import uuid
 import json
 
@@ -42,6 +43,10 @@ def upload(request):
             arb_url = 'https://vidsocial.org/watch/live/'+ live_video['identifier'] + '/'
 
             body = get_body(thumbnail_url, arb_url, description)
+            print(steemPost)
+            print(smokePost)
+            print(whalePost)
+            print(body)
 
             video = Video(user=request.user, type="live", views=0, duration="LIVE", description=description, language=language, tags=tags, name=name, publish=True, monetize=optform.cleaned_data['monetize'], nsfw=optform.cleaned_data['nsfw'],thumbsUp=0, thumbsDown=0, video=json.dumps(live_video), user_id=request.user.id, thumbNail="QmWdE9UVgWGFncQSmEQdvATXF4CYBYqZGKS8Fe3wFGADUv")
             video.save()
