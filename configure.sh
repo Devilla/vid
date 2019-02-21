@@ -1,8 +1,13 @@
 sudo apt-get install -y software-properties-common
 sudo add-apt-repository ppa:jonathonf/ffmpeg-4
+sudo add-apt-repository universe
+sudo add-apt-repository ppa:certbot/certbot
 sudo apt-get update
 
-sudo apt-get install -y python3 python3-pip ffmpeg nginx git postgresql postgresql-contrib golang-go
+sudo apt-get install -y python3 python3-pip ffmpeg nginx git postgresql postgresql-contrib golang-go libssl-dev certbot
+
+sudo service nginx stop
+sudo certbot certonly --standalone -d vidsocial.org -d www.vidsocial.org
 
 sudo -u postgres psql -c "create database ipfs_db5"
 sudo -u postgres psql -c "create user ipfs with encrypted password 'ipfs@pranish'"
@@ -26,3 +31,4 @@ sudo ./install_ant-media-server.sh ant-media-server*.zip
 sudo /usr/local/antmedia/enable_ssl.sh -d stream.vidsocial.org
 
 python3 -m pip install -r requirements.txt
+#nginx config
